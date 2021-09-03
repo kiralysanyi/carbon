@@ -1,0 +1,93 @@
+html {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(51, 51, 51);
+    color: white;
+    user-select: none;
+}
+
+#topbar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 50px;
+    background-color: rgb(27, 27, 27);
+    -webkit-app-region: drag;
+}
+
+#window_controls {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 150px;
+    height: 50px;
+    -webkit-app-region: no-drag;
+    display: block;
+}
+
+#window_controls div{
+    text-align: center;
+    line-height: 50px;
+    background-color: transparent;
+    width: 50px;
+    height: 50px;
+    border-radius: 5px;
+    float: right;
+    -webkit-app-region: no-drag;
+    color: white;
+    transition: 200ms;
+}
+
+#window_controls div:hover {
+    background-color: rgba(255, 255, 255, 0.164);
+}
+
+#toolbar {
+    position: absolute;
+    top: 0px;
+    height: 50px;
+    background-color: transparent;
+    width: calc(100% - 150px);
+    display: block;
+}
+
+#toolbar div {
+    -webkit-app-region: no-drag;
+    position: relative;
+    float:  left;
+    text-align: center;
+    line-height: 40px;
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+    transition: 200ms;
+    border-radius: 5px;
+    margin-right: 0px;
+}
+
+#toolbar div:hover {
+    background-color: rgba(255, 255, 255, 0.164);
+}
+
+#toolbar input[type="text"] {
+    position: absolute;
+    left: 100px;
+    top: 5px;
+    height: 38px;
+    width: calc(100% - 120px);
+    -webkit-app-region: no-drag;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
+    color: white;
+    outline: 0;
+    transition: 200ms;
+}
+
+#toolbar input[type="text"]:hover {
+    background-color: rgba(255, 255, 255, 0.164);
+}
+
+#toolbar input[type="text"]:focus {
+    background-color: rgba(255, 255, 255, 0.164);
+}

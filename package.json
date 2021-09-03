@@ -1,0 +1,26 @@
+{
+  "name": "sanyicraft-carbon",
+  "version": "0.0.1",
+  "description": "Web browser",
+  "main": "index.js",
+  "scripts": {
+    "test": "electron . --debug",
+    "build": "electron-builder",
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://kiralysanyi@bitbucket.org/kiralysanyi/carbon.git"
+  },
+  "keywords": [
+    "web",
+    "browser"
+  ],
+  "author": "Király Sándor",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/kiralysanyi/carbon#readme",
+  "devDependencies": {
+    "electron": "^13.0.0",
+    "electron-builder": "^22.11.7"
+  }
+}
