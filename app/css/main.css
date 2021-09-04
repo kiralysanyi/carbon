@@ -1,3 +1,7 @@
+:root {
+    --accent-color: rgb(0, 225, 255);
+}
+
 html {
     font-family: Arial, Helvetica, sans-serif;
     background-color: rgb(51, 51, 51);
@@ -30,7 +34,7 @@ html {
     line-height: 50px;
     background-color: transparent;
     width: 50px;
-    height: 50px;
+    height: 45px;
     border-radius: 5px;
     float: right;
     -webkit-app-region: no-drag;
@@ -71,10 +75,10 @@ html {
 
 #toolbar input[type="text"] {
     position: absolute;
-    left: 100px;
-    top: 5px;
-    height: 38px;
-    width: calc(100% - 120px);
+    left: 150px;
+    top: 10px;
+    height: 28px;
+    width: calc(100% - 170px);
     -webkit-app-region: no-drag;
     border: none;
     border-radius: 5px;
@@ -90,4 +94,101 @@ html {
 
 #toolbar input[type="text"]:focus {
     background-color: rgba(255, 255, 255, 0.164);
+}
+
+.bottom_line_loader {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    height: 5px;
+    background-color: var(--accent-color);
+    animation: loader linear infinite 2s;
+}
+
+webview {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+}
+
+@keyframes loader {
+    0% {width: 0px; left: 0px;}
+    25% {width: 25%; left: 25%;}
+    75% {width: 50%; left: 75%;}
+    100% {left: 100%; width: 0px;}
+}
+
+#tab_bar {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    height: 40px;
+    display: block;
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+}
+
+.tab{
+    position: relative;
+    height: 40px;
+    width: 50%;
+    background-color: transparent;
+    display: inline-block; 
+    vertical-align: top; 
+    white-space: normal; 
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.tab .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    height: 30px;
+    width: 30px;
+    line-height: 30px;
+    text-align: center;
+    transition: 200ms;
+    z-index: 100;
+    border-radius: 5px;
+}
+
+.tab .close:hover {
+    background-color: rgba(255, 255, 255, 0.212);
+}
+
+.tab img{
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    -webkit-user-drag: none;
+}
+
+.tab a {
+    position: absolute;
+    left: 40px;
+    line-height: 40px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: calc(100% - 40px);
+}
+
+#tab_bar::-webkit-scrollbar {
+    display: none;
+  }
+
+#web_container {
+    position: fixed;
+    top: 90px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 90px);
 }

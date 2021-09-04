@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,18 +9,27 @@
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="./lineicons.css">
 </head>
+
 <body>
     <div id="topbar">
         <div id="toolbar">
-            <div><i class="lni lni-plus"></i></div>
+            <div onclick="newTab()"><i class="lni lni-plus"></i></div>
             <div><i class="lni lni-menu"></i></div>
-            <input type="text" id="urlbar" value="https://google.com">
+            <div onclick="goBack()"><i class="lni lni-chevron-left"></i></div>
+            <input type="text" id="urlbar">
         </div>
         <div id="window_controls">
             <div onclick="closewin()"><i class="lni lni-close"></i></div>
             <div onclick="maximize()"><i class="lni lni-stop"></i></div>
             <div onclick="minimize()"><i class="lni lni-minus"></i></div>
         </div>
+        <div class="bottom_line_loader" id="loader" style="display: none;"></div>
     </div>
+
+    <div id="tab_bar"></div>
+    <div id="web_container"></div>
 </body>
+<script src="./js/tab.js"></script>
+<script src="./js/script.js"></script>
+
 </html>
