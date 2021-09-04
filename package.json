@@ -5,8 +5,9 @@
   "description": "Web browser",
   "main": "index.js",
   "scripts": {
-    "test": "electron . --debug",
-    "build": "electron-builder",
+    "test": "electron . --debug --trace-warnings --verbose",
+    "autobuild": "electron-builder",
+    "build_win": "electron-builder -w",
     "start": "electron ."
   },
   "repository": {

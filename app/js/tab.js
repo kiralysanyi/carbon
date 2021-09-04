@@ -1,5 +1,7 @@
 var tabs = {};
 var focused_tab = null;
+const USERAGENT = "Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
+
 
 const container = document.getElementById("web_container")
 const tab_bar = document.getElementById("tab_bar");
@@ -43,6 +45,7 @@ class tab {
         this.tab_button.appendChild(this.favicon);
 
         this.webview.src = startpage;
+        this.webview.useragent = USERAGENT;
 
         container.appendChild(this.webview);
         tab_bar.appendChild(this.tab_button);
@@ -80,9 +83,15 @@ class tab {
             }
         }
 
+        this.webview.webpreferences = "sandbox"
+        
         this.webview.addEventListener("loadstart", () => {
             loadstart();
         });
+
+        this.webview.addEventListener("did-start-navigation", () => {
+            loadstart();
+        })
 
         this.webview.addEventListener("did-start-loading", () => {
             loadstart();
@@ -106,7 +115,22 @@ class tab {
 
         this.webview.addEventListener("dom-ready", () => {
             this.focus();
+            this.webview.openDevTools();
         })
+
+        this.webview.addEventListener("crashed", (e) => {
+            console.warn("Webview crash!", "ID:" + this.id, "type: " + e.type)
+        })
+
+        this.webview.addEventListener("error", (e) => {
+            console.warn("Webview error: ", e.error);
+        })
+
+        this.webview.addEventListener("waiting", (e) => {
+            console.log("[" + this.id + "]: ", e)
+        })
+
+        
 
         onTabUpdate();
     }

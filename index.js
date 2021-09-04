@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require("electron");
+const {app, BrowserWindow, ipcMain, session} = require("electron");
 
 //checking for command line parameters
 var args = process.argv;
@@ -24,7 +24,8 @@ function initMainWindow() {
             preload: __dirname + "/preload.js",
             webviewTag: true,
             contextIsolation: false,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            webSecurity: false
         }
     });
 
