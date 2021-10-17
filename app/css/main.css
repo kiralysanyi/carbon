@@ -48,10 +48,11 @@ html {
 
 #toolbar {
     position: absolute;
+    left: 50px;
     top: 0px;
     height: 50px;
     background-color: transparent;
-    width: calc(100% - 150px);
+    width: calc(100% - 200px);
     display: block;
 }
 
@@ -75,14 +76,14 @@ html {
 
 #toolbar input[type="text"] {
     position: absolute;
-    left: 150px;
+    left: 200px;
     top: 10px;
     height: 28px;
-    width: calc(100% - 170px);
+    width: calc(100% - 210px);
     -webkit-app-region: no-drag;
     border: none;
     border-radius: 5px;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.034);
     color: white;
     outline: 0;
     transition: 200ms;

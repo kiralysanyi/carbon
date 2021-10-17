@@ -19,7 +19,15 @@ document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 
 newTab();
 
+
+
 var urlbar = document.getElementById("urlbar");
+
+window.addEventListener("keydown", (e) => {
+    if (e.key == "Enter" && document.activeElement == urlbar) {
+        navigate(urlbar.value);
+    }
+})
 
 //initialize sidebar
 
