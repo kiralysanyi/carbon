@@ -3,7 +3,7 @@ const remote = require("electron").remote;
 
 const win = remote.getCurrentWindow();
 const BrowserView = remote.BrowserView;
-
+var afterinit = false;
 
 //creating empty browserview
 const blankview = new BrowserView();
@@ -15,8 +15,18 @@ var tabs = {};
 var focused_tab = null;
 const USERAGENT = "Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
 
+function resizeAll() {
+    for (var x in tabs) {
+        tabs[x].resize();
+    }
+}
 
-const container = document.getElementById("web_container")
+function positionAll(data) {
+    for (var x in tabs) {
+        tabs[x].position(data);
+    }
+}
+
 const tab_bar = document.getElementById("tab_bar");
 
 function uuidv4() {
@@ -40,6 +50,10 @@ function getTab(id) {
 
 class tab {
     constructor() {
+        if (afterinit == true) {
+            hideSidebar();   
+        }
+        this.disableautoresize = false;
         this.id = uuidv4();
         tabs[this.id] = this;
         this.isFocused = false;
@@ -94,6 +108,7 @@ class tab {
         //connect to tabhost
         console.log("Initializing tab: ", this.id)
         this.view = new BrowserView();
+        this.view.webContents.setUserAgent(USERAGENT);
         //event listeners
 
         this.view.webContents.on("did-start-loading", loadstart);
@@ -111,11 +126,21 @@ class tab {
         var webview = this.view;
         this.view.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
         win.on("resize", () => {
-            webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+            if (this.disableautoresize == false) {
+                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });                
+            }
+            else {
+                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: sidebar_width, y: 90 });
+            }
         })
 
         setInterval(() => {
-            webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+            if(this.disableautoresize == false) {
+                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+            }
+            else {
+                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: sidebar_width, y: 90 });   
+            }
         }, 500);
 
         this.view.webContents.loadURL(startpage);
@@ -125,6 +150,11 @@ class tab {
 
     navigate(url) {
         //load url
+    }
+
+    resize() {
+        this.disableautoresize = false;
+        this.view.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
     }
 
     focus() {
@@ -152,6 +182,10 @@ class tab {
         this.view.webContents.goBack();
     }
 
+    reload() {
+        this.view.webContents.reload();
+    }
+
     forward() {
         //goforward
         this.view.webContents.goForward();
@@ -162,6 +196,27 @@ class tab {
         win.removeBrowserView(this.view);
         this.tab_button.remove();
         delete tabs[this.id];
+        if (focused_tab == this.id) {
+            var highest = tabs[Object.keys(tabs).sort().pop()];
+            if (highest) {
+                highest.focus();
+            }
+            else {
+                focused_tab = null;
+                console.log("All tabs closed")
+                document.getElementById("urlbar").value = "";
+            }
+        }
+    }
+
+    position(data) {
+        this.view.setBounds(data);
+        this.disableautoresize = true;
+        this.view.setBounds(data);
+    }
+
+    devtools() {
+        this.view.webContents.openDevTools();
     }
 }
 
@@ -171,4 +226,16 @@ function newTab() {
 
 function goBack() {
     getTab(focused_tab).back();
+}
+
+function goForward() {
+    getTab(focused_tab).forward();
+}
+
+function reload() {
+    getTab(focused_tab).reload();
+}
+
+function openDevTools() {
+    getTab(focused_tab).devtools();
 }

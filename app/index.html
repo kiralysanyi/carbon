@@ -14,7 +14,7 @@
     <div id="topbar">
         <div id="toolbar">
             <div onclick="newTab()"><i class="lni lni-plus"></i></div>
-            <div><i class="lni lni-menu"></i></div>
+            <div onclick="toggleSidebar()"><i class="lni lni-menu"></i></div>
             <div onclick="goBack()"><i class="lni lni-chevron-left"></i></div>
             <input type="text" id="urlbar">
         </div>
@@ -27,8 +27,17 @@
     </div>
 
     <div id="tab_bar"></div>
-    <div id="web_container"></div>
+    <div id="sidebar">
+        <div id="controls">
+            <div class="control_btn" onclick="reload()"><i class="lni lni-reload"></i></div>
+            <div class="control_btn" onclick="goBack()"><i class="lni lni-chevron-left"></i></div>
+            <div class="control_btn" onclick="goForward()"><i class="lni lni-chevron-right"></i></div>
+            <div class="control_btn"><i class="lni lni-bookmark"></i></div>
+        </div>
+        <button onclick="openDevTools()">DevTools</button>
+    </div>
 </body>
+<script src="./js/conf.js"></script>
 <script src="./js/tab.js"></script>
 <script src="./js/script.js"></script>
 
