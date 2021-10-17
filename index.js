@@ -36,6 +36,19 @@ function initMainWindow() {
     if (checkParameter("--debug")) {
         win.webContents.openDevTools();
     }
+    var views = win.getBrowserViews();
+
+    ipcMain.on("addListeners", (e) => {
+        views = win.getBrowserViews();
+        for(var x in views) {
+            views[x].webContents.addListener("new-window", (e, url) => {
+                e.preventDefault();
+            })
+        }
+
+
+        e.returnValue = 0;
+    })
 }
 
 app.whenReady().then(initMainWindow);

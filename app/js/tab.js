@@ -221,9 +221,7 @@ class tab {
             this.favicon.src = favicons[favicons.length - 1]
         })
 
-        //currently not working as expected
-        this.view.webContents.addListener("new-window", (e, url) => {
-            e.preventDefault();
+        this.view.webContents.on("new-window", (e, url) => {
             new tab(url);
         })
 
@@ -258,6 +256,7 @@ class tab {
         }
         this.focus();
         onTabUpdate();
+        ipcRenderer.sendSync("addListeners")
     }
 
     navigate(url) {
@@ -278,6 +277,7 @@ class tab {
                 tabs[x].hide();
             }
         }
+        win.setBrowserView(this.view);
         this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
         this.isFocused = true;
         win.setTopBrowserView(this.view);
@@ -306,6 +306,7 @@ class tab {
 
     hide() {
         //hide tab
+        win.removeBrowserView(this.view);
         this.isFocused = false;
         this.tab_button.style.backgroundColor = "transparent";
     }
