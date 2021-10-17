@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, session} = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView } = require("electron");
 
 //checking for command line parameters
 var args = process.argv;
@@ -25,7 +25,8 @@ function initMainWindow() {
             webviewTag: true,
             contextIsolation: false,
             enableRemoteModule: true,
-            webSecurity: false
+            webSecurity: false,
+            nodeIntegration: true,
         }
     });
 

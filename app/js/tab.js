@@ -1,3 +1,16 @@
+const { ipcRenderer } = require("electron");
+const remote = require("electron").remote;
+
+const win = remote.getCurrentWindow();
+const BrowserView = remote.BrowserView;
+
+
+//creating empty browserview
+const blankview = new BrowserView();
+win.setBrowserView(blankview)
+blankview.setBounds({ width: 0, height: 0, x: 0, y: 0 });
+blankview.webContents.loadFile("./app/pages/blank.html")
+
 var tabs = {};
 var focused_tab = null;
 const USERAGENT = "Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
@@ -31,7 +44,6 @@ class tab {
         tabs[this.id] = this;
         this.isFocused = false;
 
-        this.webview = document.createElement("webview");
         this.tab_button = document.createElement("div");
         this.title = document.createElement("a");
         this.favicon = document.createElement("img");
@@ -44,10 +56,6 @@ class tab {
         this.tab_button.appendChild(this.title);
         this.tab_button.appendChild(this.favicon);
 
-        this.webview.src = startpage;
-        this.webview.useragent = USERAGENT;
-
-        container.appendChild(this.webview);
         tab_bar.appendChild(this.tab_button);
 
         this.tab_button.onclick = (e) => {
@@ -79,67 +87,48 @@ class tab {
         var loadend = () => {
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
-                document.getElementById("urlbar").value = this.webview.getURL();
+                document.getElementById("urlbar").value = this.view.webContents.getURL();
             }
         }
 
-        this.webview.webpreferences = "sandbox"
-        
-        this.webview.addEventListener("loadstart", () => {
-            loadstart();
-        });
+        //connect to tabhost
+        console.log("Initializing tab: ", this.id)
+        this.view = new BrowserView();
+        //event listeners
 
-        this.webview.addEventListener("did-start-navigation", () => {
-            loadstart();
+        this.view.webContents.on("did-start-loading", loadstart);
+        this.view.webContents.on("did-stop-loading", loadend);
+        this.view.webContents.on("page-title-updated", () => {
+            this.title.innerHTML = this.view.webContents.getTitle();
         })
 
-        this.webview.addEventListener("did-start-loading", () => {
-            loadstart();
+        this.view.webContents.on("page-favicon-updated", (e, favicons) => {
+            this.favicon.src = favicons[favicons.length - 1]
         })
 
-        this.webview.addEventListener("did-stop-loading", () => {
-            loadend();
+        //end
+        win.addBrowserView(this.view);
+        var webview = this.view;
+        this.view.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+        win.on("resize", () => {
+            webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
         })
 
-        this.webview.addEventListener("did-finish-load", () => {
-            loadend();
-        })
+        setInterval(() => {
+            webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+        }, 500);
 
-        this.webview.addEventListener("page-favicon-updated", (e) => {
-            this.favicon.src = e.favicons[e.favicons.length - 1];
-        })
-
-        this.webview.addEventListener("page-title-updated", (e) => {
-            this.title.innerHTML = e.title;
-        })
-
-        this.webview.addEventListener("dom-ready", () => {
-            this.focus();
-            this.webview.openDevTools();
-        })
-
-        this.webview.addEventListener("crashed", (e) => {
-            console.warn("Webview crash!", "ID:" + this.id, "type: " + e.type)
-        })
-
-        this.webview.addEventListener("error", (e) => {
-            console.warn("Webview error: ", e.error);
-        })
-
-        this.webview.addEventListener("waiting", (e) => {
-            console.log("[" + this.id + "]: ", e)
-        })
-
-        
-
+        this.view.webContents.loadURL(startpage);
+        this.focus();
         onTabUpdate();
     }
 
     navigate(url) {
-        this.webview.loadURL(url);
+        //load url
     }
 
     focus() {
+        //focus tab
         focused_tab = this.id;
         for (var x in tabs) {
             if (x != this.id) {
@@ -147,38 +136,32 @@ class tab {
             }
         }
         this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
-        this.webview.style.display = "flex";
         this.isFocused = true;
-        document.getElementById("urlbar").value = this.webview.getURL();
+        win.setTopBrowserView(this.view);
+        document.getElementById("urlbar").value = this.view.webContents.getURL();
     }
 
     hide() {
+        //hide tab
         this.isFocused = false;
-        this.webview.style.display = "none";
         this.tab_button.style.backgroundColor = "transparent";
     }
 
     back() {
-        if (this.webview.canGoBack()) {
-            this.webview.goBack();
-        }
+        //goback
+        this.view.webContents.goBack();
+    }
+
+    forward() {
+        //goforward
+        this.view.webContents.goForward();
     }
 
     destroy() {
-        delete tabs[this.id];
-        this.webview.remove();
+        //close tab
+        win.removeBrowserView(this.view);
         this.tab_button.remove();
-        if (focused_tab == this.id) {
-            var highest = tabs[Object.keys(tabs).sort().pop()];
-            if (highest) {
-                highest.focus();
-            }
-            else {
-                focused_tab = null;
-                console.log("All tabs closed")
-                document.getElementById("urlbar").value = "";
-            }
-        }
+        delete tabs[this.id];
     }
 }
 
