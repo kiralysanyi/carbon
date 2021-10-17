@@ -194,6 +194,7 @@ class tab {
     destroy() {
         //close tab
         win.removeBrowserView(this.view);
+        this.view.webContents.destroy();
         this.tab_button.remove();
         delete tabs[this.id];
         if (focused_tab == this.id) {
