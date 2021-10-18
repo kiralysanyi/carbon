@@ -1,5 +1,5 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView } = require("electron");
-
+require('@electron/remote/main').initialize();
 //checking for command line parameters
 var args = process.argv;
 
@@ -24,7 +24,6 @@ function initMainWindow() {
             preload: __dirname + "/preload.js",
             webviewTag: true,
             contextIsolation: false,
-            enableRemoteModule: true,
             webSecurity: false,
             nodeIntegration: true,
         }
@@ -32,6 +31,8 @@ function initMainWindow() {
 
     win.loadFile("app/index.html");
     win.removeMenu();
+
+    require("@electron/remote/main").enable(win.webContents)
 
     if (checkParameter("--debug")) {
         win.webContents.openDevTools();

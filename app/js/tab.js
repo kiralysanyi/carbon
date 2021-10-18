@@ -1,5 +1,5 @@
 const { ipcRenderer } = require("electron");
-const remote = require("electron").remote;
+const remote = require("@electron/remote");
 
 const win = remote.getCurrentWindow();
 const BrowserView = remote.BrowserView;

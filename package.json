@@ -22,7 +22,10 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/kiralysanyi/carbon#readme",
   "devDependencies": {
-    "electron": "^13.0.0",
+    "electron": "^15.2.0",
     "electron-builder": "^22.11.7"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.0.1"
   }
 }
