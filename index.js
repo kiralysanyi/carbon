@@ -71,7 +71,6 @@ function initMainWindow() {
     })
 
     //tab management
-    const webContents = win.webContents;
     var webviews = {};
 
     ipcMain.on("newTab", (e, data) => {
@@ -106,6 +105,10 @@ function initMainWindow() {
         view.webContents.on("new-window", (e, url) => {
             sendEvent({type: "new-window", url: url});
         });
+
+        setInterval(() => {
+            view.setBounds({width: win.getBounds().width, height: win.getBounds().height, x: 0, y: 90});
+        }, 500);
     });
 
     ipcMain.on("removeTab", (e, uuid) => {
