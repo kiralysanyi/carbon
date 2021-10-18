@@ -1,18 +1,7 @@
 const { ipcRenderer } = require("electron");
-const remote = require("@electron/remote");
 
 //ipc crap
-
-
-const win = remote.getCurrentWindow();
-const BrowserView = remote.BrowserView;
 var afterinit = false;
-
-//creating empty browserview
-const blankview = new BrowserView();
-win.setBrowserView(blankview)
-blankview.setBounds({ width: 0, height: 0, x: 0, y: 0 });
-blankview.webContents.loadFile("./app/pages/blank.html")
 
 var tabs = {};
 var focused_tab = null;
@@ -208,7 +197,7 @@ class tab {
 
         //connect to tabhost
         console.log("Initializing tab: ", this.id)
-        ipcRenderer.sendSync("newTab", {uuid: this.id})
+        ipcRenderer.sendSync("newTab", { uuid: this.id })
         //event listeners
         ipcRenderer.on(this.id, (e, data) => {
             const type = data.type;
@@ -233,7 +222,7 @@ class tab {
 
             if (type == "new-window") {
                 if (url) {
-                    new tab(url);                    
+                    new tab(url);
                 }
                 else {
                     console.error("No url provided by tabhost");
@@ -257,7 +246,7 @@ class tab {
 
     navigate(url) {
         //load url
-        ipcRenderer.sendSync("navigate", {uuid: this.id, url: url});
+        ipcRenderer.sendSync("navigate", { uuid: this.id, url: url });
     }
 
     getUrl() {
@@ -286,23 +275,19 @@ class tab {
         document.getElementById("urlbar").value = this.getUrl();
 
         if (afterinit == true) {
-            resetControls();
-            setTimeout(() => {
-                if (this.canGoBack == true) {
-                    showBack();
-                }
-                else {
-                    hideBack();
-                }
+            if (this.canGoBack() == true) {
+                showBack();
+            }
+            else {
+                hideBack();
+            }
 
-                if (this.canGoForward() == true) {
-                    showForward();
-                }
-                else {
-                    hideForward();
-                }
-            }, 300);
-
+            if (this.canGoForward() == true) {
+                showForward();
+            }
+            else {
+                hideForward();
+            }
         }
     }
 
@@ -375,5 +360,5 @@ function openDevTools() {
 }
 
 function navigate(url) {
-    getTab(focused_tab).navigate(url);   
+    getTab(focused_tab).navigate(url);
 }

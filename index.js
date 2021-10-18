@@ -1,8 +1,8 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView } = require("electron");
-require('@electron/remote/main').initialize();
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer } = require("electron");
 //checking for command line parameters
 var args = process.argv;
 
+var mainWin = null;
 //check for parameter
 function checkParameter(name) {
     for (var x in args) {
@@ -29,6 +29,8 @@ function initMainWindow() {
         }
     });
 
+    mainWin = win;
+
     win.loadFile("app/index.html");
     win.removeMenu();
 
@@ -50,8 +52,6 @@ function initMainWindow() {
         }
         e.returnValue = 0;
     })
-
-    require("@electron/remote/main").enable(win.webContents)
 
     if (checkParameter("--debug")) {
         win.webContents.openDevTools();
@@ -83,7 +83,7 @@ function initMainWindow() {
         e.returnValue = 0;
 
         function sendEvent(data) {
-            console.log("Posting data to renderer: ", data);
+            console.log("Sending data to renderer: ", data);
             win.webContents.postMessage(uuid, data);
         }
 
@@ -177,6 +177,34 @@ function initMainWindow() {
         e.returnValue = 0;
     })
 }
+
+const menu = new Menu();
+const menuitems = {
+    reload: new MenuItem({
+        label: "Reload",
+        click: () => {
+            console.log("Reload")
+            mainWin.webContents.postMessage("command", "reload");
+        }
+    }),
+    devtools: new MenuItem({
+        label: "DevTools",
+        click: () => {
+            console.log("Devtools")
+            mainWin.webContents.postMessage("command", "devtools");
+        }
+    })
+
+}
+
+menu.append(menuitems.reload);
+menu.append(menuitems.devtools);
+
+function openMenu() {
+    menu.popup({ x: 80, y: 50 });
+}
+
+ipcMain.on("openMenu", openMenu);
 
 app.whenReady().then(initMainWindow);
 

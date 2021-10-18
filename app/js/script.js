@@ -1,5 +1,3 @@
-const { Menu, MenuItem } = require("@electron/remote");
-
 function showLoader() {
     document.getElementById("loader").style.display = "block";
 }
@@ -32,30 +30,19 @@ window.addEventListener("keydown", (e) => {
 })
 
 //initialize menu
-const menu = new Menu();
-const menuitems = {
-    reload: new MenuItem({
-        label: "Reload",
-        click: () => {
-            console.log("Reload")
-            reload();
-        }
-    }),
-    devtools: new MenuItem({
-        label: "DevTools",
-        click: () => {
-            console.log("Devtools")
-            openDevTools();
-        }
-    })
-
-}
-
-menu.append(menuitems.reload);
-menu.append(menuitems.devtools);
 
 function openMenu() {
-    menu.popup({ x: 80, y: 50 });
+    ipcRenderer.send("openMenu")
 }
+
+ipcRenderer.on("command", (e, command) => {
+    if (command == "reload") {
+        reload();
+    }
+
+    if (command == "devtools") {
+        openDevTools();
+    }
+})
 
 afterinit = true;
