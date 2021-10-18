@@ -1,19 +1,13 @@
-const remote = require("@electron/remote");
-const win = remote.getCurrentWindow();
+const { ipcRenderer } = require("electron");
 
 closewin = () => {
-    win.close();
+    ipcRenderer.sendSync("closewin")
 }
 
 minimize = () => {
-    win.minimize();
+    ipcRenderer.sendSync("minimize");
 }
 
 maximize = () => {
-    if (win.isMaximized()) {
-        win.unmaximize();
-    }
-    else {
-        win.maximize();
-    }
+    ipcRenderer.sendSync("maximize");
 }

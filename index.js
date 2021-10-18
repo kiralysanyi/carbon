@@ -32,6 +32,25 @@ function initMainWindow() {
     win.loadFile("app/index.html");
     win.removeMenu();
 
+    ipcMain.on("minimize", (e) => {
+        win.minimize();
+        e.returnValue = 0;
+    })
+
+    ipcMain.on("closewin", (e) => {
+        win.close();
+    })
+
+    ipcMain.on("maximize", (e) => {
+        if (win.isMaximized()) {
+            win.unmaximize();
+        }
+        else {
+            win.maximize();
+        }
+        e.returnValue = 0;
+    })
+
     require("@electron/remote/main").enable(win.webContents)
 
     if (checkParameter("--debug")) {
@@ -41,7 +60,7 @@ function initMainWindow() {
 
     ipcMain.on("addListeners", (e) => {
         views = win.getBrowserViews();
-        for(var x in views) {
+        for (var x in views) {
             views[x].webContents.addListener("new-window", (e, url) => {
                 e.preventDefault();
             })
