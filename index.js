@@ -105,9 +105,25 @@ function initMainWindow() {
         view.webContents.on("new-window", (e, url) => {
             sendEvent({type: "new-window", url: url});
         });
+        var isFullScreen = false;
+
+        view.webContents.on("enter-html-full-screen", () => {
+            isFullScreen = true;
+        })
+
+        view.webContents.on("leave-html-full-screen", () => {
+            isFullScreen = false;
+        })
 
         setInterval(() => {
-            view.setBounds({width: win.getBounds().width, height: win.getBounds().height, x: 0, y: 90});
+            var y = 0;
+            if (isFullScreen == true) {
+                y = 0;
+            }
+            else {
+                y = 90;
+            }
+            view.setBounds({width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y});
         }, 500);
     });
 
