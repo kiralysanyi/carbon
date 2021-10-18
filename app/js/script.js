@@ -1,3 +1,5 @@
+const { Menu, MenuItem } = require("@electron/remote");
+
 function showLoader() {
     document.getElementById("loader").style.display = "block";
 }
@@ -29,36 +31,31 @@ window.addEventListener("keydown", (e) => {
     }
 })
 
-//initialize sidebar
-
-var sidebar = document.getElementById("sidebar")
-sidebar.style.width = sidebar_width + "px";
-sidebar.style.left = "-" + sidebar_width + "px";
-var isSidebarOpen = false;
-
-function showSidebar() {
-    positionAll({y: 90, x: sidebar_width, width: window.outerWidth, height: window.outerHeight - 90});
-    sidebar.style.left = "0px";
-    isSidebarOpen = true;
-}
-
-function hideSidebar() {
-    sidebar.style.left = "-" + sidebar_width + "px";
-    setTimeout(() => {
-        resizeAll();
-        isSidebarOpen = false;
-    }, 300);
-}
-
-function toggleSidebar() {
-    if (focused_tab != null) {
-        if (isSidebarOpen == true) {
-            hideSidebar();
+//initialize menu
+const menu = new Menu();
+const menuitems = {
+    reload: new MenuItem({
+        label: "Reload",
+        click: () => {
+            console.log("Reload")
+            reload();
         }
-        else {
-            showSidebar();
-        }   
-    }
+    }),
+    devtools: new MenuItem({
+        label: "DevTools",
+        click: () => {
+            console.log("Devtools")
+            openDevTools();
+        }
+    })
+
+}
+
+menu.append(menuitems.reload);
+menu.append(menuitems.devtools);
+
+function openMenu() {
+    menu.popup({ x: 80, y: 50 });
 }
 
 afterinit = true;

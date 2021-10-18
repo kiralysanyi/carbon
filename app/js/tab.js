@@ -1,6 +1,9 @@
 const { ipcRenderer } = require("electron");
 const remote = require("@electron/remote");
 
+//ipc crap
+
+
 const win = remote.getCurrentWindow();
 const BrowserView = remote.BrowserView;
 var afterinit = false;
@@ -137,10 +140,8 @@ function getTab(id) {
 class tab {
     constructor(page) {
         if (afterinit == true) {
-            hideSidebar();
             urlbar.style.display = "block";
         }
-        this.disableautoresize = false;
         this.id = uuidv4();
         tabs[this.id] = this;
         this.isFocused = false;
@@ -188,15 +189,15 @@ class tab {
         var loadend = () => {
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
-                document.getElementById("urlbar").value = this.view.webContents.getURL();
+                document.getElementById("urlbar").value = this.getUrl();
 
-                if (this.view.webContents.canGoBack() == true) {
+                if (this.canGoBack() == true) {
                     showBack();
                 } else {
                     hideBack();
                 }
 
-                if (this.view.webContents.canGoForward() == true) {
+                if (this.canGoForward() == true) {
                     showForward()
                 }
                 else {
@@ -207,52 +208,47 @@ class tab {
 
         //connect to tabhost
         console.log("Initializing tab: ", this.id)
-        this.view = new BrowserView();
-        this.view.webContents.setUserAgent(USERAGENT);
+        ipcRenderer.sendSync("newTab", {uuid: this.id})
         //event listeners
+        ipcRenderer.on(this.id, (e, data) => {
+            const type = data.type;
+            const url = data.url;
+            const favicons = data.favicons;
 
-        this.view.webContents.on("did-start-loading", loadstart);
-        this.view.webContents.on("did-stop-loading", loadend);
-        this.view.webContents.on("page-title-updated", () => {
-            this.title.innerHTML = this.view.webContents.getTitle();
+            if (type == "did-start-loading") {
+                loadstart();
+            }
+
+            if (type == "did-stop-loading") {
+                loadend();
+            }
+
+            if (type == "page-title-updated") {
+                this.title.innerHTML = data.title;
+            }
+
+            if (type == "page-favicon-updated") {
+                this.favicon.src = favicons[favicons.length - 1];
+            }
+
+            if (type == "new-window") {
+                if (url) {
+                    new tab(url);                    
+                }
+                else {
+                    console.error("No url provided by tabhost");
+                }
+            }
         })
 
-        this.view.webContents.on("page-favicon-updated", (e, favicons) => {
-            this.favicon.src = favicons[favicons.length - 1]
-        })
 
-        this.view.webContents.on("new-window", (e, url) => {
-            new tab(url);
-        })
 
         //end
-        this.view.setBackgroundColor("#FFF");
-        win.addBrowserView(this.view);
-        var webview = this.view;
-        this.view.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
-        win.on("resize", () => {
-            if (this.disableautoresize == false) {
-                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
-            }
-            else {
-                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: sidebar_width, y: 90 });
-            }
-        })
-
-        setInterval(() => {
-            if (this.disableautoresize == false) {
-                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
-            }
-            else {
-                webview.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: sidebar_width, y: 90 });
-            }
-        }, 500);
-
         if (page) {
-            this.view.webContents.loadURL(page);
+            this.navigate(page);
         }
         else {
-            this.view.webContents.loadURL(startpage);
+            this.navigate(startpage);
         }
         this.focus();
         onTabUpdate();
@@ -261,12 +257,19 @@ class tab {
 
     navigate(url) {
         //load url
-        this.view.webContents.loadURL(url);
+        ipcRenderer.sendSync("navigate", {uuid: this.id, url: url});
     }
 
-    resize() {
-        this.disableautoresize = false;
-        this.view.setBounds({ width: window.outerWidth, height: window.outerHeight - 90, x: 0, y: 90 });
+    getUrl() {
+        return ipcRenderer.sendSync("getUrl", this.id);
+    }
+
+    canGoBack() {
+        return ipcRenderer.sendSync("canGoBack", this.id);
+    }
+
+    canGoForward() {
+        return ipcRenderer.sendSync("canGoForward", this.id);
     }
 
     focus() {
@@ -277,23 +280,22 @@ class tab {
                 tabs[x].hide();
             }
         }
-        win.setBrowserView(this.view);
         this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
         this.isFocused = true;
-        win.setTopBrowserView(this.view);
-        document.getElementById("urlbar").value = this.view.webContents.getURL();
+        ipcRenderer.sendSync("focusTab", this.id)
+        document.getElementById("urlbar").value = this.getUrl();
 
         if (afterinit == true) {
             resetControls();
             setTimeout(() => {
-                if (this.view.webContents.canGoBack() == true) {
+                if (this.canGoBack == true) {
                     showBack();
                 }
                 else {
                     hideBack();
                 }
 
-                if (this.view.webContents.canGoForward() == true) {
+                if (this.canGoForward() == true) {
                     showForward();
                 }
                 else {
@@ -313,22 +315,23 @@ class tab {
 
     back() {
         //goback
-        this.view.webContents.goBack();
+        ipcRenderer.sendSync("goBack", this.id)
     }
 
     reload() {
-        this.view.webContents.reload();
+        //reload
+        ipcRenderer.sendSync("reload", this.id);
     }
 
     forward() {
         //goforward
-        this.view.webContents.goForward();
+        ipcRenderer.sendSync("goForward", this.id)
     }
 
     destroy() {
         //close tab
         win.removeBrowserView(this.view);
-        this.view.webContents.destroy();
+        ipcRenderer.sendSync("removeTab", this.id);
         this.tab_button.remove();
         delete tabs[this.id];
         if (focused_tab == this.id) {
@@ -346,14 +349,8 @@ class tab {
         }
     }
 
-    position(data) {
-        this.view.setBounds(data);
-        this.disableautoresize = true;
-        this.view.setBounds(data);
-    }
-
     devtools() {
-        this.view.webContents.openDevTools();
+        ipcRenderer.sendSync("openDevTools", this.id)
     }
 }
 
