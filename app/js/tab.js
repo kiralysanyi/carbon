@@ -293,7 +293,6 @@ class tab {
 
     hide() {
         //hide tab
-        win.removeBrowserView(this.view);
         this.isFocused = false;
         this.tab_button.style.backgroundColor = "transparent";
     }
@@ -315,7 +314,6 @@ class tab {
 
     destroy() {
         //close tab
-        win.removeBrowserView(this.view);
         ipcRenderer.sendSync("removeTab", this.id);
         this.tab_button.remove();
         delete tabs[this.id];

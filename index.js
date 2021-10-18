@@ -201,7 +201,7 @@ menu.append(menuitems.reload);
 menu.append(menuitems.devtools);
 
 function openMenu() {
-    menu.popup({ x: 80, y: 50 });
+    menu.popup({ x: 100, y: 50 });
 }
 
 ipcMain.on("openMenu", openMenu);
