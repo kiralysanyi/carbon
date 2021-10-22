@@ -1,31 +1,32 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
+const settings = require("./settings")
 //checking for command line parameters
 var args = process.argv;
+
+//importing prompt module
 var prompt = require("./prompt");
 
+//permission handling, loading saved permissions and writing permissions
 var permissions = {};
 
-function savePermissions() {
-
+function loadPermissions(callback) {
+    return new Promise((resolved) => {
+        var data = settings.readData("permissions.conf.json")
+        if (data == false) {
+            console.log("No permission config file found");
+            resolved(false);
+        }
+        else {
+            permissions = JSON.parse(data);
+            console.log("Loaded permission config");
+            resolved(true);
+        }
+    })
 }
 
-function extractHostname(url) {
-    var hostname;
-    //find & remove protocol (http, ftp, etc.) and get hostname
 
-    if (url.indexOf("//") > -1) {
-        hostname = url.split('/')[2];
-    }
-    else {
-        hostname = url.split('/')[0];
-    }
-
-    //find & remove port number
-    hostname = hostname.split(':')[0];
-    //find & remove "?"
-    hostname = hostname.split('?')[0];
-
-    return hostname;
+function savePermissions() {
+    settings.saveData("permissions.conf.json", JSON.stringify(permissions));
 }
 
 var mainWin = null;
@@ -141,26 +142,40 @@ function initMainWindow() {
             isFullScreen = false;
         })
 
+
         //permission handling
-        view.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback) => {
-            const host = extractHostname(webContents.getURL());
+        var processing = [];
+
+        view.webContents.session.setPermissionCheckHandler(async (webContents, permission, requestOrigin, details) => {
+            const host = requestOrigin;
+
+            if (!processing.includes(host + permission)) {
+                processing.push(host + permission);
+            }
+            else {
+                if (permissions[host] && permissions[host][permission]) {
+                    return permissions[host][permission];
+                } else {
+                    return false;
+                }
+            }
+
+            await loadPermissions();
+            console.log(permission, details)
             if (permissions[host] && permissions[host][permission]) {
-                callback(permissions[host][permission]);
-                return;
+                return permissions[host][permission];
             }
 
             if (permission == "fullscreen") {
-                callback(true);
-                return;
+                return true;
             }
             console.log(webContents.getURL(), " asked for permission: ", permission)
             var answer = await prompt.confirm("Do you want to grant permission: " + permission + " ?");
             permissions[host] = {}
             permissions[host][permission] = answer;
             savePermissions();
-            callback(answer)
-            return;
-        })
+            return answer;
+        });
 
         setInterval(() => {
             var y = 0;
