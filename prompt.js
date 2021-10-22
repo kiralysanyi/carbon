@@ -54,7 +54,7 @@ var alert = (text) => {
         win.removeMenu();
         win.webContents.setUserAgent(winID);
         win.loadFile("prompts/alert.html");
-        win.webContents.openDevTools();
+        //win.webContents.openDevTools();
 
         ipcMain.once(winID + "text", (e) => {
             e.returnValue = text;
