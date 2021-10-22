@@ -29,6 +29,8 @@ function loadPermissions() {
     })
 }
 
+loadPermissions();
+
 
 function savePermissions() {
     settings.saveData("permissions.conf.json", JSON.stringify(permissions));
@@ -170,7 +172,6 @@ function initMainWindow() {
                 }
             }
 
-            await loadPermissions();
             console.log(permission, details)
             if (permissions[host] && permissions[host][permission]) {
                 return permissions[host][permission];
@@ -200,8 +201,13 @@ function initMainWindow() {
 
             console.log(host, " asked for permission: ", permission)
             var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
-            permissions[host] = {}
-            permissions[host][permission] = answer;
+            if (permissions[host]) {
+                permissions[host][permission] = answer;
+            }
+            else {
+                permissions[host] = {};
+                permissions[host][permission] = answer;
+            }
             savePermissions();
             return answer;
         });
