@@ -1,6 +1,32 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer } = require("electron");
 //checking for command line parameters
 var args = process.argv;
+var prompt = require("./prompt");
+
+var permissions = {};
+
+function savePermissions() {
+
+}
+
+function extractHostname(url) {
+    var hostname;
+    //find & remove protocol (http, ftp, etc.) and get hostname
+
+    if (url.indexOf("//") > -1) {
+        hostname = url.split('/')[2];
+    }
+    else {
+        hostname = url.split('/')[0];
+    }
+
+    //find & remove port number
+    hostname = hostname.split(':')[0];
+    //find & remove "?"
+    hostname = hostname.split('?')[0];
+
+    return hostname;
+}
 
 var mainWin = null;
 //check for parameter
@@ -76,8 +102,8 @@ function initMainWindow() {
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView();
         win.setBrowserView(view);
-        view.setBounds({width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90});
-        view.setAutoResize({width: true, height: true});
+        view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
+        view.setAutoResize({ width: true, height: true });
         webviews[data.uuid] = view;
         const uuid = data.uuid;
         e.returnValue = 0;
@@ -88,22 +114,22 @@ function initMainWindow() {
         }
 
         view.webContents.on("did-start-loading", () => {
-            sendEvent({type: "did-start-loading"})
+            sendEvent({ type: "did-start-loading" })
         });
         view.webContents.on("did-stop-loading", () => {
-            sendEvent({type: "did-stop-loading"})
+            sendEvent({ type: "did-stop-loading" })
         });
 
         view.webContents.on("page-title-updated", () => {
-            sendEvent({type: "page-title-updated", title: view.webContents.getTitle()});
+            sendEvent({ type: "page-title-updated", title: view.webContents.getTitle() });
         });
 
         view.webContents.on("page-favicon-updated", (e, favicons) => {
-            sendEvent({type: "page-favicon-updated", favicons: favicons});
+            sendEvent({ type: "page-favicon-updated", favicons: favicons });
         });
 
         view.webContents.on("new-window", (e, url) => {
-            sendEvent({type: "new-window", url: url});
+            sendEvent({ type: "new-window", url: url });
         });
         var isFullScreen = false;
 
@@ -115,6 +141,27 @@ function initMainWindow() {
             isFullScreen = false;
         })
 
+        //permission handling
+        view.webContents.session.setPermissionRequestHandler(async (webContents, permission, callback) => {
+            const host = extractHostname(webContents.getURL());
+            if (permissions[host] && permissions[host][permission]) {
+                callback(permissions[host][permission]);
+                return;
+            }
+
+            if (permission == "fullscreen") {
+                callback(true);
+                return;
+            }
+            console.log(webContents.getURL(), " asked for permission: ", permission)
+            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " ?");
+            permissions[host] = {}
+            permissions[host][permission] = answer;
+            savePermissions();
+            callback(answer)
+            return;
+        })
+
         setInterval(() => {
             var y = 0;
             if (isFullScreen == true) {
@@ -123,7 +170,7 @@ function initMainWindow() {
             else {
                 y = 90;
             }
-            view.setBounds({width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y});
+            view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });
         }, 500);
     });
 
