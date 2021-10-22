@@ -1,5 +1,9 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
 const settings = require("./settings")
+//useragent
+const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
+const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
+
 //checking for command line parameters
 var args = process.argv;
 
@@ -102,6 +106,7 @@ function initMainWindow() {
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView();
+        view.webContents.setUserAgent(USERAGENT);
         win.setBrowserView(view);
         view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
         view.setAutoResize({ width: true, height: true });
@@ -140,6 +145,10 @@ function initMainWindow() {
 
         view.webContents.on("leave-html-full-screen", () => {
             isFullScreen = false;
+        })
+
+        view.webContents.on("login", (e, details, authinfo, callback) => {
+            
         })
 
 
@@ -271,12 +280,34 @@ const menuitems = {
             console.log("Devtools")
             mainWin.webContents.postMessage("command", "devtools");
         }
+    }),
+
+    logintogoogle: new MenuItem({
+        label: "Login to google",
+        click: () => {
+            console.log("Starting google login process");
+            const win = new BrowserWindow({
+                width: 800,
+                height: 600
+            })
+
+            win.webContents.setUserAgent(USERAGENT_FIREFOX);
+
+            win.webContents.on("did-navigate", (e, url) => {
+                if (url.includes("myaccount.google.com")) {
+                    win.close();
+                }
+            })
+
+            win.loadURL("https://accounts.google.com");
+        }
     })
 
 }
 
 menu.append(menuitems.reload);
 menu.append(menuitems.devtools);
+menu.append(menuitems.logintogoogle);
 
 function openMenu() {
     menu.popup({ x: 100, y: 50 });

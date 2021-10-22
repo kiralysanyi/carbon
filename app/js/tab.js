@@ -5,7 +5,6 @@ var afterinit = false;
 
 var tabs = {};
 var focused_tab = null;
-const USERAGENT = "Mozilla/5.0 (X11; Fedora; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.63 Safari/537.36";
 
 const back_button = document.getElementById("back_button");
 const forward_button = document.getElementById("forward_button");
