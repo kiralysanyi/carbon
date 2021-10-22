@@ -11,7 +11,7 @@ var confirm = (question) => {
     return new Promise((resolved) => {
         const winID = uuidv4();
         const win = new BrowserWindow({
-            width: 350,
+            width: 500,
             height: 280,
             resizable: false,
             frame: false,
@@ -37,7 +37,43 @@ var confirm = (question) => {
     })
 }
 
+var alert = (text) => {
+    return new Promise((resolved) => {
+        const winID = uuidv4();
+        const win = new BrowserWindow({
+            width: 500,
+            height: 280,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
+        });
+        win.removeMenu();
+        win.webContents.setUserAgent(winID);
+        win.loadFile("prompts/alert.html");
+        win.webContents.openDevTools();
+
+        ipcMain.once(winID + "text", (e) => {
+            e.returnValue = text;
+        })
+
+        ipcMain.once(winID + "answer", (e) => {
+            resolved()
+            win.close();
+        })
+    })
+}
+
+ipcMain.on("alert", async (e, text) => {
+    await alert(text);
+    e.returnValue = 0;
+})
+
 
 module.exports = {
-    confirm: confirm
+    confirm: confirm,
+    alert: alert
 }

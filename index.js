@@ -1,5 +1,6 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
-const settings = require("./settings")
+const settings = require("./settings");
+const path = require("path");
 //useragent
 const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
 const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
@@ -13,7 +14,7 @@ var prompt = require("./prompt");
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
 
-function loadPermissions(callback) {
+function loadPermissions() {
     return new Promise((resolved) => {
         var data = settings.readData("permissions.conf.json")
         if (data == false) {
@@ -105,7 +106,12 @@ function initMainWindow() {
     var webviews = {};
 
     ipcMain.on("newTab", (e, data) => {
-        const view = new BrowserView();
+        const view = new BrowserView({
+            webPreferences: {
+                preload: path.join(app.getAppPath(), 'view_preload.js'),
+                contextIsolation: false
+            }
+        });
         view.webContents.setUserAgent(USERAGENT);
         win.setBrowserView(view);
         view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
@@ -147,16 +153,11 @@ function initMainWindow() {
             isFullScreen = false;
         })
 
-        view.webContents.on("login", (e, details, authinfo, callback) => {
-            
-        })
-
-
         //permission handling
         var processing = [];
 
         view.webContents.session.setPermissionCheckHandler(async (webContents, permission, requestOrigin, details) => {
-            const host = requestOrigin;
+            const host = new URL(requestOrigin).host;
 
             if (!processing.includes(host + permission)) {
                 processing.push(host + permission);
@@ -178,8 +179,19 @@ function initMainWindow() {
             if (permission == "fullscreen") {
                 return true;
             }
-            console.log(webContents.getURL(), " asked for permission: ", permission)
-            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " ?");
+
+            if (permission == "notifications") {
+                console.log("NOTE: push notifications not supported");
+            }
+
+            if (permission == "geolocation") {
+                await prompt.alert("Geolocation api is disabled in carbon");
+                console.log("Geolocation api is disabled in carbon");
+                return false;
+            }
+
+            console.log(host, " asked for permission: ", permission)
+            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
             permissions[host] = {}
             permissions[host][permission] = answer;
             savePermissions();
@@ -296,6 +308,7 @@ const menuitems = {
             win.webContents.on("did-navigate", (e, url) => {
                 if (url.includes("myaccount.google.com")) {
                     win.close();
+                    console.log("Google login process ended")
                 }
             })
 
