@@ -180,6 +180,14 @@ function initMainWindow() {
                 return true;
             }
 
+            if (permission == "background-sync") {
+                return true;
+            }
+
+            if (permission == "window-placement") {
+                return true;
+            }
+
             if (permission == "notifications") {
                 console.log("NOTE: push notifications not supported");
             }
