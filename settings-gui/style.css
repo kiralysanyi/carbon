@@ -1,0 +1,79 @@
+#container {
+    position: fixed;
+    top: 90px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 50px);
+    background-color: rgb(51, 51, 51);
+}
+
+.tab {
+    width: 200px;
+    text-align: center;
+}
+
+.tab a {
+    position: relative;
+    left: 0px;
+}
+
+.content {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    display: block;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.content h1 {
+    margin-left: 15px;
+}
+
+.content a {
+    margin-left: 15px;
+}
+
+#pcontainer {
+    position: absolute;
+    top: 100px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 100px);
+    background-color: transparent;
+}
+
+#refresh_button {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 40px;
+    width: 100px;
+    z-index: 100;
+}
+
+.menuitem {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.menuitem a {
+    line-height: 40px;
+}
+
+.submenuitem a {
+    line-height: 40px;
+}
+
+
+.submenuitem {
+    position: relative;
+    width: calc(100% - 40px);
+    margin-left: 40px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.1);
+}
