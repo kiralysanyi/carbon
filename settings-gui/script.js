@@ -1,3 +1,4 @@
+const { ipcRenderer } = require("electron");
 const settings = require("../settings");
 
 //loading config
@@ -113,9 +114,11 @@ adblock_td1.appendChild(adblock_title);
 
 if (config.adblock == true) {
     adblock_switch.changeState(true);
+    ipcRenderer.sendSync("enableAdblock");
 }
 else {
     adblock_switch.changeState(false);
+    ipcRenderer.sendSync("disableAdblock");
 }
 
 
