@@ -49,6 +49,29 @@ function checkParameter(name) {
     return false;
 }
 
+function attachControlHost(win) {
+    win.webContents.on("ipc-message-sync", (e, channel) => {
+        if (channel == "minimize") {
+            win.minimize();
+            e.returnValue = 0;
+        }
+
+        if (channel == "closewin") {
+            win.close();
+        }
+
+        if (channel == "maximize") {
+            if (win.isMaximized()) {
+                win.unmaximize();
+            }
+            else {
+                win.maximize();
+            }
+            e.returnValue = 0;
+        }
+    })
+}
+
 function initMainWindow() {
     const win = new BrowserWindow({
         minWidth: 800,
@@ -56,7 +79,7 @@ function initMainWindow() {
         title: "Carbon",
         frame: false,
         webPreferences: {
-            preload: __dirname + "/preload.js",
+            preload: path.join(__dirname, "preload.js"),
             spellcheck: false,
             contextIsolation: false,
             nodeIntegration: true,
@@ -68,24 +91,7 @@ function initMainWindow() {
     win.loadFile("app/index.html");
     win.removeMenu();
 
-    ipcMain.on("minimize", (e) => {
-        win.minimize();
-        e.returnValue = 0;
-    })
-
-    ipcMain.on("closewin", (e) => {
-        win.close();
-    })
-
-    ipcMain.on("maximize", (e) => {
-        if (win.isMaximized()) {
-            win.unmaximize();
-        }
-        else {
-            win.maximize();
-        }
-        e.returnValue = 0;
-    })
+    attachControlHost(win);
 
     if (checkParameter("--debug")) {
         win.webContents.openDevTools();
@@ -171,7 +177,7 @@ function initMainWindow() {
         view.webContents.on("leave-html-full-screen", () => {
             isFullScreen = false;
         })
-    
+
 
         setInterval(() => {
             var y = 0;
@@ -289,13 +295,39 @@ const menuitems = {
 
             win.loadURL("https://accounts.google.com");
         }
+    }),
+    opensettings: new MenuItem({
+        label: "Settings",
+        click: () => {
+            const win = new BrowserWindow({
+                minWidth: 800,
+                minHeight: 600,
+                frame: false,
+                webPreferences: {
+                    nodeIntegration: true,
+                    preload: path.join(__dirname, "preload.js"),
+                    contextIsolation: false
+                }
+            })
+
+            win.loadFile("settings-gui/index.html");
+            attachControlHost(win);
+
+            if (checkParameter("--debug")) {
+                win.webContents.openDevTools();
+            }
+
+            win.webContents.on("ipc-message-sync", (e, channel) => {
+
+            })
+        }
     })
 
 }
 
-menu.append(menuitems.reload);
-menu.append(menuitems.devtools);
-menu.append(menuitems.logintogoogle);
+for (var x in menuitems) {
+    menu.append(menuitems[x]);
+}
 
 function openMenu() {
     menu.popup({ x: 100, y: 50 });
@@ -308,67 +340,54 @@ app.whenReady().then(initMainWindow);
 app.on("window-all-closed", app.exit);
 
 app.on('session-created', function () {
-        //permission handling
-        session.defaultSession.setPermissionRequestHandler(async (webcontents, permission, callback) => {
-            const host = new URL(webcontents.getURL()).hostname;
+    //permission handling
+    session.defaultSession.setPermissionRequestHandler(async (webcontents, permission, callback) => {
+        await loadPermissions();
+        const host = new URL(webcontents.getURL()).hostname;
 
-            console.log(host + " wants permission for: " + permission);
+        console.log(host + " wants permission for: " + permission);
 
-            if (permissions[host] && permissions[host][permission]) {
+        if (permissions[host] && permissions[host][permission]) {
+            callback(permissions[host][permission]);
+            console.log("Access granted automatically:", permission);
+            return permissions[host][permission];
+        }
+        else {
+            if (permissions[host] && permissions[host][permission] == false) {
                 callback(permissions[host][permission]);
-                console.log("Access granted automatically:", permission);
+                console.log("Access denied automatically", permission);
                 return permissions[host][permission];
             }
-            else {
-                if (permissions[host] && permissions[host][permission] == false) {
-                    callback(permissions[host][permission]);
-                    console.log("Access denied automatically", permission);
-                    return permissions[host][permission];    
-                }
-            }
+        }
 
-            if (permissions[host] && permissions[host][permission]) {
-                callback(permissions[host][permission]);
-                return permissions[host][permission];
-            }
+        if (permissions[host] && permissions[host][permission]) {
+            callback(permissions[host][permission]);
+            return permissions[host][permission];
+        }
 
-            if (permission == "fullscreen") {
-                callback(true);
-                return true;
-            }
+        if (permission == "fullscreen") {
+            callback(true);
+            return true;
+        }
 
-            if (permission == "background-sync") {
-                callback(true);
-                return true;
-            }
+        if (permission == "background-sync") {
+            callback(true);
+            return true;
+        }
 
-            if (permission == "window-placement") {
-                callback(true);
-                return true;
-            }
+        if (permission == "window-placement") {
+            callback(true);
+            return true;
+        }
 
-            if (permission == "notifications") {
-                console.log("NOTE: push notifications not supported");
-                callback(false);
-                return false;
-            }
+        if (permission == "notifications") {
+            console.log("NOTE: push notifications not supported");
+            callback(false);
+            return false;
+        }
 
-            if (permission == "media") {
-                var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?");
-                if (permissions[host]) {
-                    permissions[host][permission] = answer;
-                }
-                else {
-                    permissions[host] = {};
-                    permissions[host][permission] = answer;
-                }
-                savePermissions();
-                callback(answer);
-                return answer;
-            }
-
-            console.log(host, " asked for permission: ", permission)
-            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
+        if (permission == "media") {
+            var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?");
             if (permissions[host]) {
                 permissions[host][permission] = answer;
             }
@@ -377,21 +396,36 @@ app.on('session-created', function () {
                 permissions[host][permission] = answer;
             }
             savePermissions();
+            callback(answer);
             return answer;
+        }
 
-        });
+        console.log(host, " asked for permission: ", permission)
+        var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
+        if (permissions[host]) {
+            permissions[host][permission] = answer;
+        }
+        else {
+            permissions[host] = {};
+            permissions[host][permission] = answer;
+        }
+        savePermissions();
+        return answer;
 
-        session.defaultSession.setPermissionCheckHandler((webcontents, permission, origin, details) => {
-            const host = new URL(origin).hostname;
-            if (permission == "media") {
-                if (permissions[host]["media"] == true) {
-                    return true;
-                }
-                else {
-                    return false;
-                }
-                    
+    });
+
+    session.defaultSession.setPermissionCheckHandler(async (webcontents, permission, origin, details) => {
+        await loadPermissions();
+        const host = new URL(origin).hostname;
+        if (permission == "media") {
+            if (permissions[host]["media"]) {
+                return true;
             }
-        });
+            else {
+                return false;
+            }
+
+        }
+    });
 
 });
