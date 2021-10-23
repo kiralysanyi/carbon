@@ -99,3 +99,5 @@ refresh_button.onclick = refresh;
 permission_tab.container.appendChild(refresh_button);
 
 permission_tab.container.appendChild(permission_container);
+
+refresh();

@@ -20,7 +20,7 @@
 .content {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: calc(100% - 40px);
     top: 0px;
     left: 0px;
     display: block;
