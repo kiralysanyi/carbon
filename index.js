@@ -2,6 +2,7 @@ const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRe
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
+const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 //useragent
 const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
 const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
@@ -31,6 +32,20 @@ function loadPermissions() {
 }
 
 loadPermissions();
+
+//initializing general config file
+(() => {
+    var config = settings.readData("general.conf.json");
+    if (config == false) {
+        config = {};
+        settings.saveData("general.conf.json", JSON.stringify(config));
+        //default config
+        config["adblock"] = false;
+        settings.saveData("general.conf.json", JSON.stringify(config));
+    }
+
+
+})()
 
 
 function savePermissions() {
@@ -188,9 +203,9 @@ function initMainWindow() {
                 y = 90;
             }
             try {
-                view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });  
+                view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });
             } catch (error) {
-                
+
             }
         }, 500);
     });
@@ -430,6 +445,36 @@ app.on('session-created', function () {
             }
 
         }
+    });
+
+    //adblock
+    const fetch = require("cross-fetch").fetch
+
+    ElectronBlocker.fromPrebuiltAdsAndTracking(fetch).then(async (blocker) => {
+        function enable() {
+            blocker.enableBlockingInSession(session.defaultSession);
+            console.log("Adblock enabled")
+        }
+
+        function disable() {
+            blocker.disableBlockingInSession(session.defaultSession);
+            console.log("Adblock disabled")
+        }
+
+        const isEnabled = JSON.parse(settings.readData("general.conf.json")).adblock;
+
+        if (isEnabled) {
+            enable();
+        }
+
+        ipcMain.on("enableAdblock", (e) => {
+            enable();
+            e.returnValue = 0;
+        })
+        ipcMain.on("disableAdblock", (e) => {
+            disable();
+            e.returnValue = 0;
+        })
     });
 
 });
