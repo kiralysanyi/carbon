@@ -187,7 +187,11 @@ function initMainWindow() {
             else {
                 y = 90;
             }
-            view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });
+            try {
+                view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });  
+            } catch (error) {
+                
+            }
         }, 500);
     });
 
