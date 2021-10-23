@@ -1,4 +1,5 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
+const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
 //useragent
@@ -56,9 +57,8 @@ function initMainWindow() {
         frame: false,
         webPreferences: {
             preload: __dirname + "/preload.js",
-            webviewTag: true,
+            spellcheck: false,
             contextIsolation: false,
-            webSecurity: false,
             nodeIntegration: true,
         }
     });
@@ -122,6 +122,23 @@ function initMainWindow() {
         const uuid = data.uuid;
         e.returnValue = 0;
 
+        contextMenu({
+            prepend: (defaultActions, parameters, browserview) => [
+                {
+                    label: 'Search Google for “{selection}”',
+                    // Only show it when right-clicking text
+                    visible: parameters.selectionText.trim().length > 0,
+                    click: () => {
+                        win.webContents.postMessage("new_tab", `https://google.com/search?q=${encodeURIComponent(parameters.selectionText)}`);
+                    }
+                }
+            ],
+            window: view,
+            showSearchWithGoogle: false,
+            showInspectElement: false
+        });
+
+
         function sendEvent(data) {
             console.log("Sending data to renderer: ", data);
             win.webContents.postMessage(uuid, data);
@@ -154,63 +171,7 @@ function initMainWindow() {
         view.webContents.on("leave-html-full-screen", () => {
             isFullScreen = false;
         })
-
-        //permission handling
-        var processing = [];
-
-        view.webContents.session.setPermissionCheckHandler(async (webContents, permission, requestOrigin, details) => {
-            const host = new URL(requestOrigin).host;
-
-            if (!processing.includes(host + permission)) {
-                processing.push(host + permission);
-            }
-            else {
-                if (permissions[host] && permissions[host][permission]) {
-                    return permissions[host][permission];
-                } else {
-                    return false;
-                }
-            }
-
-            console.log(permission, details)
-            if (permissions[host] && permissions[host][permission]) {
-                return permissions[host][permission];
-            }
-
-            if (permission == "fullscreen") {
-                return true;
-            }
-
-            if (permission == "background-sync") {
-                return true;
-            }
-
-            if (permission == "window-placement") {
-                return true;
-            }
-
-            if (permission == "notifications") {
-                console.log("NOTE: push notifications not supported");
-            }
-
-            if (permission == "geolocation") {
-                await prompt.alert("Geolocation api is disabled in carbon");
-                console.log("Geolocation api is disabled in carbon");
-                return false;
-            }
-
-            console.log(host, " asked for permission: ", permission)
-            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
-            if (permissions[host]) {
-                permissions[host][permission] = answer;
-            }
-            else {
-                permissions[host] = {};
-                permissions[host][permission] = answer;
-            }
-            savePermissions();
-            return answer;
-        });
+    
 
         setInterval(() => {
             var y = 0;
@@ -345,3 +306,92 @@ ipcMain.on("openMenu", openMenu);
 app.whenReady().then(initMainWindow);
 
 app.on("window-all-closed", app.exit);
+
+app.on('session-created', function () {
+        //permission handling
+        session.defaultSession.setPermissionRequestHandler(async (webcontents, permission, callback) => {
+            const host = new URL(webcontents.getURL()).hostname;
+
+            console.log(host + " wants permission for: " + permission);
+
+            if (permissions[host] && permissions[host][permission]) {
+                callback(permissions[host][permission]);
+                console.log("Access granted automatically:", permission);
+                return permissions[host][permission];
+            }
+            else {
+                if (permissions[host] && permissions[host][permission] == false) {
+                    callback(permissions[host][permission]);
+                    console.log("Access denied automatically", permission);
+                    return permissions[host][permission];    
+                }
+            }
+
+            if (permissions[host] && permissions[host][permission]) {
+                callback(permissions[host][permission]);
+                return permissions[host][permission];
+            }
+
+            if (permission == "fullscreen") {
+                callback(true);
+                return true;
+            }
+
+            if (permission == "background-sync") {
+                callback(true);
+                return true;
+            }
+
+            if (permission == "window-placement") {
+                callback(true);
+                return true;
+            }
+
+            if (permission == "notifications") {
+                console.log("NOTE: push notifications not supported");
+                callback(false);
+                return false;
+            }
+
+            if (permission == "media") {
+                var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?");
+                if (permissions[host]) {
+                    permissions[host][permission] = answer;
+                }
+                else {
+                    permissions[host] = {};
+                    permissions[host][permission] = answer;
+                }
+                savePermissions();
+                callback(answer);
+                return answer;
+            }
+
+            console.log(host, " asked for permission: ", permission)
+            var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
+            if (permissions[host]) {
+                permissions[host][permission] = answer;
+            }
+            else {
+                permissions[host] = {};
+                permissions[host][permission] = answer;
+            }
+            savePermissions();
+            return answer;
+
+        });
+
+        session.defaultSession.setPermissionCheckHandler((webcontents, permission, origin, details) => {
+            const host = new URL(origin).hostname;
+            if (permission == "media") {
+                if (permissions[host]["media"] == true) {
+                    return true;
+                }
+                else {
+                    return false;
+                }
+                    
+            }
+        });
+
+});

@@ -336,6 +336,10 @@ class tab {
     }
 }
 
+ipcRenderer.on("new_tab", (e, url) => {
+    new tab(url);
+})
+
 function newTab() {
     new tab();
 }
