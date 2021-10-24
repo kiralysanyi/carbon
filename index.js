@@ -73,6 +73,7 @@ function attachControlHost(win) {
 
         if (channel == "closewin") {
             win.close();
+            e.returnValue = 0;
         }
 
         if (channel == "maximize") {
