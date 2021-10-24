@@ -48,7 +48,7 @@ loadPermissions();
         settings.saveData("general.conf.json", JSON.stringify(config));
         //default config
         config["adblock"] = false;
-        config["searchEngine"] = "google";
+        config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
         settings.saveData("general.conf.json", JSON.stringify(config));
     }

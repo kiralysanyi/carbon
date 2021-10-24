@@ -149,6 +149,8 @@ search_select.onchange = () => {
     saveConf();
 }
 
+search_select.value = config.searchEngine;
+
 //setting up permissions page
 
 function refresh() {
