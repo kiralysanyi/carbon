@@ -27,7 +27,14 @@ function readData(filename) {
     }
 }
 
+function readKeyFromFile(filename, key) {
+    var data = readData(filename);
+    data = JSON.parse(data);
+    return data[key];
+}
+
 module.exports = {
     saveData: saveData,
-    readData: readData
+    readData: readData,
+    readKeyFromFile: readKeyFromFile
 }

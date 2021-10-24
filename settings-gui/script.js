@@ -13,7 +13,9 @@ else {
     config = JSON.parse(data);
 }
 
-
+function saveConf() {
+    settings.saveData("general.conf.json", JSON.stringify(config));
+}
 
 class switchbox {
     constructor() {
@@ -109,7 +111,7 @@ adblock_switch.onchange = () => {
         ipcRenderer.sendSync("disableAdblock");
     }
     config.adblock = adblock_switch.state;
-    settings.saveData("general.conf.json", JSON.stringify(config));
+    saveConf();
     hideLoader();
 }
 
@@ -123,6 +125,29 @@ else {
     adblock_switch.changeState(false);
 }
 
+//creating row2
+var settings_row2 = document.createElement("tr");
+settings_table.appendChild(settings_row2);
+var search_td1 = document.createElement("td");
+var search_td2 = document.createElement("td");
+settings_row2.appendChild(search_td1);
+settings_row2.appendChild(search_td2);
+search_td1.innerHTML = "<a>Search engine</a>"
+
+//setting up search engine selector
+var search_select = document.createElement("select");
+var engines = ipcRenderer.sendSync("searchEngines");
+for (var x in engines) {
+    var option_element = document.createElement("option");
+    option_element.innerHTML = engines[x];
+    option_element.value = engines[x];
+    search_select.appendChild(option_element);
+}
+search_td2.appendChild(search_select);
+search_select.onchange = () => {
+    config.searchEngine = search_select.value;
+    saveConf();
+}
 
 //setting up permissions page
 

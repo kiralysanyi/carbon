@@ -6,6 +6,12 @@ const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 //useragent
 const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
 const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
+const searchStrings = {
+    google: "https://google.com/search?q=",
+    bing: "https://www.bing.com/search?q=",
+    duckduckgo: "https://duckduckgo.com/?q="
+}
+const defaultHomePage = "https://google.com";
 
 //checking for command line parameters
 var args = process.argv;
@@ -42,6 +48,8 @@ loadPermissions();
         settings.saveData("general.conf.json", JSON.stringify(config));
         //default config
         config["adblock"] = false;
+        config["searchEngine"] = "google";
+        config["homePage"] = "default";
         settings.saveData("general.conf.json", JSON.stringify(config));
     }
 
@@ -135,6 +143,15 @@ function initMainWindow() {
 
     //tab management
     var webviews = {};
+
+    ipcMain.on("searchString", (e) => {
+        var setting = settings.readKeyFromFile("general.conf.json", "searchEngine");
+        e.returnValue = searchStrings[setting]
+    });
+
+    ipcMain.on("searchEngines", (e) => {
+        e.returnValue = Object.keys(searchStrings);
+    });
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
@@ -245,7 +262,12 @@ function initMainWindow() {
 
     ipcMain.on("navigate", (e, data) => {
         const view = webviews[data.uuid];
-        view.webContents.loadURL(data.url);
+        if (data.url == "home") {
+            view.webContents.loadURL(defaultHomePage);
+        }
+        else {
+            view.webContents.loadURL(data.url);
+        }
         e.returnValue = 0;
     })
 

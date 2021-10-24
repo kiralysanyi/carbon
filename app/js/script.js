@@ -32,7 +32,6 @@ function validURL(str) {
 }
 
 var urlbar = document.getElementById("urlbar");
-const searchstring = "https://google.com/search?q="
 
 
 window.addEventListener("keydown", (e) => {
@@ -54,7 +53,7 @@ window.addEventListener("keydown", (e) => {
             }
     
         } else {
-            var search = searchstring + url
+            var search = ipcRenderer.sendSync("searchString") + url
             navigate(search);
         }
     }

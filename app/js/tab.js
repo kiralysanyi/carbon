@@ -246,7 +246,7 @@ class tab {
             this.navigate(page);
         }
         else {
-            this.navigate(startpage);
+            this.navigate("home");
         }
         this.focus();
         onTabUpdate();
