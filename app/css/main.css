@@ -173,7 +173,8 @@ html {
     line-height: 40px;
     white-space: nowrap;
     text-overflow: ellipsis;
-    width: calc(100% - 40px);
+    width: calc(100% - 80px);
+    overflow: hidden;
 }
 
 #tab_bar::-webkit-scrollbar {

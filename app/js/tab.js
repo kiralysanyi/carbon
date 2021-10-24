@@ -114,9 +114,17 @@ function uuidv4() {
 }
 
 function onTabUpdate() {
-    if (Object.keys(tabs).length > 2) {
-        tab_bar.scrollLeft = tab_bar.scrollWidth;
-    }
+    setTimeout(() => {
+        if (Object.keys(tabs).length > 5) {
+            tab_bar.style.scrollBehavior = "smooth";
+            setTimeout(() => {
+                tab_bar.scrollLeft = tab_bar.scrollWidth;
+                setTimeout(() => {
+                    tab_bar.style.scrollBehavior = "auto";
+                }, 200);
+            }, 50);
+        }
+    }, 200);
 }
 
 var startpage = "https://google.com";
@@ -169,9 +177,6 @@ class tab {
         this.loader.classList.add("bottom_line_loader");
         this.tab_button.appendChild(this.loader);
         this.tab_button.classList.add("tab");
-        setTimeout(() => {
-            this.tab_button.style.width = "50%";
-        }, 100);
 
         var loadstart = () => {
             this.loader.style.display = "block";
@@ -246,6 +251,19 @@ class tab {
         this.focus();
         onTabUpdate();
         ipcRenderer.sendSync("addListeners")
+
+
+        //dynamic tab button
+        if (Object.keys(tabs).length < 6) {
+            for (var x in tabs) {
+                const tab_button = tabs[x].tab_button;
+                tab_button.style.width = "calc(100% / " + Object.keys(tabs).length + ")"
+            }
+        }
+        else {
+            this.tab_button.style.width = "calc(100% / 5)"
+        }
+
     }
 
     navigate(url) {
@@ -324,6 +342,15 @@ class tab {
             this.tab_button.remove();
         }, 200);
         delete tabs[this.id];
+
+        //dynamic tab button
+        if (Object.keys(tabs).length < 6) {
+            for (var x in tabs) {
+                const tab_button = tabs[x].tab_button;
+                tab_button.style.width = "calc(100% / " + Object.keys(tabs).length + ")"
+            }
+        }
+
         if (focused_tab == this.id) {
             var highest = tabs[Object.keys(tabs).sort().pop()];
             if (highest) {
