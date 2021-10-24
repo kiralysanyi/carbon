@@ -177,7 +177,19 @@ function initMainWindow() {
             sendEvent({ type: "did-start-loading" })
         });
         view.webContents.on("did-stop-loading", () => {
-            sendEvent({ type: "did-stop-loading" })
+            sendEvent({ type: "did-stop-loading" });
+            //changing user agent if needed for google account login
+            if (new URL(view.webContents.getURL()).host == "accounts.google.com" && view.webContents.getUserAgent() != USERAGENT_FIREFOX) {
+                view.webContents.setUserAgent(USERAGENT_FIREFOX);
+                view.webContents.reload();
+                return;
+            }
+
+            if (new URL(view.webContents.getURL()).host != "accounts.google.com" && view.webContents.getUserAgent() == USERAGENT_FIREFOX) {
+                view.webContents.setUserAgent(USERAGENT);
+                view.webContents.reload();
+                return;
+            }
         });
 
         view.webContents.on("page-title-updated", () => {
@@ -299,28 +311,6 @@ const menuitems = {
         click: () => {
             console.log("Devtools")
             mainWin.webContents.postMessage("command", "devtools");
-        }
-    }),
-
-    logintogoogle: new MenuItem({
-        label: "Login to google",
-        click: () => {
-            console.log("Starting google login process");
-            const win = new BrowserWindow({
-                width: 800,
-                height: 600
-            })
-
-            win.webContents.setUserAgent(USERAGENT_FIREFOX);
-
-            win.webContents.on("did-navigate", (e, url) => {
-                if (url.includes("myaccount.google.com")) {
-                    win.close();
-                    console.log("Google login process ended")
-                }
-            })
-
-            win.loadURL("https://accounts.google.com");
         }
     }),
     opensettings: new MenuItem({
