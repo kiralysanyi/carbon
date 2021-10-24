@@ -1,0 +1,128 @@
+html {
+    background-image: url("https://picsum.photos/1920/1080");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    font-family: Arial, Helvetica, sans-serif;
+    user-select: none;
+}
+
+#sidebar {
+    position: fixed;
+    left: -300px;
+    top: 0px;
+    width: 300px;
+    height: 100%;
+    background-color: rgba(37, 37, 37, 0.705);
+    backdrop-filter: blur(4px);
+    transition: 200ms;
+    color: white;
+    overflow: hidden;
+}
+
+#sidebar_open {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    transition: 200ms;
+    color: white;
+    font-size: 30px;
+    text-align: center;
+}
+
+#sidebar_open i {
+    position: absolute;
+    width: 30px;
+    height: 30px;
+    top: 5px;
+    left: 5px;
+}
+
+#sidebar_back {
+    position: fixed;
+    top: 0px;
+    width: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.192);
+    display: none;
+}
+
+#sidebar_content {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    width: 300px;
+    height: calc(100% - 70px);
+    display: block;
+}
+
+#sidebar_content div {
+    position: relative;
+    float: left;
+    width: 300px;
+    height: 40px;
+    transition: 200ms;
+    text-align: center;
+    font-size: 28px;
+    line-height: 40px;
+}
+
+#sidebar_content div:hover {
+    background-color: rgba(255, 255, 255, 0.123);
+}
+
+#version_indicator {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    line-height: 30px;
+}
+
+#main_content {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.281);
+}
+
+#searchform {
+    position: fixed;
+    width: 400px;
+    height: 400px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    overflow: hidden;
+}
+
+#searchform input[type="text"]{
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 50px;
+    font-size: 28px;
+    border: none;
+    background-color: rgb(34, 34, 34);
+    color: white;
+    outline: 0;
+}
+
+#autocomplete_message {
+    position: absolute;
+    top: 60px;
+    left: 0px;
+    width: 100%;
+    height: 40px;
+    text-align: center;
+    line-height: 40px;
+    color: white;
+    display: none;
+}

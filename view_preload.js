@@ -15,4 +15,8 @@ carbonAPI.getVersion = () => {
     return ipcRenderer.sendSync("getVersion");
 }
 
+carbonAPI.getSearchString = () => {
+    return ipcRenderer.sendSync("searchString");
+}
+
 console.log("Gutten tag! Preload loaded");

@@ -11,7 +11,7 @@ const searchStrings = {
     bing: "https://www.bing.com/search?q=",
     duckduckgo: "https://duckduckgo.com/?q="
 }
-const defaultHomePage = "https://google.com";
+const defaultHomePage = "file://" + __dirname + "/homepage/index.html";
 //checking for command line parameters
 var args = process.argv;
 
@@ -193,7 +193,11 @@ function initMainWindow() {
             sendEvent({ type: "did-start-loading" })
         });
         view.webContents.on("did-stop-loading", () => {
-            sendEvent({ type: "did-stop-loading" });
+            var utype = null;
+            if (view.webContents.getURL() == defaultHomePage) {
+                utype = "home";
+            }
+            sendEvent({ type: "did-stop-loading", urltype: utype });
             //changing user agent if needed for google account login
             if (new URL(view.webContents.getURL()).host == "accounts.google.com" && view.webContents.getUserAgent() != USERAGENT_FIREFOX) {
                 view.webContents.setUserAgent(USERAGENT_FIREFOX);

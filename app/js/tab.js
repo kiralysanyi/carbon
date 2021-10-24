@@ -1,4 +1,5 @@
 const { ipcRenderer } = require("electron");
+const settings = require("../settings");
 
 //ipc crap
 var afterinit = false;
@@ -180,6 +181,7 @@ class tab {
 
         var loadstart = () => {
             this.loader.style.display = "block";
+            this.favicon.style.display = "none";
         }
 
         var loadend = () => {
@@ -219,6 +221,9 @@ class tab {
 
             if (type == "did-stop-loading") {
                 loadend();
+                if (data.urltype == "home") {
+                    document.getElementById("urlbar").value = "";
+                }
             }
 
             if (type == "page-title-updated") {
@@ -226,6 +231,7 @@ class tab {
             }
 
             if (type == "page-favicon-updated") {
+                this.favicon.style.display = "block";
                 this.favicon.src = favicons[favicons.length - 1];
             }
 
