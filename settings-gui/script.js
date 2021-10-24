@@ -110,7 +110,6 @@ adblock_switch.onchange = () => {
     else {
         ipcRenderer.sendSync("disableAdblock");
     }
-    ipcRenderer.sendSync("enableAdblock");
     config.adblock = adblock_switch.state;
     settings.saveData("general.conf.json", JSON.stringify(config));
     hideLoader();
