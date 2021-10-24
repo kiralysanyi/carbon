@@ -104,6 +104,13 @@ settings_row1.appendChild(adblock_td2);
 var adblock_title = document.createElement("a");
 adblock_switch.onchange = () => {
     showLoader();
+    if (adblock_switch.state == true) {
+        ipcRenderer.sendSync("enableAdblock");
+    }
+    else {
+        ipcRenderer.sendSync("disableAdblock");
+    }
+    ipcRenderer.sendSync("enableAdblock");
     config.adblock = adblock_switch.state;
     settings.saveData("general.conf.json", JSON.stringify(config));
     hideLoader();
@@ -114,11 +121,9 @@ adblock_td1.appendChild(adblock_title);
 
 if (config.adblock == true) {
     adblock_switch.changeState(true);
-    ipcRenderer.sendSync("enableAdblock");
 }
 else {
     adblock_switch.changeState(false);
-    ipcRenderer.sendSync("disableAdblock");
 }
 
 
