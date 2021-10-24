@@ -38,14 +38,107 @@ searchform.addEventListener("submit", (e) => {
 
 searchbox.placeholder = "Search on " + carbonAPI.getSearchEngine();
 
+var isAutoCompleteEnabled = false;
+
+const autocomplete_box = document.getElementById("autocomplete_box");
+
+
 searchbox.addEventListener("focus", () => {
     searchform.style.backdropFilter = "blur(4px)";
     searchform.style.backgroundColor = "rgba(34, 34, 34, 0.4)";
-    document.getElementById("autocomplete_message").style.display = "block";
+    if (isAutoCompleteEnabled == true) {
+        document.getElementById("autocomplete_message").style.display = "none";
+    }
+    else {
+        document.getElementById("autocomplete_message").style.display = "block";
+    }
+    autocomplete_box.style.display = "block";
 })
 
 searchbox.addEventListener("blur", () => {
-    searchform.style.backdropFilter = "none";
-    searchform.style.backgroundColor = "transparent";
-    document.getElementById("autocomplete_message").style.display = "none";
+    setTimeout(() => {
+        searchform.style.backdropFilter = "none";
+        searchform.style.backgroundColor = "transparent";
+        document.getElementById("autocomplete_message").style.display = "none";
+        autocomplete_box.style.display = "none";
+    }, 200);
 })
+
+//request handler
+function sendRequest(url, callback) {
+    var req = new XMLHttpRequest();
+    req.onload = () => {
+        console.log(JSON.parse(req.responseText));
+        if (callback) {
+            callback(JSON.parse(req.responseText));
+        }
+    }
+    req.open("GET", url);
+    req.send();
+}
+
+//autocomplete (suggest)
+const query_strings = {
+    duckduckgo: "https://ac.duckduckgo.com/ac/?q=",
+    google: "https://suggestqueries.google.com/complete/search?client=firefox&q="
+}
+
+
+if (carbonAPI.getSearchEngine() == "duckduckgo") {
+    function check() {
+        sendRequest(query_strings.duckduckgo + searchbox.value, (result) => {
+            autocomplete_box.innerHTML = "";
+            for (var x in result) {
+                (() => {
+                    var phrase = result[x]["phrase"];
+                    var element = document.createElement("div");
+                    element.innerHTML = phrase;
+                    autocomplete_box.appendChild(element)
+                    element.setAttribute("phrase", phrase);
+                    element.onclick = () => {
+                        console.log("Redirecting: ", carbonAPI.getSearchString() + phrase);
+                        location.href = carbonAPI.getSearchString() + phrase;
+                    }
+                })()
+            }
+        })
+    }
+    isAutoCompleteEnabled = true;
+    document.addEventListener("keydown", () => {
+        check();
+    })
+
+    searchbox.addEventListener("focus", check)
+}
+
+if (carbonAPI.getSearchEngine() == "google") {
+    function check() {
+        if (searchbox.value == "") {
+            return;
+        }
+        sendRequest(query_strings.google + searchbox.value, (result) => {
+            var results = result[1];
+            autocomplete_box.innerHTML = "";
+            for (var x in results) {
+                (() => {
+                    var phrase = results[x]
+                    var element = document.createElement("div");
+                    element.innerHTML = phrase;
+                    autocomplete_box.appendChild(element)
+                    element.setAttribute("phrase", phrase);
+                    element.onclick = () => {
+                        console.log("Redirecting: ", carbonAPI.getSearchString() + phrase);
+                        location.href = carbonAPI.getSearchString() + phrase;
+                    }
+                })()
+            }
+        })
+    }
+
+    isAutoCompleteEnabled = true;
+    document.addEventListener("keydown", () => {
+        check();
+    })
+
+    searchbox.addEventListener("focus", check)
+}
