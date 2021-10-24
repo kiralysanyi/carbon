@@ -20,12 +20,43 @@ document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 newTab();
 
 
+function validURL(str) {
+    var pattern = new RegExp(
+        '^(https?:\\/\\/)?' + // protocol1
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
+    return !!pattern.test(str);
+}
 
 var urlbar = document.getElementById("urlbar");
+const searchstring = "https://google.com/search?q="
+
 
 window.addEventListener("keydown", (e) => {
     if (e.key == "Enter" && document.activeElement == urlbar) {
-        navigate(urlbar.value);
+        var url = urlbar.value;
+        urlbar.blur();
+        
+        if (url.substring(0, 7) == "file://") {
+            navigate(url);
+            return 0;
+        }
+        if (validURL(url) == true) {
+            var pat = /^https?:\/\//i;
+            if (pat.test(url)) {
+                navigate(url);
+            } else {
+                url = "http://" + url;
+                navigate(url);
+            }
+    
+        } else {
+            var search = searchstring + url
+            navigate(search);
+        }
     }
 })
 

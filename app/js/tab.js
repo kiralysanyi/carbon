@@ -177,7 +177,9 @@ class tab {
         var loadend = () => {
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
-                document.getElementById("urlbar").value = this.getUrl();
+                if (document.getElementById("urlbar") != document.activeElement) {
+                    document.getElementById("urlbar").value = this.getUrl();
+                }
 
                 if (this.canGoBack() == true) {
                     showBack();
