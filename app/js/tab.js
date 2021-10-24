@@ -169,6 +169,9 @@ class tab {
         this.loader.classList.add("bottom_line_loader");
         this.tab_button.appendChild(this.loader);
         this.tab_button.classList.add("tab");
+        setTimeout(() => {
+            this.tab_button.style.width = "50%";
+        }, 100);
 
         var loadstart = () => {
             this.loader.style.display = "block";
@@ -316,7 +319,10 @@ class tab {
     destroy() {
         //close tab
         ipcRenderer.sendSync("removeTab", this.id);
-        this.tab_button.remove();
+        this.tab_button.style.width = "0%";
+        setTimeout(() => {
+            this.tab_button.remove();
+        }, 200);
         delete tabs[this.id];
         if (focused_tab == this.id) {
             var highest = tabs[Object.keys(tabs).sort().pop()];

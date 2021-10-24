@@ -12,6 +12,7 @@ var args = process.argv;
 
 //importing prompt module
 var prompt = require("./prompt");
+const { readFileSync } = require("fs");
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -89,6 +90,12 @@ function attachControlHost(win) {
 }
 
 function initMainWindow() {
+    ipcMain.on("getVersion", (e) => {
+        var data = readFileSync(__dirname + "/package.json", "utf-8");
+        data = JSON.parse(data)
+        e.returnValue = data.version;
+    })
+
     const win = new BrowserWindow({
         minWidth: 800,
         minHeight: 600,

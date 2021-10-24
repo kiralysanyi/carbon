@@ -74,8 +74,6 @@ function hideLoader() {
 var general_tab = new tab("General");
 var permission_tab = new tab("Permissions");
 
-general_tab.focus();
-
 //setting up general page
 var general_title = document.createElement("h1");
 general_title.innerHTML = "General"
@@ -206,3 +204,17 @@ permission_tab.container.appendChild(refresh_button);
 permission_tab.container.appendChild(permission_container);
 
 refresh();
+
+//setting up about page
+
+var aboutpage = new tab("About");
+aboutpage.container.style.textAlign = "center";
+var about_title = document.createElement("h1");
+aboutpage.container.appendChild(about_title);
+about_title.innerHTML = "Sanyicraft Carbon";
+var version_subtitle = document.createElement("h3");
+version_subtitle.innerHTML = "Version: " + getVersion();
+aboutpage.container.appendChild(version_subtitle);
+
+
+general_tab.focus();
