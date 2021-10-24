@@ -84,12 +84,12 @@ general_tab.container.appendChild(general_title);
 var settings_table = document.createElement("table");
 general_tab.container.appendChild(settings_table);
 
-//creating head row
+//setting up head row
 var settings_head = document.createElement("tr");
 settings_table.appendChild(settings_head);
 settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
 
-//creating row1
+//setting up row1
 var settings_row1 = document.createElement("tr");
 settings_table.appendChild(settings_row1);
 
@@ -125,7 +125,7 @@ else {
     adblock_switch.changeState(false);
 }
 
-//creating row2
+//setting up row2
 var settings_row2 = document.createElement("tr");
 settings_table.appendChild(settings_row2);
 var search_td1 = document.createElement("td");
@@ -151,6 +151,39 @@ search_select.onchange = () => {
 
 search_select.value = config.searchEngine;
 
+//setting up row3
+var settings_row3 = document.createElement("tr");
+settings_table.appendChild(settings_row3);
+var home_td1 = document.createElement("td");
+var home_td2 = document.createElement("td");
+home_td1.innerHTML = "<a>Homepage</a>";
+
+var home_reset = document.createElement("button");
+home_reset.innerHTML = "Reset";
+home_reset.style.height = "40px";
+
+var home_input = document.createElement("input");
+home_input.type = "text";
+
+home_reset.onclick = () => {
+    home_input.value = "default";
+    config.homePage = "default";
+    saveConf();
+}
+
+home_input.onchange = () => {
+    config.homePage = home_input.value;
+    saveConf();
+}
+
+home_td2.appendChild(home_input);
+home_td2.appendChild(home_reset);
+
+home_input.value = config.homePage;
+
+
+settings_row3.appendChild(home_td1);
+settings_row3.appendChild(home_td2);
 //setting up permissions page
 
 function refresh() {

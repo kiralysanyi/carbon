@@ -124,3 +124,18 @@ select {
 option {
     color: black;
 }
+
+input {
+    position: relative;
+    width: auto;
+    height: 40px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.082);
+    transition: 200ms;
+    outline: 0;
+    color: white;
+}
+
+input:focus {
+    background-color: rgba(255, 255, 255, 0.171);
+}

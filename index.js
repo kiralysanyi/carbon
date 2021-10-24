@@ -12,7 +12,6 @@ const searchStrings = {
     duckduckgo: "https://duckduckgo.com/?q="
 }
 const defaultHomePage = "https://google.com";
-
 //checking for command line parameters
 var args = process.argv;
 
@@ -43,6 +42,7 @@ loadPermissions();
 //initializing general config file
 (() => {
     var config = settings.readData("general.conf.json");
+    console.log("Configuration read: ", config);
     if (config == false) {
         config = {};
         settings.saveData("general.conf.json", JSON.stringify(config));
@@ -52,7 +52,6 @@ loadPermissions();
         config["homePage"] = "default";
         settings.saveData("general.conf.json", JSON.stringify(config));
     }
-
 
 })()
 
@@ -263,7 +262,13 @@ function initMainWindow() {
     ipcMain.on("navigate", (e, data) => {
         const view = webviews[data.uuid];
         if (data.url == "home") {
-            view.webContents.loadURL(defaultHomePage);
+            var home = settings.readKeyFromFile("general.conf.json", "homePage");
+            if (home == "default") {
+                view.webContents.loadURL(defaultHomePage);
+            }
+            else {
+                view.webContents.loadURL(home);
+            }
         }
         else {
             view.webContents.loadURL(data.url);
