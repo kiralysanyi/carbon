@@ -1,4 +1,6 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
+const glasstron = require('glasstron');
+app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
@@ -103,7 +105,7 @@ function initMainWindow() {
         e.returnValue = data.version;
     })
 
-    const win = new BrowserWindow({
+    const win = new glasstron.BrowserWindow({
         minWidth: 800,
         minHeight: 600,
         title: "Carbon",
@@ -117,6 +119,8 @@ function initMainWindow() {
     });
 
     mainWin = win;
+    win.blurType = "acrylic";
+	win.setBlur(true);
 
     win.loadFile("app/index.html");
     win.removeMenu();
@@ -347,7 +351,7 @@ const menuitems = {
     opensettings: new MenuItem({
         label: "Settings",
         click: () => {
-            const win = new BrowserWindow({
+            const win = new glasstron.BrowserWindow({
                 minWidth: 800,
                 minHeight: 600,
                 frame: false,
@@ -359,6 +363,8 @@ const menuitems = {
             })
 
             win.loadFile("settings-gui/index.html");
+            win.blurType = "acrylic";
+            win.setBlur(true);
             attachControlHost(win);
 
             if (checkParameter("--debug")) {

@@ -1,7 +1,7 @@
 {
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "Web browser",
   "main": "index.js",
   "scripts": {
@@ -28,6 +28,7 @@
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.23.0",
     "cross-fetch": "^3.1.4",
-    "electron-context-menu": "^3.1.1"
+    "electron-context-menu": "^3.1.1",
+    "glasstron": "^0.1.1"
   }
 }
