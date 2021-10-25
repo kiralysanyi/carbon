@@ -83,7 +83,7 @@ const query_strings = {
     google: "https://suggestqueries.google.com/complete/search?client=firefox&q="
 }
 
-
+//duckduckgo search suggestions
 if (carbonAPI.getSearchEngine() == "duckduckgo") {
     function check() {
         sendRequest(query_strings.duckduckgo + searchbox.value, (result) => {
@@ -104,16 +104,25 @@ if (carbonAPI.getSearchEngine() == "duckduckgo") {
         })
     }
     isAutoCompleteEnabled = true;
-    document.addEventListener("keydown", () => {
-        check();
-    })
+    if (isAutoCompleteEnabled) {
+        setTimeout(() => {
+            check();
+        }, 100);
+    }
 
-    searchbox.addEventListener("focus", check)
+    searchbox.addEventListener("focus", () => {
+        if (isAutoCompleteEnabled) {
+            check();
+        }
+    })
 }
 
+
+//google search suggestions
 if (carbonAPI.getSearchEngine() == "google") {
     function check() {
         if (searchbox.value == "") {
+            autocomplete_box.innerHTML = "";
             return;
         }
         sendRequest(query_strings.google + searchbox.value, (result) => {
@@ -137,8 +146,33 @@ if (carbonAPI.getSearchEngine() == "google") {
 
     isAutoCompleteEnabled = true;
     document.addEventListener("keydown", () => {
-        check();
+        if (isAutoCompleteEnabled) {
+            setTimeout(() => {
+                check();
+            }, 100);
+        }
     })
 
-    searchbox.addEventListener("focus", check)
+    searchbox.addEventListener("focus", () => {
+        if (isAutoCompleteEnabled) {
+            check();
+        }
+    })
+}
+
+//enable autocomplete if supported
+function enableAutocomplete() {
+    if (carbonAPI.getSearchEngine() != "google" && carbonAPI.getSearchEngine() != "duckduckgo") {
+        return;
+    }
+
+    isAutoCompleteEnabled = true;
+}
+
+//disable autocomplete
+function disableAutocomplete() {
+    isAutoCompleteEnabled = false;
+    setTimeout(() => {
+        autocomplete_box.innerHTML = "";
+    }, 100);
 }

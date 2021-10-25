@@ -181,7 +181,6 @@ class tab {
 
         var loadstart = () => {
             this.loader.style.display = "block";
-            this.favicon.style.display = "none";
         }
 
         var loadend = () => {
@@ -231,7 +230,6 @@ class tab {
             }
 
             if (type == "page-favicon-updated") {
-                this.favicon.style.display = "block";
                 this.favicon.src = favicons[favicons.length - 1];
             }
 
