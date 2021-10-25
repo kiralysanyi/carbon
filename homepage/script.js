@@ -42,25 +42,21 @@ var isAutoCompleteEnabled = false;
 
 const autocomplete_box = document.getElementById("autocomplete_box");
 
+function showBox() {
+    autocomplete_box.style.display = "block";
+}
+
+function hideBox() {
+    autocomplete_box.style.display = "none";
+}
 
 searchbox.addEventListener("focus", () => {
-    searchform.style.backdropFilter = "blur(4px)";
-    searchform.style.backgroundColor = "rgba(34, 34, 34, 0.4)";
-    if (isAutoCompleteEnabled == true) {
-        document.getElementById("autocomplete_message").style.display = "none";
-    }
-    else {
-        document.getElementById("autocomplete_message").style.display = "block";
-    }
-    autocomplete_box.style.display = "block";
+    showBox();
 })
 
 searchbox.addEventListener("blur", () => {
     setTimeout(() => {
-        searchform.style.backdropFilter = "none";
-        searchform.style.backgroundColor = "transparent";
-        document.getElementById("autocomplete_message").style.display = "none";
-        autocomplete_box.style.display = "none";
+        hideBox();
     }, 200);
 })
 
@@ -88,6 +84,14 @@ if (carbonAPI.getSearchEngine() == "duckduckgo") {
     function check() {
         sendRequest(query_strings.duckduckgo + searchbox.value, (result) => {
             autocomplete_box.innerHTML = "";
+            
+            if(result.length < 6) {
+                autocomplete_box.style.height = 50 * result.length + "px";
+            }
+            else {
+                autocomplete_box.style.height = 50 * 5 + "px";
+            }
+
             for (var x in result) {
                 (() => {
                     var phrase = result[x]["phrase"];
@@ -115,6 +119,14 @@ if (carbonAPI.getSearchEngine() == "duckduckgo") {
             check();
         }
     })
+
+    document.addEventListener("keydown", () => {
+        if (isAutoCompleteEnabled) {
+            setTimeout(() => {
+                check();
+            }, 100);
+        }
+    })
 }
 
 
@@ -122,12 +134,20 @@ if (carbonAPI.getSearchEngine() == "duckduckgo") {
 if (carbonAPI.getSearchEngine() == "google") {
     function check() {
         if (searchbox.value == "") {
+            autocomplete_box.style.height = "0px";
             autocomplete_box.innerHTML = "";
             return;
         }
         sendRequest(query_strings.google + searchbox.value, (result) => {
             var results = result[1];
             autocomplete_box.innerHTML = "";
+            if(results.length < 6) {
+                autocomplete_box.style.height = 50 * results.length + "px";
+            }
+            else {
+                autocomplete_box.style.height = 50 * 5 + "px";
+            }
+
             for (var x in results) {
                 (() => {
                     var phrase = results[x]
@@ -175,4 +195,14 @@ function disableAutocomplete() {
     setTimeout(() => {
         autocomplete_box.innerHTML = "";
     }, 100);
+}
+
+if(carbonAPI.getSearchEngine() == "bing") {
+    autocomplete_box.style.height = "50px";
+    var message = document.createElement("a");
+    autocomplete_box.appendChild(message);
+    message.style.lineHeight = "50px";
+    autocomplete_box.style.textAlign = "center";
+    message.style.color = "white";
+    message.innerHTML = "Autocomplete not supported with bing";
 }
