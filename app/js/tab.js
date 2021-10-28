@@ -20,11 +20,11 @@ function hideBack() {
     setTimeout(() => {
         back_button.style.display = "none";
         if (isForwardButtonShown) {
-            urlbar.style.width = "width: calc(100% - 160px);"
+            urlbar.style.width = "calc(100% - 160px);"
             urlbar.style.left = "150px"
         }
         else {
-            urlbar.style.width = "width: calc(100% - 110px);"
+            urlbar.style.width = "calc(100% - 110px);"
             urlbar.style.left = "100px"
         }
     }, 200);
@@ -37,11 +37,9 @@ function hideForward() {
     setTimeout(() => {
         forward_button.style.display = "none";
         if (isBackButtonShown) {
-            urlbar.style.width = "width: calc(100% - 160px);"
             urlbar.style.left = "150px"
         }
         else {
-            urlbar.style.width = "width: calc(100% - 110px);"
             urlbar.style.left = "100px"
         }
     }, 200);
@@ -54,11 +52,9 @@ function showBack() {
     setTimeout(() => {
         back_button.style.opacity = 1;
         if (isForwardButtonShown) {
-            urlbar.style.width = "width: calc(100% - 210px);"
             urlbar.style.left = "200px"
         }
         else {
-            urlbar.style.width = "width: calc(100% - 160px);"
             urlbar.style.left = "150px"
         }
     }, 200);
@@ -71,11 +67,9 @@ function showForward() {
     setTimeout(() => {
         forward_button.style.opacity = 1;
         if (isBackButtonShown) {
-            urlbar.style.width = "width: calc(100% - 210px);"
             urlbar.style.left = "200px"
         }
         else {
-            urlbar.style.width = "width: calc(100% - 160px);"
             urlbar.style.left = "150px"
         }
     }, 200);
@@ -89,7 +83,6 @@ function resetControls() {
     back_button.style.display = "none";
     forward_button.style.opacity = 0;
     back_button.style.opacity = 0;
-    urlbar.style.width = "width: calc(100% - 110px);"
     urlbar.style.left = "100px"
 }
 
@@ -127,8 +120,6 @@ function onTabUpdate() {
         }
     }, 200);
 }
-
-var startpage = "https://google.com";
 
 function getTab(id) {
     return tabs[id];
@@ -183,10 +174,10 @@ class tab {
             this.loader.style.display = "block";
         }
 
-        var loadend = () => {
+        var loadend = (utype) => {
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
-                if (document.getElementById("urlbar") != document.activeElement) {
+                if (document.getElementById("urlbar") != document.activeElement && utype != "home") {
                     document.getElementById("urlbar").value = this.getUrl();
                 }
 
@@ -219,10 +210,7 @@ class tab {
             }
 
             if (type == "did-stop-loading") {
-                loadend();
-                if (data.urltype == "home") {
-                    document.getElementById("urlbar").value = "";
-                }
+                loadend(data.urltype);
             }
 
             if (type == "page-title-updated") {

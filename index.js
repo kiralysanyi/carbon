@@ -19,7 +19,6 @@ var args = process.argv;
 //importing prompt module
 var prompt = require("./prompt");
 const { readFileSync } = require("fs");
-const { electron } = require("process");
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -197,7 +196,7 @@ function initMainWindow() {
         });
         view.webContents.on("did-stop-loading", () => {
             var utype = null;
-            if (view.webContents.getURL() == defaultHomePage) {
+            if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
                 utype = "home";
             }
             sendEvent({ type: "did-stop-loading", urltype: utype });
@@ -313,7 +312,14 @@ function initMainWindow() {
 
     ipcMain.on("getUrl", (e, uuid) => {
         const view = webviews[uuid];
-        console.log(view.webContents.getURL());
+        try {
+            if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
+                e.returnValue = "";
+                return;
+            }   
+        } catch (error) {
+            
+        }
         e.returnValue = view.webContents.getURL();
     })
 
