@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, ipcRenderer, webContents } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
@@ -186,6 +186,13 @@ function initMainWindow() {
                     visible: parameters.selectionText.trim().length > 0,
                     click: () => {
                         win.webContents.postMessage("new_tab", `https://google.com/search?q=${encodeURIComponent(parameters.selectionText)}`);
+                    }
+                },
+                {
+                    label: 'Download Image',
+                    visible: parameters.mediaType == "image",
+                    click: () => {
+                        win.webContents.downloadURL(parameters.srcURL);
                     }
                 }
             ],
@@ -590,7 +597,6 @@ app.on('session-created', function () {
     })
 
     ipcMain.on("getDownloads", (e) => {
-        console.log(current_downloads);
         e.returnValue = JSON.stringify(current_downloads);
     })
 
