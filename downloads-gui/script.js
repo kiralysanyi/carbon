@@ -76,8 +76,7 @@ setInterval(() => {
         element.innerHTML += "<h2>" + item.file + "</h2>";
         element.innerHTML += "<p>" + item.url + "</p>";
         var date = new Date(item.time);
-    
-        element.innerHTML += "<p>" + date.toDateString(); + "</p>";
+        element.innerHTML += "<p>" + date.toDateString() + " " + date.getHours() + ":" + date.getMinutes() + "</p>";
         container.appendChild(element);
     }
     

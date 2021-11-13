@@ -4,6 +4,10 @@ const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
+const glasstron = require("glasstron");
+
+require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
+
 //useragent
 const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
 const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
@@ -55,10 +59,21 @@ loadPermissions();
         settings.saveData("general.conf.json", JSON.stringify(config));
     }
 
+    //initializing experimental config file
+    var config_exp = settings.readData("experimental.conf.json");
+    console.log("Configuration read: ", config_exp);
+    if (config_exp == false) {
+        config_exp = {};
+        settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
+        //default config
+        config_exp["blur"] = false;
+        settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
+    }
+
     //initializing download history
 
     var dlhistory = settings.readData("download.history.json");
-    console.log("Download history read: ", dlhistory);
+    console.log("Download history read");
     if (dlhistory == false) {
         dlhistory = {};
         settings.saveData("download.history.json", JSON.stringify(dlhistory));
@@ -113,20 +128,53 @@ function initMainWindow() {
         e.returnValue = data.version;
     })
 
-    const win = new BrowserWindow({
-        minWidth: 800,
-        minHeight: 600,
-        title: "Carbon",
-        frame: false,
-        webPreferences: {
-            preload: path.join(__dirname, "preload.js"),
-            spellcheck: false,
-            contextIsolation: false,
-            nodeIntegration: true,
+    var win = null;
+
+    if (settings.readKeyFromFile("experimental.conf.json", "blur") == false) {
+        win = new BrowserWindow({
+            minWidth: 800,
+            minHeight: 600,
+            title: "Carbon",
+            frame: false,
+            show: false,
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+                spellcheck: false,
+                contextIsolation: false,
+                nodeIntegration: true,
+            }
+        });
+    }
+    else {
+        win = new glasstron.BrowserWindow({
+            minWidth: 800,
+            minHeight: 600,
+            title: "Carbon",
+            frame: false,
+            show: false,
+            webPreferences: {
+                preload: path.join(__dirname, "preload.js"),
+                spellcheck: false,
+                contextIsolation: false,
+                nodeIntegration: true,
+            }
+        });
+
+        if (process.platform != "win32") {
+            win.blurType = "acrylic";
         }
-    });
+        else {
+            win.blurType = "blurbehind";
+        }
+        win.setBlur(true);
+    }
 
     mainWin = win;
+    win.maximize();
+
+    setTimeout(() => {
+        win.show()            
+    }, 1000);
 
 
     win.loadFile("app/index.html");
@@ -432,7 +480,11 @@ function openMenu() {
 
 ipcMain.on("openMenu", openMenu);
 
-app.whenReady().then(initMainWindow);
+app.whenReady().then(() => {
+    setTimeout(() => {
+        initMainWindow();
+    }, 1000);
+});
 
 app.on("window-all-closed", app.exit);
 

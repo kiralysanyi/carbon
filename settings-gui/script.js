@@ -3,6 +3,8 @@ const settings = require("../settings");
 
 //loading config
 var config = null;
+var experimental_config = null;
+
 
 var data = settings.readData("general.conf.json");
 if (data == false) {
@@ -13,8 +15,19 @@ else {
     config = JSON.parse(data);
 }
 
+data = settings.readData("experimental.conf.json");
+
+if (data == false) {
+    console.error("Configuration error");
+    window.alert("Configuration error, please restart the browser");
+}
+else {
+    experimental_config = JSON.parse(data);
+}
+
 function saveConf() {
     settings.saveData("general.conf.json", JSON.stringify(config));
+    settings.saveData("experimental.conf.json", JSON.stringify(experimental_config));
 }
 
 class switchbox {
@@ -69,7 +82,7 @@ function showLoader() {
 function hideLoader() {
     setTimeout(() => {
         document.getElementById("loader").style.display = "none";
-        document.getElementById("window_controls").style.pointerEvents = "all";            
+        document.getElementById("window_controls").style.pointerEvents = "all";
     }, 1000);
 }
 
@@ -275,6 +288,38 @@ about_title.innerHTML = "Sanyicraft Carbon";
 var version_subtitle = document.createElement("h3");
 version_subtitle.innerHTML = "Version: " + getVersion();
 aboutpage.container.appendChild(version_subtitle);
+
+//setting up experimental page
+
+var experimental_page = new tab("Experimental");
+var experimental_title = document.createElement("h1");
+experimental_title.innerHTML = "Experimental settings";
+experimental_page.container.appendChild(experimental_title);
+
+var exp_settings_table = document.createElement("table");
+experimental_page.container.appendChild(exp_settings_table);
+
+//setting up head row
+var exp_settings_head = document.createElement("tr");
+exp_settings_table.appendChild(exp_settings_head);
+exp_settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
+
+//setting up row 1
+var blur_row = document.createElement("tr");
+blur_row.innerHTML = "<td><a>UI blur (browser restart needed)</a></td>";
+
+var blur_td_2 = document.createElement("td");
+blur_row.appendChild(blur_td_2);
+var blur_switch = new switchbox();
+blur_td_2.appendChild(blur_switch.mainElement);
+
+blur_switch.changeState(experimental_config.blur);
+blur_switch.onchange = () => {
+    experimental_config.blur = blur_switch.state;
+    saveConf();
+}
+
+exp_settings_table.appendChild(blur_row);
 
 
 general_tab.focus();
