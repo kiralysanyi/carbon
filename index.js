@@ -40,8 +40,8 @@ function loadPermissions() {
 
 loadPermissions();
 
-//initializing general config file
 (() => {
+    //initializing general config file
     var config = settings.readData("general.conf.json");
     console.log("Configuration read: ", config);
     if (config == false) {
@@ -54,8 +54,16 @@ loadPermissions();
         settings.saveData("general.conf.json", JSON.stringify(config));
     }
 
-})()
+    //initializing download history
 
+    var dlhistory = settings.readData("download.history.json");
+    console.log("Download history read: ", dlhistory);
+    if (dlhistory == false) {
+        dlhistory = {};
+        settings.saveData("download.history.json", JSON.stringify(dlhistory));
+    }
+
+})()
 
 function savePermissions() {
     settings.saveData("permissions.conf.json", JSON.stringify(permissions));
@@ -316,9 +324,9 @@ function initMainWindow() {
             if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
                 e.returnValue = "";
                 return;
-            }   
+            }
         } catch (error) {
-            
+
         }
         e.returnValue = view.webContents.getURL();
     })
@@ -368,6 +376,31 @@ const menuitems = {
             })
 
             win.loadFile("settings-gui/index.html");
+
+
+
+            attachControlHost(win);
+
+            if (checkParameter("--debug")) {
+                win.webContents.openDevTools();
+            }
+        }
+    }),
+    opendownloads: new MenuItem({
+        label: "Downloads",
+        click: () => {
+            const win = new BrowserWindow({
+                minWidth: 800,
+                minHeight: 600,
+                frame: false,
+                webPreferences: {
+                    nodeIntegration: true,
+                    preload: path.join(__dirname, "preload.js"),
+                    contextIsolation: false
+                }
+            })
+
+            win.loadFile("downloads-gui/index.html");
 
 
 
@@ -483,6 +516,68 @@ app.on('session-created', function () {
 
         }
     });
+
+    //download handling 
+
+    var current_downloads = {};
+
+    session.defaultSession.on("will-download", (e, item, webcontents) => {
+        var received = 0;
+        item.on('updated', (event, state) => {
+            if (state == 'interrupted') {
+                console.log('Download is interrupted but can be resumed');
+                current_downloads[item.getETag()] = {
+                    "state": state,
+                    "received": received,
+                    "file": item.getFilename(),
+                    "url": item.getURL(),
+                    "total": item.getTotalBytes()
+                }
+            } else if (state === 'progressing') {
+                if (item.isPaused()) {
+                    console.log('Download is paused')
+                    current_downloads[item.getETag()] = {
+                        "state": state,
+                        "received": received,
+                        "file": item.getFilename(),
+                        "url": item.getURL(),
+                        "total": item.getTotalBytes()
+                    }
+                } else {
+                    received = item.getReceivedBytes();
+                    current_downloads[item.getETag()] = {
+                        "state": state,
+                        "received": received,
+                        "file": item.getFilename(),
+                        "url": item.getURL(),
+                        "total": item.getTotalBytes()
+                    }
+                }
+            }
+        })
+        item.once('done', (event, state) => {
+            if (state == 'completed') {
+                var date = new Date();
+                console.log('Download successfully')
+                var saved_downloads = JSON.parse(settings.readData("download.history.json"));
+                saved_downloads[item.getETag()] = {
+                    "file": item.getFilename(),
+                    "url": item.getURL(),
+                    "time": date.getTime()
+                }
+                settings.saveData("download.history.json", JSON.stringify(saved_downloads));
+            } else {
+                console.log(`Download failed: ${state}`)
+            }
+
+            delete current_downloads[item.getETag()];
+        })
+
+    })
+
+    ipcMain.on("getDownloads", (e) => {
+        e.returnValue = JSON.stringify(current_downloads);
+    })
 
     //adblock
     const fetch = require("cross-fetch").fetch
