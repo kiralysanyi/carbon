@@ -42,17 +42,36 @@ setInterval(() => {
         var element = document.createElement("div");
         element.id = x;
         element.classList.add("downloaditem");
-        element.innerHTML += "<h2>" + item.file + "</h2>";
+        element.innerHTML += "<h2>" + item.file + " [" + item.state + "]</h2>";
         element.innerHTML += "<p>" + item.url + "</p>";
         element.innerHTML += "<a class='percentage'>" + percentage + "%</a>";
-        element.innerHTML += "<div class='progress_bar' style='width: " + percentage + "%;'></div>"
+        element.innerHTML += "<div class='progress_bar' style='width: " + percentage + "%;'></div>";
+
+        var cancel_btn = document.createElement("button");
+        var pause_btn = document.createElement("button");
+        pause_btn.innerHTML = '<i class="lni lni-pause"></i>';
+        cancel_btn.innerHTML = '<i class="lni lni-close"></i>';
+
+        cancel_btn.onclick = () => {
+            console.log("Cancelling: ", x)
+            ipcRenderer.send("cancel", x);
+        }
+
+        pause_btn.onclick = () => {
+            console.log("Pausing: ", x)
+            ipcRenderer.send("pause", x);
+        }
+
+        element.appendChild(cancel_btn);
+        element.appendChild(pause_btn);
+
         container.appendChild(element);
     }
 
-    for (var x in downloads_saved) {
-        var item = downloads_saved[x]; //time file url
+    for (var y in downloads_saved) {
+        var item = downloads_saved[y]; //time file url
         var element = document.createElement("div");
-        element.id = x;
+        element.id = y;
         element.classList.add("downloaditem");
         element.innerHTML += "<h2>" + item.file + "</h2>";
         element.innerHTML += "<p>" + item.url + "</p>";

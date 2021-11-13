@@ -19,6 +19,7 @@ var args = process.argv;
 //importing prompt module
 var prompt = require("./prompt");
 const { readFileSync } = require("fs");
+const { randomUUID } = require("crypto");
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -520,14 +521,17 @@ app.on('session-created', function () {
     //download handling 
 
     var current_downloads = {};
+    var dlitems = {};
 
     session.defaultSession.on("will-download", (e, item, webcontents) => {
+        const DLID = randomUUID();
+        dlitems[DLID] = item;
         var received = 0;
         item.on('updated', (event, state) => {
             if (state == 'interrupted') {
                 console.log('Download is interrupted but can be resumed');
-                current_downloads[item.getETag()] = {
-                    "state": state,
+                current_downloads[DLID] = {
+                    "state": "paused",
                     "received": received,
                     "file": item.getFilename(),
                     "url": item.getURL(),
@@ -536,8 +540,8 @@ app.on('session-created', function () {
             } else if (state === 'progressing') {
                 if (item.isPaused()) {
                     console.log('Download is paused')
-                    current_downloads[item.getETag()] = {
-                        "state": state,
+                    current_downloads[DLID] = {
+                        "state": "paused",
                         "received": received,
                         "file": item.getFilename(),
                         "url": item.getURL(),
@@ -545,7 +549,7 @@ app.on('session-created', function () {
                     }
                 } else {
                     received = item.getReceivedBytes();
-                    current_downloads[item.getETag()] = {
+                    current_downloads[DLID] = {
                         "state": state,
                         "received": received,
                         "file": item.getFilename(),
@@ -560,7 +564,7 @@ app.on('session-created', function () {
                 var date = new Date();
                 console.log('Download successfully')
                 var saved_downloads = JSON.parse(settings.readData("download.history.json"));
-                saved_downloads[item.getETag()] = {
+                saved_downloads[DLID] = {
                     "file": item.getFilename(),
                     "url": item.getURL(),
                     "time": date.getTime()
@@ -570,12 +574,23 @@ app.on('session-created', function () {
                 console.log(`Download failed: ${state}`)
             }
 
-            delete current_downloads[item.getETag()];
+            delete current_downloads[DLID];
         })
 
     })
 
+    ipcMain.on("cancel", (e, dlid) => {
+        console.log("Download cancelled", dlid);
+        dlitems[dlid].cancel();
+    })
+
+    ipcMain.on("pause", (e, dlid) => {
+        console.log("Download paused", dlid);
+        dlitems[dlid].pause();
+    })
+
     ipcMain.on("getDownloads", (e) => {
+        console.log(current_downloads);
         e.returnValue = JSON.stringify(current_downloads);
     })
 
