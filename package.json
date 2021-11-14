@@ -11,6 +11,8 @@
     "test": "electron . --debug --trace-warnings --verbose",
     "autobuild": "electron-builder",
     "build_win": "electron-builder -w",
+    "build_linux": "electron-builder -l",
+    "build_all": "electron-builder -lw",
     "start": "electron ."
   },
   "repository": {
