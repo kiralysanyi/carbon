@@ -1,0 +1,138 @@
+#container {
+    position: fixed;
+    top: 90px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 50px);
+    background-color: rgb(51, 51, 51);
+}
+
+.tab {
+    width: 200px;
+    text-align: center;
+}
+
+.tab a {
+    position: relative;
+    left: 0px;
+}
+
+.content {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 40px);
+    top: 0px;
+    left: 0px;
+    display: block;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.content h1,h3 {
+    text-align: center;
+    transition: 500ms;
+}
+
+.content a {
+    margin-left: 15px;
+}
+
+.switch {
+    position: relative;
+    width: 80px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.11);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.switch .thumb {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 30px;
+    height: 30px;
+    background-color: var(--accent-color);
+    transition: 200ms;
+}
+
+select {
+    position: relative;
+    width: 200px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.11);
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    border: none;
+}
+
+option {
+    color: black;
+}
+
+input {
+    position: relative;
+    width: auto;
+    height: 40px;
+    border: none;
+    background-color: rgba(255, 255, 255, 0.082);
+    transition: 200ms;
+    outline: 0;
+    color: white;
+}
+
+input:focus {
+    background-color: rgba(255, 255, 255, 0.171);
+}
+
+.continue_btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 130px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent-color);
+    color: white;
+    transition: 200ms;
+}
+
+.back_btn {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    width: 130px;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: var(--accent-color);
+    color: white;
+    transition: 200ms;
+}
+
+.selector {
+    position: absolute;
+    top: 150px;
+    height: 120px;
+    width: 80%;
+    left: 10%;
+    background-color: rgba(255, 255, 255, 0.055);
+    border-radius: 10px;
+    overflow: auto;
+    transition: 200ms;
+}
+
+.selector div {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    text-align: center;
+    transition: 200ms;
+}
+
+.selector div:hover {
+    background-color: rgba(255, 255, 255, 0.103);
+}

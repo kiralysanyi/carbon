@@ -44,12 +44,13 @@ function loadPermissions() {
 }
 
 loadPermissions();
+var first_startup = false;
 
 (() => {
     //initializing general config file
     var config = settings.readData("general.conf.json");
     console.log("Configuration read: ", config);
-    if (config == false) {
+    if (config == "{}") {
         config = {};
         settings.saveData("general.conf.json", JSON.stringify(config));
         //default config
@@ -57,12 +58,13 @@ loadPermissions();
         config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
         settings.saveData("general.conf.json", JSON.stringify(config));
+        first_startup = true;
     }
 
     //initializing experimental config file
     var config_exp = settings.readData("experimental.conf.json");
     console.log("Configuration read: ", config_exp);
-    if (config_exp == false) {
+    if (config_exp == "{}") {
         config_exp = {};
         settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
         //default config
@@ -74,7 +76,7 @@ loadPermissions();
 
     var dlhistory = settings.readData("download.history.json");
     console.log("Download history read");
-    if (dlhistory == false) {
+    if (dlhistory == "{}") {
         dlhistory = {};
         settings.saveData("download.history.json", JSON.stringify(dlhistory));
     }
@@ -121,13 +123,34 @@ function attachControlHost(win) {
     })
 }
 
-function initMainWindow() {
-    ipcMain.on("getVersion", (e) => {
-        var data = readFileSync(__dirname + "/package.json", "utf-8");
-        data = JSON.parse(data)
-        e.returnValue = data.version;
-    })
+function initSetup() {
+    const win = new BrowserWindow({
+        minWidth: 800,
+        minHeight: 600,
+        title: "Carbon",
+        frame: false,
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            spellcheck: false,
+            contextIsolation: false,
+            nodeIntegration: true,
+        }
+    });
 
+    win.loadFile("first-time-setup/index.html");
+    win.show();
+    attachControlHost(win);
+    if (checkParameter("--debug")) {
+        win.webContents.openDevTools();
+    }
+
+    win.on("closed", () => {
+        initMainWindow();
+    })
+}
+
+function initMainWindow() {
     var win = null;
 
     if (settings.readKeyFromFile("experimental.conf.json", "blur") == false) {
@@ -173,7 +196,7 @@ function initMainWindow() {
     win.maximize();
 
     setTimeout(() => {
-        win.show()            
+        win.show()
     }, 1000);
 
 
@@ -201,15 +224,6 @@ function initMainWindow() {
 
     //tab management
     var webviews = {};
-
-    ipcMain.on("searchString", (e) => {
-        var setting = settings.readKeyFromFile("general.conf.json", "searchEngine");
-        e.returnValue = searchStrings[setting]
-    });
-
-    ipcMain.on("searchEngines", (e) => {
-        e.returnValue = Object.keys(searchStrings);
-    });
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
@@ -482,7 +496,28 @@ ipcMain.on("openMenu", openMenu);
 
 app.whenReady().then(() => {
     setTimeout(() => {
-        initMainWindow();
+        //some ipc listeners
+        ipcMain.on("getVersion", (e) => {
+            var data = readFileSync(__dirname + "/package.json", "utf-8");
+            data = JSON.parse(data)
+            e.returnValue = data.version;
+        })
+
+        ipcMain.on("searchString", (e) => {
+            var setting = settings.readKeyFromFile("general.conf.json", "searchEngine");
+            e.returnValue = searchStrings[setting]
+        });
+
+        ipcMain.on("searchEngines", (e) => {
+            e.returnValue = Object.keys(searchStrings);
+        });
+
+        if (first_startup == false) {
+            initMainWindow();
+        }
+        else {
+            initSetup();
+        }
     }, 1000);
 });
 
