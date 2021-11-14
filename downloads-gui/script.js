@@ -19,21 +19,29 @@ showLoader();
 
 const container = document.getElementById("container");
 
-for (var x in downloads_saved) {
-    var item = downloads_saved[x]; //time file url
-    var element = document.createElement("div");
-    element.id = x;
-    element.classList.add("downloaditem");
-    element.innerHTML += "<h2>" + item.file + "</h2>";
-    element.innerHTML += "<p>" + item.url + "</p>";
-    var date = new Date(item.time);
-
-    element.innerHTML += "<p>" + date.toDateString(); + "</p>";
-    container.appendChild(element);
-}
-
 setInterval(() => {
     container.innerHTML = "";
+    readCurrent();
+    readSaved();
+}, 1000);
+
+function readSaved() {
+    downloads_saved = JSON.parse(settings.readData("download.history.json"));
+    for (var x in downloads_saved) {
+        var item = downloads_saved[x]; //time file url
+        var element = document.createElement("div");
+        element.id = x;
+        element.classList.add("downloaditem");
+        element.innerHTML += "<h2>" + item.file + "</h2>";
+        element.innerHTML += "<p>" + item.url + "</p>";
+        var date = new Date(item.time);
+    
+        element.innerHTML += "<p>" + date.toDateString(); + "</p>";
+        container.appendChild(element);
+    }
+}
+
+function readCurrent() {
     var current_downloads = JSON.parse(ipcRenderer.sendSync("getDownloads"));
     for (var x in current_downloads) {
         var item = current_downloads[x]; //state file url received total
@@ -71,19 +79,6 @@ setInterval(() => {
 
         container.appendChild(element);
     }
-
-    for (var y in downloads_saved) {
-        var item = downloads_saved[y]; //time file url
-        var element = document.createElement("div");
-        element.id = y;
-        element.classList.add("downloaditem");
-        element.innerHTML += "<h2>" + item.file + "</h2>";
-        element.innerHTML += "<p>" + item.url + "</p>";
-        var date = new Date(item.time);
-        element.innerHTML += "<p>" + date.toDateString() + " " + date.getHours() + ":" + date.getMinutes() + "</p>";
-        container.appendChild(element);
-    }
-    
-}, 1000);
+}
 
 hideLoader();

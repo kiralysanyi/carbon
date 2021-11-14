@@ -23,7 +23,10 @@ function readData(filename) {
     }
     else {
         console.log("Error while reading configuration, not existing file: ", filename, " in config directory");
-        return false;
+        console.log("Creating file");
+        checkDir();
+        fs.writeFileSync(confdir + "/" + filename, "{}", "utf-8");
+        return fs.readFileSync(confdir + "/" + filename, "utf-8");
     }
 }
 
