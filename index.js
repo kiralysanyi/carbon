@@ -645,7 +645,12 @@ app.on('session-created', function () {
 
     ipcMain.on("pause", (e, dlid) => {
         console.log("Download paused", dlid);
-        dlitems[dlid].pause();
+        if (dlitems[dlid].isPaused()) {
+            dlitems[dlid].resume();
+        }
+        else {
+            dlitems[dlid].pause();
+        }
     })
 
     ipcMain.on("getDownloads", (e) => {

@@ -49,6 +49,10 @@ setInterval(() => {
 
         var cancel_btn = document.createElement("button");
         var pause_btn = document.createElement("button");
+
+        cancel_btn.classList.add("cancel_btn");
+        pause_btn.classList.add("pause_btn");
+
         pause_btn.innerHTML = '<i class="lni lni-pause"></i>';
         cancel_btn.innerHTML = '<i class="lni lni-close"></i>';
 

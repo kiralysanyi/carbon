@@ -35,3 +35,30 @@
     height: 5px;
     background-color: rgb(0, 225, 255);
 }
+
+.downloaditem button {
+    background-color: rgba(255, 255, 255, 0.123);
+    border: none;
+    outline: 0;
+    width: 30px;
+    height: 30px;
+    float: right;
+    color: white;
+    transition: 200ms;
+}
+
+.downloaditem button:hover {
+    background-color: rgba(255, 255, 255, 0.24);
+}
+
+.pause_btn {
+    position: absolute;
+    top: 0px;
+    right: 40px;
+}
+
+.cancel_btn {
+    position: absolute;
+    top: 0px;
+    right: 10px;
+}
