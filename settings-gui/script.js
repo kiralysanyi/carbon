@@ -103,22 +103,22 @@ settings_row2.appendChild(search_td1);
 settings_row2.appendChild(search_td2);
 search_td1.innerHTML = "<a>Search engine</a>"
 
+settings_row2.style.height = "40px";
+
 //setting up search engine selector
-var search_select = document.createElement("select");
+var search_select = new select();
 var engines = ipcRenderer.sendSync("searchEngines");
 for (var x in engines) {
-    var option_element = document.createElement("option");
-    option_element.innerHTML = engines[x];
-    option_element.value = engines[x];
-    search_select.appendChild(option_element);
+    search_select.addOption(engines[x], engines[x]);
 }
-search_td2.appendChild(search_select);
+search_td2.appendChild(search_select.mainObj);
 search_select.onchange = () => {
     config.searchEngine = search_select.value;
     saveConf();
 }
 
-search_select.value = config.searchEngine;
+search_select.setValue(config.searchEngine);
+search_select.mainObj.style.marginTop = "0px";
 
 //setting up row3
 var settings_row3 = document.createElement("tr");
@@ -181,32 +181,19 @@ function refresh() {
                     sub_data.innerHTML = "<a>" + y + "<a>"
                     permission_container.appendChild(sub_data);
 
-                    var selector = document.createElement("select");
-                    var option1 = document.createElement("option");
-                    var option2 = document.createElement("option");
-                    option1.innerHTML = "Denied";
-                    option1.value = false;
-                    option2.innerHTML = "Allowed";
-                    option2.value = true;
-                    selector.appendChild(option1);
-                    selector.appendChild(option2);
-
-                    selector.value = permissions[host][perm];
+                    var selector = new select();
+                    selector.addOption("Allowed", true);
+                    selector.addOption("Denied", false);
+                    selector.setValue(permissions[host][perm]);
 
                     selector.onchange = () => {
                         var data = selector.value;
-                        if (data == "true") {
-                            data = true;
-                        }
-                        else {
-                            data = false;
-                        }
                         permissions[host][perm] = data;
                         console.log(permissions, host, perm);
                         settings.saveData("permissions.conf.json", JSON.stringify(permissions));
                     }
 
-                    sub_data.appendChild(selector);
+                    sub_data.appendChild(selector.mainObj);
                 })()
             }
         }
@@ -244,6 +231,7 @@ about_title.innerHTML = "Sanyicraft Carbon";
 var version_subtitle = document.createElement("h3");
 version_subtitle.innerHTML = "Version: " + getVersion();
 aboutpage.container.appendChild(version_subtitle);
+
 
 //setting up experimental page
 
