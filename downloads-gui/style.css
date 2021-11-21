@@ -5,6 +5,7 @@
     width: 100%;
     height: calc(100% - 50px);
     background-color: rgb(51, 51, 51);
+    overflow: auto;
 }
 
 .downloaditem {

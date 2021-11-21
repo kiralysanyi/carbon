@@ -65,45 +65,14 @@ class switchbox {
     }
 }
 
-
-class tab {
-    constructor(title) {
-        tabs.push(this);
-        this.tab_button = document.createElement("div");
-        this.title = document.createElement("a");
-        this.tab_button.appendChild(this.title);
-        this.container = document.createElement("div");
-        this.container.classList.add("content");
-        this.tab_button.classList.add("tab");
-        this.title.innerHTML = title;
-        this.onfocus = () => { };
-
-        document.getElementById("container").appendChild(this.container);
-        document.getElementById("tab_bar").appendChild(this.tab_button);
-    }
-
-    focus() {
-        //hide other tabs
-        for (var x in tabs) {
-            tabs[x].container.style.display = "none";
-            tabs[x].tab_button.style.backgroundColor = "transparent";
-            tabs[x].tab_button.style.borderBottom = "none";
-            tabs[x].tab_button.style.height = "40px";
-        }
-
-        //show this tab
-        this.container.style.display = "block";
-        this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
-        this.tab_button.style.borderBottom = "2px solid rgb(0, 225, 255)";
-        this.tab_button.style.height = "38px";
-        this.onfocus();
-    }
-}
-
 //declare tabs
 var welcome_tab = new tab("Welcome");
 var search_engine_tab = new tab("Search engine");
 var final_tab = new tab("Finish");
+
+welcome_tab.disableFocusButton();
+search_engine_tab.disableFocusButton();
+final_tab.disableFocusButton();
 
 //setup welcome screen
 function setupWelcome() {

@@ -512,6 +512,8 @@ app.whenReady().then(() => {
             e.returnValue = Object.keys(searchStrings);
         });
 
+        first_startup = checkParameter("--setup");
+
         if (first_startup == false) {
             initMainWindow();
         }

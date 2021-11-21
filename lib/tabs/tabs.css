@@ -1,0 +1,28 @@
+.tab {
+    width: 200px;
+    text-align: center;
+}
+
+.tab a {
+    position: relative;
+    left: 0px;
+}
+
+.content {
+    position: absolute;
+    width: 100%;
+    height: calc(100% - 40px);
+    top: 0px;
+    left: 0px;
+    display: block;
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+.content h1 {
+    margin-left: 15px;
+}
+
+.content a {
+    margin-left: 15px;
+}
