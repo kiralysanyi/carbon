@@ -165,10 +165,22 @@ class tab {
             }
         }
 
+        this.mute_button = document.createElement("div");
+        this.mute_button.classList.add("mute");
         this.loader = document.createElement("div");
         this.loader.classList.add("bottom_line_loader");
         this.tab_button.appendChild(this.loader);
         this.tab_button.classList.add("tab");
+        this.tab_button.appendChild(this.mute_button);
+
+        this.mute_button.onclick = (e) => {
+            e.stopPropagation();
+            this.mute();
+        }
+
+        this.mute_button.innerHTML = '<i class="lni lni-volume-medium"></i>'
+
+        this.mute_button.style.display = "none";
 
         var loadstart = () => {
             this.loader.style.display = "block";
@@ -221,6 +233,18 @@ class tab {
                 this.favicon.src = favicons[favicons.length - 1];
             }
 
+            if (type == "media-started-playing") {
+                this.mute_button.style.display = "block";
+                this.tab_button.style.height = "38px";
+                this.tab_button.style.borderBottom = "solid 2px red";
+            }
+
+            if (type == "media-paused") {
+                this.mute_button.style.display = "none";
+                this.tab_button.style.height = "40px";
+                this.tab_button.style.borderBottom = "none";
+            }
+
             if (type == "new-window") {
                 if (url) {
                     new tab(url);
@@ -256,6 +280,10 @@ class tab {
             this.tab_button.style.width = "calc(100% / 5)"
         }
 
+    }
+
+    mute() {
+        ipcRenderer.sendSync("mute", this.id);
     }
 
     navigate(url) {

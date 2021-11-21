@@ -129,6 +129,25 @@
     overflow: hidden;
 }
 
+.mute {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 40px;
+    height: 40px;
+    display: block;
+    background-color: gray;
+    opacity: 0;
+    transition: 200ms;
+    font-size: 30px;
+    text-align: center;
+    line-height: 40px;
+}
+
+.mute:hover {
+    opacity: 1;
+}
+
 #tab_bar::-webkit-scrollbar {
     display: none;
 }

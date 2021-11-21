@@ -266,7 +266,11 @@ function initMainWindow() {
 
         function sendEvent(data) {
             console.log("Sending data to renderer: ", data);
-            win.webContents.postMessage(uuid, data);
+            try {
+                win.webContents.postMessage(uuid, data);
+            } catch (error) {
+                console.error(error);
+            }
         }
 
         view.webContents.on("did-start-loading", () => {
@@ -292,6 +296,14 @@ function initMainWindow() {
             }
         });
 
+        view.webContents.on("media-started-playing", () => {
+            sendEvent({type: "media-started-playing"});
+        })
+
+        view.webContents.on("media-paused", () => {
+            sendEvent({type: "media-paused"});
+        });
+
         view.webContents.on("page-title-updated", () => {
             sendEvent({ type: "page-title-updated", title: view.webContents.getTitle() });
         });
@@ -313,6 +325,7 @@ function initMainWindow() {
             isFullScreen = false;
         })
 
+        
 
         setInterval(() => {
             var y = 0;
@@ -336,6 +349,19 @@ function initMainWindow() {
         delete webviews[uuid];
         e.returnValue = 0;
     })
+
+    ipcMain.on("mute", (e, uuid) => {
+        e.returnValue = 0;
+        console.log("Mute requested to tab: " + uuid);
+        const view = webviews[uuid];
+        console.log(view);
+        if (view.webContents.isAudioMuted() == false) {
+            view.webContents.setAudioMuted(true);
+        }
+        else {
+            view.webContents.setAudioMuted(false);
+        }
+    });
 
     ipcMain.on("openDevTools", (e, uuid) => {
         const view = webviews[uuid];
@@ -603,14 +629,12 @@ app.on('session-created', function () {
     session.defaultSession.setPermissionCheckHandler(async (webcontents, permission, origin, details) => {
         await loadPermissions();
         const host = new URL(origin).hostname;
-        if (permission == "media") {
-            if (permissions[host]["media"]) {
+        try {
+            if (permission == "media") {
                 return true;
             }
-            else {
-                return false;
-            }
-
+        } catch (error) {
+            console.error(error);
         }
     });
 
