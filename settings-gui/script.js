@@ -229,7 +229,13 @@ var about_title = document.createElement("h1");
 aboutpage.container.appendChild(about_title);
 about_title.innerHTML = "Sanyicraft Carbon";
 var version_subtitle = document.createElement("h3");
-version_subtitle.innerHTML = "Version: " + getVersion();
+version_subtitle.innerHTML = "Carbon: " + getVersion();
+version_subtitle.innerHTML += "<br>Electron: " + process.versions.electron;
+version_subtitle.innerHTML += "<br>Chrome: " + process.versions.chrome;
+version_subtitle.innerHTML += "<br>Node: " + process.versions.node;
+
+
+
 aboutpage.container.appendChild(version_subtitle);
 
 
