@@ -297,11 +297,11 @@ function initMainWindow() {
         });
 
         view.webContents.on("media-started-playing", () => {
-            sendEvent({type: "media-started-playing"});
+            sendEvent({ type: "media-started-playing" });
         })
 
         view.webContents.on("media-paused", () => {
-            sendEvent({type: "media-paused"});
+            sendEvent({ type: "media-paused" });
         });
 
         view.webContents.on("page-title-updated", () => {
@@ -325,7 +325,7 @@ function initMainWindow() {
             isFullScreen = false;
         })
 
-        
+
 
         setInterval(() => {
             var y = 0;
@@ -539,6 +539,23 @@ app.whenReady().then(() => {
         });
 
         first_startup = checkParameter("--setup");
+        var openFirst = null;
+
+        ipcMain.once("openFirst", (e) => {
+            e.returnValue = openFirst;
+        });
+
+        for (var x in process.argv) {
+            if (x > 0) {
+                try {
+                    new URL(process.argv[x]);
+                    console.log("Argument is url: ", process.argv[x]);
+                    openFirst = process.argv[x];
+                } catch (error) {
+                    console.log("Argument is not url: ", process.argv[x]);
+                }
+            }
+        }
 
         if (first_startup == false) {
             initMainWindow();

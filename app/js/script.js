@@ -17,9 +17,6 @@ function transformScroll(event) {
 
 document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 
-newTab();
-
-
 function validURL(str) {
     var pattern = new RegExp(
         '^(https?:\\/\\/)?' + // protocol1
@@ -79,4 +76,13 @@ afterinit = true;
 
 if (settings.readKeyFromFile("experimental.conf.json", "blur") == true) {
     document.getElementById("topbar").style.backgroundColor = "rgba(27, 27, 27, 0.5)";   
+}
+
+const startup_url = ipcRenderer.sendSync("openFirst");
+
+if (startup_url != "null") {
+    newTab(startup_url);
+}
+else {
+    newTab();
 }

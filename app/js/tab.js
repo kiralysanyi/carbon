@@ -395,8 +395,8 @@ ipcRenderer.on("new_tab", (e, url) => {
     new tab(url);
 })
 
-function newTab() {
-    new tab();
+function newTab(url) {
+    new tab(url);
 }
 
 function goBack() {
