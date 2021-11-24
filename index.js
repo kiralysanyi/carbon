@@ -749,3 +749,7 @@ app.on('session-created', function () {
     });
 
 });
+
+process.on("uncaughtException", (e) => {
+    console.log(e.name, e.message, e.stack);
+})
