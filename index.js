@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, components } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
@@ -151,7 +151,6 @@ function initSetup() {
 }
 
 function initMainWindow() {
-    console.log(components.status());
     var win = null;
 
     if (settings.readKeyFromFile("experimental.conf.json", "blur") == false) {
@@ -230,8 +229,7 @@ function initMainWindow() {
         const view = new BrowserView({
             webPreferences: {
                 preload: path.join(app.getAppPath(), 'view_preload.js'),
-                contextIsolation: false,
-                plugins: true
+                contextIsolation: false
             }
         });
         view.webContents.setUserAgent(USERAGENT);
@@ -522,10 +520,7 @@ function openMenu() {
 
 ipcMain.on("openMenu", openMenu);
 
-app.whenReady().then(async () => {
-    console.log("Waiting for components...");
-    await components.whenReady();
-    console.log("Components loaded.", components.status());
+app.whenReady().then(() => {
     setTimeout(() => {
         //some ipc listeners
         ipcMain.on("getVersion", (e) => {

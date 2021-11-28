@@ -8,7 +8,7 @@
   "description": "Web browser",
   "main": "index.js",
   "scripts": {
-    "test": "electron . --debug --trace-warnings --verbose --setup --enable-logging --v=0",
+    "test": "electron . --debug --trace-warnings --verbose --setup",
     "autobuild": "electron-builder",
     "build_win": "electron-builder -w",
     "build_linux": "electron-builder -l",
@@ -27,7 +27,7 @@
   "license": "ISC",
   "homepage": "https://bitbucket.org/kiralysanyi/carbon#readme",
   "devDependencies": {
-    "electron": "https://github.com/castlabs/electron-releases#v16.0.0+wvcus",
+    "electron": "^16.0.0",
     "electron-builder": "^22.11.7"
   },
   "dependencies": {
