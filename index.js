@@ -669,6 +669,8 @@ app.on('session-created', function () {
     session.defaultSession.on("will-download", (e, item, webcontents) => {
         const DLID = randomUUID();
         dlitems[DLID] = item;
+        var received0 = 0
+        var speed = 0;
         var received = 0;
         item.on('updated', (event, state) => {
             if (state == 'interrupted') {
@@ -678,7 +680,8 @@ app.on('session-created', function () {
                     "received": received,
                     "file": item.getFilename(),
                     "url": item.getURL(),
-                    "total": item.getTotalBytes()
+                    "total": item.getTotalBytes(),
+                    "speed": 0
                 }
             } else if (state === 'progressing') {
                 if (item.isPaused()) {
@@ -688,16 +691,20 @@ app.on('session-created', function () {
                         "received": received,
                         "file": item.getFilename(),
                         "url": item.getURL(),
-                        "total": item.getTotalBytes()
+                        "total": item.getTotalBytes(),
+                        "speed": 0
                     }
                 } else {
                     received = item.getReceivedBytes();
+                    speed = received - received0;
+                    received0 = received;
                     current_downloads[DLID] = {
                         "state": state,
                         "received": received,
                         "file": item.getFilename(),
                         "url": item.getURL(),
-                        "total": item.getTotalBytes()
+                        "total": item.getTotalBytes(),
+                        "speed": speed
                     }
                 }
             }
@@ -774,5 +781,5 @@ app.on('session-created', function () {
 });
 
 process.on("uncaughtException", (e) => {
-    console.log(e.name, e.message, e.stack);
+    console.error(e.name, e.message, e.stack);
 })

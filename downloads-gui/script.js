@@ -46,6 +46,7 @@ function readCurrent() {
     for (var x in current_downloads) {
         var item = current_downloads[x]; //state file url received total
         var percentage = item.received / item.total * 100;
+        var speed = (item.speed / 1024 / 1024).toFixed(2);
         percentage = Math.floor(percentage);
         var element = document.createElement("div");
         element.id = x;
@@ -53,6 +54,7 @@ function readCurrent() {
         element.innerHTML += "<h2>" + item.file + " [" + item.state + "]</h2>";
         element.innerHTML += "<p>" + item.url + "</p>";
         element.innerHTML += "<a class='percentage'>" + percentage + "%</a>";
+        element.innerHTML += "<a class='speed'>" + speed + "MB/s</a>"
         element.innerHTML += "<div class='progress_bar' style='width: " + percentage + "%;'></div>";
 
         var cancel_btn = document.createElement("button");
