@@ -1,3 +1,7 @@
+html {
+    background-color: transparent;
+}
+
 #container {
     position: fixed;
     top: 90px;
@@ -133,4 +137,12 @@ input:focus {
 
 #tab_bar div {
     width: calc(100% / 4);
+}
+
+#topbar {
+    background-color: rgba(32, 32, 32, 0.5);
+}
+
+#container {
+    background-color: rgba(65, 65, 65, 0.5);
 }

@@ -169,11 +169,12 @@
     width: 70%;
     height: 60%;
     transform: translate(-50%, -50%);
-    background-color: rgb(27, 27, 27);
+    background-color: rgba(27, 27, 27, 0.616);
     border-radius: 10px;
     display: none;
     z-index: 100000;
-    transition: 500ms;
+    transition: 300ms;
+    overflow: hidden;
 }
 
 #settings_iframe {

@@ -11,7 +11,11 @@
 </head>
 
 <body>
+
     <div id="main_content">
+        <div id="history"></div>
+        <button id="clearHistory" onclick="carbonAPI.clearHistory(); location.reload()">Clear History</button>
+    
         <form id="searchform">
             <input id="searchbox" type="text" placeholder="Type keywords">
         </form>
@@ -31,6 +35,7 @@
     <div id="sidebar_open">
         <i class="lni lni-menu"></i>
     </div>
+
 </body>
 <script src="script.js"></script>
 <!-- Images from: https://picsum.photos/ -->

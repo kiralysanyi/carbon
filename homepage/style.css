@@ -140,3 +140,56 @@ html {
 #autocomplete_box div:hover {
     background-color: rgba(32, 32, 32, 0.747);
 }
+
+#history {
+    position: fixed;
+    bottom: 60px;
+    height: 50%;
+    width: 80%;
+    left: 10%;
+    background-color: rgba(39, 39, 39, 0.644);
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#clearHistory {
+    position: fixed;
+    bottom: 10px;
+    left: 35%;
+    width: 30%;
+    height: 40px;
+    border-radius: 10px;
+    background-color: rgba(0, 0, 0, 0.527);
+    color: white;
+    border: none;
+}
+
+.history_element {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    background-color: rgba(39, 39, 39, 0.473);
+    color: white;
+    transition: 200ms;
+}
+
+.history_element img {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 30px;
+    height: 30px;
+    object-fit: cover;
+}
+
+.history_element div {
+    position: absolute;
+    top: 0px;
+    left: 40px;
+    line-height: 40px;
+}
+
+.history_element:hover {
+    background-color: rgb(65, 65, 65);
+}

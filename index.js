@@ -273,9 +273,40 @@ function initMainWindow() {
             }
         }
 
+        view.webContents.on("did-navigate", () => {
+            if (new URL(view.webContents.getURL()).href != new URL(defaultHomePage).href) {
+                saveHistory();
+            }
+        })
+
+        view.webContents.on("will-navigate", () => {
+            sendEvent({ type: "did-start-loading" })
+        });
+
         view.webContents.on("did-start-loading", () => {
             sendEvent({ type: "did-start-loading" })
         });
+
+        view.webContents.on("did-navigate", () => {
+            var utype = null;
+            if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
+                utype = "home";
+            }
+            sendEvent({ type: "did-stop-loading", urltype: utype });
+            //changing user agent if needed for google account login
+            if (new URL(view.webContents.getURL()).host == "accounts.google.com" && view.webContents.getUserAgent() != USERAGENT_FIREFOX) {
+                view.webContents.setUserAgent(USERAGENT_FIREFOX);
+                view.webContents.reload();
+                return;
+            }
+
+            if (new URL(view.webContents.getURL()).host != "accounts.google.com" && view.webContents.getUserAgent() == USERAGENT_FIREFOX) {
+                view.webContents.setUserAgent(USERAGENT);
+                view.webContents.reload();
+                return;
+            }
+        });
+
         view.webContents.on("did-stop-loading", () => {
             var utype = null;
             if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
@@ -305,11 +336,38 @@ function initMainWindow() {
         });
 
         view.webContents.on("page-title-updated", () => {
+            saveHistory();
             sendEvent({ type: "page-title-updated", title: view.webContents.getTitle() });
         });
 
+        var currentIcon = null;
+
+        function saveHistory() {
+            if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
+                return;
+            }
+            const history = JSON.parse(settings.readData("history.json", "{}"));
+            history[view.webContents.getURL()] = {
+                title: view.webContents.getTitle(),
+                url: view.webContents.getURL(),
+                iconURL: currentIcon
+            };
+            settings.saveData("history.json", JSON.stringify(history));
+        }
+
         view.webContents.on("page-favicon-updated", (e, favicons) => {
             sendEvent({ type: "page-favicon-updated", favicons: favicons });
+            currentIcon = favicons[0];
+            try {
+                const history = JSON.parse(settings.readData("history.json", "{}"));
+                history[view.webContents.getURL()].iconURL = favicons[0];
+                settings.saveData("history.json", JSON.stringify(history));
+            } catch (error) {
+                saveHistory();
+                const history = JSON.parse(settings.readData("history.json", "{}"));
+                history[view.webContents.getURL()].iconURL = favicons[0];
+                settings.saveData("history.json", JSON.stringify(history));
+            }
         });
 
         view.webContents.on("new-window", (e, url) => {
@@ -413,6 +471,10 @@ function initMainWindow() {
     ipcMain.on("canGoForward", (e, uuid) => {
         const view = webviews[uuid];
         e.returnValue = view.webContents.canGoForward();
+    })
+
+    ipcMain.on("getHomeURL", (e) => {
+        e.returnValue = defaultHomePage;
     })
 
     ipcMain.on("getUrl", (e, uuid) => {
@@ -600,7 +662,7 @@ app.on('session-created', function () {
             return true;
         }
 
-        if(permission == "pointerLock") {
+        if (permission == "pointerLock") {
             callback(true);
             return true;
         }

@@ -107,10 +107,11 @@ function showSettingsModal() {
     modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
 
     modal.style.display = "block";
+    document.getElementById("settings_iframe").reload();
 
     setTimeout(() => {
         modal.style.transform = "translate(-50%, -50%) scale(1, 1)"
-    }, 100);
+    }, 10);
 
     if (isDebug()) {
         document.getElementById("settings_iframe").openDevTools();
@@ -130,5 +131,5 @@ function hideSettingsModal() {
         document.getElementById("settings_modal_back").style.display = "none";
         showCurrentTab();
         placeholder.src = "";
-    }, 500);
+    }, 300);
 }

@@ -16,7 +16,7 @@ function saveData(filename, data) {
     fs.writeFileSync(confdir + "/" + filename, data, "utf-8");
 }
 
-function readData(filename) {
+function readData(filename, defaultvalue = "{}") {
     checkDir();
     if (fs.existsSync(confdir + "/" + filename)) {
         return fs.readFileSync(confdir + "/" + filename, "utf-8");
@@ -25,7 +25,7 @@ function readData(filename) {
         console.log("Error while reading configuration, not existing file: ", filename, " in config directory");
         console.log("Creating file");
         checkDir();
-        fs.writeFileSync(confdir + "/" + filename, "{}", "utf-8");
+        fs.writeFileSync(confdir + "/" + filename, defaultvalue, "utf-8");
         return fs.readFileSync(confdir + "/" + filename, "utf-8");
     }
 }

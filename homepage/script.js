@@ -206,3 +206,32 @@ if(carbonAPI.getSearchEngine() == "bing") {
     message.style.color = "white";
     message.innerHTML = "Autocomplete not supported with bing";
 }
+
+const historyDOM = document.getElementById("history");
+
+class historyItem {
+    constructor(title, url, iconURL) {
+        this.title = title;
+        this.url = url;
+        this.iconURL = iconURL;
+        this.htmlObj = document.createElement("div");
+        this.htmlObj.classList.add("history_element");
+        historyDOM.appendChild(this.htmlObj);
+        this.titleDOM = document.createElement("div");
+        this.titleDOM.innerHTML = this.title;
+        this.iconDOM = document.createElement("img");
+        this.iconDOM.src = this.iconURL;
+        this.htmlObj.appendChild(this.iconDOM);
+        this.htmlObj.appendChild(this.titleDOM);
+        this.htmlObj.onclick = () => {
+            location.href = this.url;
+        }
+    }
+}
+
+carbonAPI.getHistory().then((data) => {
+    for (var x in data) {
+        var object = data[x];
+        new historyItem(object.title, object.url, object.iconURL);
+    }
+});
