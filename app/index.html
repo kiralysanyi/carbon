@@ -29,6 +29,12 @@
     </div>
 
     <div id="tab_bar"></div>
+    <img id="tab_placeholder" src="" alt="placeholder">
+    <div id="settings_modal_back" onclick="hideSettingsModal()"></div>
+    <div id="settings_modal">
+        <webview id="settings_iframe" src="../settings-gui/index.html" nodeintegration webpreferences="contextIsolation=false" preload="../preload.js">
+        </webview>
+    </div>
 </body>
 <script src="./js/tab.js"></script>
 <script src="./js/script.js"></script>

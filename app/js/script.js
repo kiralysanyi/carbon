@@ -35,7 +35,7 @@ window.addEventListener("keydown", (e) => {
     if (e.key == "Enter" && document.activeElement == urlbar) {
         var url = urlbar.value;
         urlbar.blur();
-        
+
         if (url.substring(0, 7) == "file://") {
             navigate(url);
             return 0;
@@ -48,7 +48,7 @@ window.addEventListener("keydown", (e) => {
                 url = "http://" + url;
                 navigate(url);
             }
-    
+
         } else {
             var search = ipcRenderer.sendSync("searchString") + url
             navigate(search);
@@ -70,12 +70,16 @@ ipcRenderer.on("command", (e, command) => {
     if (command == "devtools") {
         openDevTools();
     }
+
+    if (command == "settings") {
+        showSettingsModal();
+    }
 })
 
 afterinit = true;
 
 if (settings.readKeyFromFile("experimental.conf.json", "blur") == true) {
-    document.getElementById("topbar").style.backgroundColor = "rgba(27, 27, 27, 0.5)";   
+    document.getElementById("topbar").style.backgroundColor = "rgba(27, 27, 27, 0.5)";
 }
 
 const startup_url = ipcRenderer.sendSync("openFirst");
@@ -85,4 +89,46 @@ if (startup_url != "null") {
 }
 else {
     newTab();
+}
+
+function hideCurrentTab() {
+    return ipcRenderer.sendSync("hideCurrentTab");
+}
+
+function showCurrentTab() {
+    return ipcRenderer.sendSync("showCurrentTab");
+}
+
+function showSettingsModal() {
+    const placeholder = document.getElementById("tab_placeholder");
+    placeholder.src = hideCurrentTab();
+    const modal = document.getElementById("settings_modal");
+
+    modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
+
+    modal.style.display = "block";
+
+    setTimeout(() => {
+        modal.style.transform = "translate(-50%, -50%) scale(1, 1)"
+    }, 100);
+
+    if (isDebug()) {
+        document.getElementById("settings_iframe").openDevTools();
+    }
+    document.getElementById("settings_modal_back").style.display = "block";
+}
+
+function hideSettingsModal() {
+    if (isDebug()) {
+        document.getElementById("settings_iframe").closeDevTools();
+    }
+    const placeholder = document.getElementById("tab_placeholder");
+    const modal = document.getElementById("settings_modal");
+    modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
+    setTimeout(() => {
+        modal.style.display = "none";
+        document.getElementById("settings_modal_back").style.display = "none";
+        showCurrentTab();
+        placeholder.src = "";
+    }, 500);
 }

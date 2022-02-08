@@ -32,13 +32,11 @@ function saveConf() {
 
 function showLoader() {
     document.getElementById("loader").style.display = "block";
-    document.getElementById("window_controls").style.pointerEvents = "none";
 }
 
 function hideLoader() {
     setTimeout(() => {
         document.getElementById("loader").style.display = "none";
-        document.getElementById("window_controls").style.pointerEvents = "all";
     }, 1000);
 }
 

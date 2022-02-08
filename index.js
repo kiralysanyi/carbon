@@ -165,6 +165,8 @@ function initMainWindow() {
                 spellcheck: false,
                 contextIsolation: false,
                 nodeIntegration: true,
+                webviewTag: true,
+                nodeIntegrationInSubFrames: true
             }
         });
     }
@@ -180,15 +182,12 @@ function initMainWindow() {
                 spellcheck: false,
                 contextIsolation: false,
                 nodeIntegration: true,
+                webviewTag: true,
+                nodeIntegrationInSubFrames: true
             }
         });
 
-        if (process.platform != "win32") {
-            win.blurType = "acrylic";
-        }
-        else {
-            win.blurType = "blurbehind";
-        }
+        win.blurType = "blurbehind";
         win.setBlur(true);
     }
 
@@ -224,6 +223,7 @@ function initMainWindow() {
 
     //tab management
     var webviews = {};
+    var focusedTab = null;
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
@@ -367,7 +367,8 @@ function initMainWindow() {
         const view = webviews[uuid];
         view.webContents.openDevTools();
         e.returnValue = 0;
-    })
+    });
+
 
     ipcMain.on("navigate", (e, data) => {
         const view = webviews[data.uuid];
@@ -431,8 +432,22 @@ function initMainWindow() {
         const view = webviews[uuid];
         win.setBrowserView(view);
         win.setTopBrowserView(view);
+        focusedTab = view;
         e.returnValue = 0;
     })
+
+    ipcMain.on("hideCurrentTab", (e) => {
+        var view = focusedTab;
+        view.webContents.capturePage().then((image) => {
+            win.removeBrowserView(focusedTab);
+            e.returnValue = image.toDataURL();
+        });
+    })
+
+    ipcMain.on("showCurrentTab", (e) => {
+        win.setBrowserView(focusedTab);
+        e.returnValue = 0;
+    });
 
     ipcMain.on("hideTab", (e, uuid) => {
         const view = webviews[uuid];
@@ -460,26 +475,8 @@ const menuitems = {
     opensettings: new MenuItem({
         label: "Settings",
         click: () => {
-            const win = new BrowserWindow({
-                minWidth: 800,
-                minHeight: 600,
-                frame: false,
-                webPreferences: {
-                    nodeIntegration: true,
-                    preload: path.join(__dirname, "preload.js"),
-                    contextIsolation: false
-                }
-            })
-
-            win.loadFile("settings-gui/index.html");
-
-
-
-            attachControlHost(win);
-
-            if (checkParameter("--debug")) {
-                win.webContents.openDevTools();
-            }
+            console.log("Settings");
+            mainWin.webContents.postMessage("command", "settings")
         }
     }),
     opendownloads: new MenuItem({
@@ -519,6 +516,10 @@ function openMenu() {
 }
 
 ipcMain.on("openMenu", openMenu);
+
+ipcMain.on("isDebug", (e) => {
+    e.returnValue = checkParameter("--debug")
+})
 
 app.whenReady().then(() => {
     setTimeout(() => {

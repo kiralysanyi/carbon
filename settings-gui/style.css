@@ -130,3 +130,7 @@ input {
 input:focus {
     background-color: rgba(255, 255, 255, 0.171);
 }
+
+#tab_bar div {
+    width: calc(100% / 4);
+}

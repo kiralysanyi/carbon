@@ -15,3 +15,7 @@ maximize = () => {
 getVersion = () => {
     return ipcRenderer.sendSync("getVersion");
 }
+
+isDebug = () => {
+    return ipcRenderer.sendSync("isDebug");
+}
