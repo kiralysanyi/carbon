@@ -600,6 +600,11 @@ app.on('session-created', function () {
             return true;
         }
 
+        if(permission == "pointerLock") {
+            callback(true);
+            return true;
+        }
+
         if (permission == "background-sync") {
             callback(true);
             return true;
