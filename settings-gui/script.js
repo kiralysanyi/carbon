@@ -254,7 +254,7 @@ exp_settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
 
 //setting up row 1
 var blur_row = document.createElement("tr");
-blur_row.innerHTML = "<td><a>UI blur (browser restart needed)</a></td>";
+blur_row.innerHTML = "<td><a>Window blur (browser restart needed)</a></td>";
 
 var blur_td_2 = document.createElement("td");
 blur_row.appendChild(blur_td_2);

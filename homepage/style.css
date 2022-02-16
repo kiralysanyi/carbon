@@ -1,4 +1,4 @@
-html {
+body {
     background-image: url("https://picsum.photos/1920/1080");
     background-position: center;
     background-repeat: no-repeat;
@@ -188,6 +188,8 @@ html {
     top: 0px;
     left: 40px;
     line-height: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .history_element:hover {

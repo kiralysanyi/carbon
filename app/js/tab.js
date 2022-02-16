@@ -217,6 +217,11 @@ class tab {
             const url = data.url;
             const favicons = data.favicons;
 
+            if (type == "did-navigate") {
+                this.favicon.style.display = "none";
+                this.title.style.left = "10px";
+            }
+
             if (type == "did-start-loading") {
                 loadstart();
             }
@@ -230,6 +235,9 @@ class tab {
             }
 
             if (type == "page-favicon-updated") {
+                this.title.style.left = "40px";
+                console.log(favicons.length);
+                this.favicon.style.display = "block";
                 this.favicon.src = favicons[favicons.length - 1];
             }
 

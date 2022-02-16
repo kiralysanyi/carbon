@@ -17,6 +17,7 @@ html {
     height: 50px;
     background-color: rgb(27, 27, 27);
     -webkit-app-region: drag;
+    z-index: 10000000;
 }
 
 #window_controls {

@@ -127,6 +127,7 @@
     text-overflow: ellipsis;
     width: calc(100% - 80px);
     overflow: hidden;
+    transition: 200ms;
 }
 
 .mute {
@@ -159,7 +160,9 @@
     left: 0px;
     width: 100%;
     border: none;
-    filter: blur(4px);
+    display: none;
+    transition: 1s;
+    transform: scale(1.1);
 }
 
 #settings_modal {
@@ -188,11 +191,42 @@
 
 #settings_modal_back {
     position: fixed;
-    top: 0px;
+    top: 50px;
     left: 0px;
+    height: calc(100% - 50px);
     width: 100%;
-    height: 100%;
     background-color: rgba(0, 0, 0, 0.596);
     z-index: 10000;
     display: none;
+    transition: 300ms;
+}
+
+#suggestions {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    width: 300px;
+    height: 0px;
+    top: 50px;
+    border-radius: 15px;
+    background-color: rgb(36, 36, 36);
+    z-index: 1000;
+    display: none;
+    overflow: hidden;
+    transition: 200ms;
+}
+
+#suggestions div {
+    position: relative;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    color: white;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: 200ms; 
+}
+
+#suggestions div:hover {
+    background-color: rgba(255, 255, 255, 0.089);
 }

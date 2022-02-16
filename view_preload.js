@@ -33,7 +33,7 @@ function isHomePage() {
 carbonAPI.getHistory = () => {
     return new Promise((resolved) => {
         if (isHomePage()) {
-            const data = JSON.parse(settings.readData("history.json", "[]"));
+            const data = JSON.parse(settings.readData("history.json", "{}"));
             resolved(data);
         }
     });
@@ -43,6 +43,12 @@ carbonAPI.clearHistory = () => {
     if(isHomePage()) {
         settings.saveData("history.json", "{}");
     }
+}
+
+carbonAPI.experimental = {}
+
+carbonAPI.experimental.isBlurEnabled = () => {
+    return settings.readKeyFromFile("experimental.conf.json", "blur");
 }
 
 console.log("Gutten tag! Preload loaded");

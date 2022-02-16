@@ -283,6 +283,10 @@ function initMainWindow() {
             sendEvent({ type: "did-start-loading" })
         });
 
+        view.webContents.on("did-navigate", () => {
+            sendEvent({type: "did-navigate"});
+        })
+
         view.webContents.on("did-start-loading", () => {
             sendEvent({ type: "did-start-loading" })
         });
@@ -501,8 +505,8 @@ function initMainWindow() {
     ipcMain.on("hideCurrentTab", (e) => {
         var view = focusedTab;
         view.webContents.capturePage().then((image) => {
-            win.removeBrowserView(focusedTab);
             e.returnValue = image.toDataURL();
+            win.removeBrowserView(focusedTab);
         });
     })
 

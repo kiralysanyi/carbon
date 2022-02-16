@@ -230,8 +230,13 @@ class historyItem {
 }
 
 carbonAPI.getHistory().then((data) => {
+    console.log(data);
     for (var x in data) {
         var object = data[x];
         new historyItem(object.title, object.url, object.iconURL);
     }
 });
+
+if (carbonAPI.experimental.isBlurEnabled() == true) {
+    document.body.style.background = "none";
+}
