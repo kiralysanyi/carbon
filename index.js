@@ -22,7 +22,7 @@ var args = process.argv;
 
 //importing prompt module
 var prompt = require("./prompt");
-const { readFileSync } = require("fs");
+const { readFileSync, existsSync } = require("fs");
 const { randomUUID } = require("crypto");
 
 //permission handling, loading saved permissions and writing permissions
@@ -620,6 +620,17 @@ app.whenReady().then(() => {
                     openFirst = process.argv[x];
                 } catch (error) {
                     console.log("Argument is not url: ", process.argv[x]);
+                }
+            }
+        }
+
+        for (var x in process.argv) {
+            if (x > 0) {
+                if(existsSync(process.argv[x]) && process.argv[x] != ".") {
+                    console.log("Argument is path: ", process.argv[x]);
+                    openFirst = "file://" + process.argv[x];
+                } else {
+                    console.log("Argument is not a path: ", process.argv[x]);
                 }
             }
         }
