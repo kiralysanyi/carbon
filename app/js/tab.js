@@ -190,7 +190,10 @@ class tab {
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
                 if (document.getElementById("urlbar") != document.activeElement && utype != "home") {
-                    document.getElementById("urlbar").value = this.getUrl();
+                    var url = this.getUrl();
+                    if (url != "no_change") {
+                        document.getElementById("urlbar").value = url;
+                    }            
                 }
 
                 if (this.canGoBack() == true) {
@@ -230,8 +233,15 @@ class tab {
                 loadend(data.urltype);
             }
 
+            if (type == "did-fail-load") {
+                loadend();
+            }
+
             if (type == "page-title-updated") {
                 this.title.innerHTML = data.title;
+                if(focused_tab == this.id) {
+                    document.title = data.title + " - Carbon";
+                }
             }
 
             if (type == "page-favicon-updated") {
@@ -314,6 +324,7 @@ class tab {
     focus() {
         //focus tab
         focused_tab = this.id;
+        document.title = this.title.innerHTML + " - Carbon"
         for (var x in tabs) {
             if (x != this.id) {
                 tabs[x].hide();
@@ -322,7 +333,10 @@ class tab {
         this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
         this.isFocused = true;
         ipcRenderer.sendSync("focusTab", this.id)
-        document.getElementById("urlbar").value = this.getUrl();
+        var url = this.getUrl();
+        if (url != "no_change") {
+            document.getElementById("urlbar").value = url;
+        }
 
         if (afterinit == true) {
             if (this.canGoBack() == true) {

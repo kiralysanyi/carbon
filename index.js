@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
@@ -24,6 +24,7 @@ var args = process.argv;
 var prompt = require("./prompt");
 const { readFileSync, existsSync } = require("fs");
 const { randomUUID } = require("crypto");
+const createPage = require("./lib/crashpages/index").createPage;
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -224,6 +225,7 @@ function initMainWindow() {
     //tab management
     var webviews = {};
     var focusedTab = null;
+    const errorTracker = {};
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
@@ -274,7 +276,7 @@ function initMainWindow() {
         }
 
         view.webContents.on("did-navigate", () => {
-            if (new URL(view.webContents.getURL()).href != new URL(defaultHomePage).href) {
+            if (new URL(view.webContents.getURL()).href != new URL(defaultHomePage).href && errorTracker[uuid] != true) {
                 saveHistory();
             }
         })
@@ -284,12 +286,19 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-navigate", () => {
-            sendEvent({type: "did-navigate"});
+            sendEvent({ type: "did-navigate" });
         })
 
         view.webContents.on("did-start-loading", () => {
+            errorTracker[uuid] = false;
             sendEvent({ type: "did-start-loading" })
         });
+
+        view.webContents.on("did-fail-load", (e, code, description) => {
+            errorTracker[uuid] = true;
+            sendEvent({ type: "did-fail-load" });
+            view.webContents.loadURL(createPage(code, description, view.webContents.getURL()));
+        })
 
         view.webContents.on("did-navigate", () => {
             var utype = null;
@@ -482,16 +491,21 @@ function initMainWindow() {
     })
 
     ipcMain.on("getUrl", (e, uuid) => {
-        const view = webviews[uuid];
-        try {
-            if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
-                e.returnValue = "";
-                return;
-            }
-        } catch (error) {
+        if (errorTracker[uuid] != true) {
+            const view = webviews[uuid];
+            try {
+                if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
+                    e.returnValue = "";
+                    return;
+                }
+            } catch (error) {
 
+            }
+
+            e.returnValue = view.webContents.getURL();
+        } else {
+            e.returnValue = "no_change";
         }
-        e.returnValue = view.webContents.getURL();
     })
 
     ipcMain.on("focusTab", (e, uuid) => {
@@ -626,7 +640,7 @@ app.whenReady().then(() => {
 
         for (var x in process.argv) {
             if (x > 0) {
-                if(existsSync(process.argv[x]) && process.argv[x] != ".") {
+                if (existsSync(process.argv[x]) && process.argv[x] != ".") {
                     console.log("Argument is path: ", process.argv[x]);
                     openFirst = "file://" + process.argv[x];
                 } else {
@@ -744,6 +758,7 @@ app.on('session-created', function () {
     var dlitems = {};
 
     session.defaultSession.on("will-download", (e, item, webcontents) => {
+        new Notification({ title: "Download information", body: "Download has been started: " + item.getFilename() }).show()
         const DLID = randomUUID();
         dlitems[DLID] = item;
         var received0 = 0
@@ -797,6 +812,7 @@ app.on('session-created', function () {
                     "time": date.getTime()
                 }
                 settings.saveData("download.history.json", JSON.stringify(saved_downloads));
+                new Notification({ title: "Download information", body: "Download has been completed: " + item.getFilename() }).show()
             } else {
                 console.log(`Download failed: ${state}`)
             }
