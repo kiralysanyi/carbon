@@ -133,6 +133,7 @@ class tab {
         this.id = uuidv4();
         tabs[this.id] = this;
         this.isFocused = false;
+        this.error = false;
 
         this.tab_button = document.createElement("div");
         this.title = document.createElement("a");
@@ -226,6 +227,9 @@ class tab {
             }
 
             if (type == "did-start-loading") {
+                showCurrentTab();
+                this.error = false;
+                hideErrorPage();
                 loadstart();
             }
 
@@ -235,6 +239,22 @@ class tab {
 
             if (type == "did-fail-load") {
                 loadend();
+                this.error = {
+                    code: data.code,
+                    description: data.description
+                };
+
+                if (this.id == focused_tab) {
+                    hideCurrentTab();
+                    this.title.innerHTML = "Error!";
+                    const errorPageElement = showErrorPage(data.code, data.description);
+                    const reloadButton = document.createElement("button");
+                    reloadButton.innerHTML = "Retry";
+                    errorPageElement.appendChild(reloadButton);
+                    reloadButton.onclick = () => {
+                        this.reload();
+                    }
+                }
             }
 
             if (type == "page-title-updated") {
@@ -246,7 +266,6 @@ class tab {
 
             if (type == "page-favicon-updated") {
                 this.title.style.left = "40px";
-                console.log(favicons.length);
                 this.favicon.style.display = "block";
                 this.favicon.src = favicons[favicons.length - 1];
             }
@@ -322,7 +341,9 @@ class tab {
     }
 
     focus() {
+        hideErrorPage();
         //focus tab
+
         focused_tab = this.id;
         document.title = this.title.innerHTML + " - Carbon"
         for (var x in tabs) {
@@ -352,6 +373,17 @@ class tab {
             else {
                 hideForward();
             }
+        }
+
+        if (this.error != false) {
+            const errorPageElement = showErrorPage(this.error.code, this.error.description);
+            const reloadButton = document.createElement("button");
+            reloadButton.innerHTML = "Retry";
+            errorPageElement.appendChild(reloadButton);
+            reloadButton.onclick = () => {
+                this.reload();
+            }
+            hideCurrentTab();
         }
     }
 
@@ -411,6 +443,21 @@ class tab {
     devtools() {
         ipcRenderer.sendSync("openDevTools", this.id)
     }
+}
+
+function showErrorPage(code, description) {
+    const element = document.getElementById("error_page");
+    element.style.display = "block";
+    element.innerHTML += "<h1>An error occoured while loading the page!</h1>";
+    element.innerHTML += "<p>Code: " + code + "</p>";
+    element.innerHTML += "<p>Description: "+ description +"</p>";
+    return element;
+}
+
+function hideErrorPage() {
+    const element = document.getElementById("error_page");
+    element.style.display = "none";
+    element.innerHTML = "";
 }
 
 ipcRenderer.on("new_tab", (e, url) => {

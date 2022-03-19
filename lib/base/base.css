@@ -20,6 +20,27 @@ html {
     z-index: 10000000;
 }
 
+#error_page {
+    position: fixed;
+    top: 90px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 90px);
+    background-color: rgb(31, 31, 31);
+    color: white;
+    text-align: center;
+}
+
+#error_page button {
+    background-color: var(--accent-color);
+    color: white;
+    border-radius: 10px;
+    outline: 0;
+    border: none;
+    height: 40px;
+    width: 100px;
+}
+
 #window_controls {
     position: absolute;
     top: 0px;

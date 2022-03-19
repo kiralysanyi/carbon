@@ -24,7 +24,6 @@ var args = process.argv;
 var prompt = require("./prompt");
 const { readFileSync, existsSync } = require("fs");
 const { randomUUID } = require("crypto");
-const createPage = require("./lib/crashpages/index").createPage;
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -296,8 +295,8 @@ function initMainWindow() {
 
         view.webContents.on("did-fail-load", (e, code, description) => {
             errorTracker[uuid] = true;
-            sendEvent({ type: "did-fail-load" });
-            view.webContents.loadURL(createPage(code, description, view.webContents.getURL()));
+            sendEvent({ type: "did-fail-load", code: code, description: description });
+            console.log("Error: ",code, description);
         })
 
         view.webContents.on("did-navigate", () => {
