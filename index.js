@@ -69,6 +69,7 @@ var first_startup = false;
         settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
         //default config
         config_exp["blur"] = false;
+        config_exp["immersive_interface"] = false;
         settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
     }
 
@@ -514,6 +515,13 @@ function initMainWindow() {
         focusedTab = view;
         e.returnValue = 0;
     })
+
+    ipcMain.on("getBase64", (e) => {
+        var view = focusedTab;
+        view.webContents.capturePage({x: 0, y: 0, width: mainWin.getBounds().width, height: 90}).then((image) => {
+            e.reply("base64", image.toDataURL());
+        });
+    });
 
     ipcMain.on("hideCurrentTab", (e) => {
         var view = focusedTab;

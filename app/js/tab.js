@@ -487,3 +487,20 @@ function openDevTools() {
 function navigate(url) {
     getTab(focused_tab).navigate(url);
 }
+
+const immersiveInterfaceEnabled = settings.readKeyFromFile("experimental.conf.json", "immersive_interface");
+
+if (immersiveInterfaceEnabled == true) {
+    const topbar_image = document.getElementById("immersive_topbar");
+    document.getElementById("topbar").style.backgroundColor = "rgba(0,0,0,0.6)";
+    document.getElementById("topbar").style.backdropFilter = "blur(10px)";
+    topbar_image.style.display = "block";
+
+    ipcRenderer.on("base64", (e, image) => {
+        topbar_image.src = image;
+    });
+
+    setInterval(() => {
+        ipcRenderer.send("getBase64"); 
+    }, 200);
+}

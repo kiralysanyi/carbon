@@ -270,4 +270,21 @@ blur_switch.onchange = () => {
 exp_settings_table.appendChild(blur_row);
 
 
+//setting up row 2
+var immersive_row = document.createElement("tr");
+immersive_row.innerHTML = "<td><a>Immersive interface (browser restart needed)</a></td>";
+
+var immersive_td_2 = document.createElement("td");
+immersive_row.appendChild(immersive_td_2);
+var immersive_switch = new switchbox();
+immersive_td_2.appendChild(immersive_switch.mainElement);
+
+immersive_switch.changeState(experimental_config.immersive_interface);
+immersive_switch.onchange = () => {
+    experimental_config.immersive_interface = immersive_switch.state;
+    saveConf();
+}
+
+exp_settings_table.appendChild(immersive_row);
+
 general_tab.focus();
