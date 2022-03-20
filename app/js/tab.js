@@ -502,5 +502,5 @@ if (immersiveInterfaceEnabled == true) {
 
     setInterval(() => {
         ipcRenderer.send("getBase64"); 
-    }, 200);
+    }, 40);
 }

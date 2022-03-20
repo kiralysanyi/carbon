@@ -718,9 +718,15 @@ app.on('session-created', function () {
             callback(false);
             return false;
         }
+        
+        if (permission == "sensors") {
+            console.log("NOTE: sensor api disabled");
+            callback(false);
+            return false;
+        }
 
         if (permission == "media") {
-            var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?");
+            var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?", host + permission);
             if (permissions[host]) {
                 permissions[host][permission] = answer;
             }
@@ -734,7 +740,7 @@ app.on('session-created', function () {
         }
 
         console.log(host, " asked for permission: ", permission)
-        var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?");
+        var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?", host + permission);
         if (permissions[host]) {
             permissions[host][permission] = answer;
         }

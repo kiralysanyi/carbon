@@ -1,6 +1,6 @@
 const fs = require("fs");
 const homedir = require("os").homedir();
-const confdir = homedir + "/carbon"
+const confdir = homedir + "/.carbon"
 
 function checkDir() {
     if (!fs.existsSync(confdir)) {

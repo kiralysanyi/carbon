@@ -7,7 +7,21 @@ function uuidv4() {
     });
 }
 
-var confirm = (question) => {
+const prompts = {};
+
+var confirm = (question, promptid) => {
+    if (!promptid) {
+        console.log("No promptid provided!");
+        return false;
+    }
+
+    if (prompts[promptid] == "pending") {
+        console.log("Question already asked");
+        return false;
+    }
+
+    prompts[promptid] = "pending";
+
     return new Promise((resolved) => {
         const winID = uuidv4();
         const win = new BrowserWindow({
@@ -31,6 +45,7 @@ var confirm = (question) => {
         })
 
         ipcMain.once(winID + "answer", (e, args) => {
+            delete prompts[promptid];
             resolved(args)
             win.close();
         })
