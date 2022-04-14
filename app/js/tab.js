@@ -224,6 +224,7 @@ class tab {
             if (type == "did-navigate") {
                 this.favicon.style.display = "none";
                 this.title.style.left = "10px";
+                this.customcolor = false;
             }
 
             if (type == "did-start-loading") {
@@ -290,6 +291,11 @@ class tab {
                     console.error("No url provided by tabhost");
                 }
             }
+
+            if (type == "color-change") {
+                this.customcolor = true;
+                this.tab_button.style.backgroundColor = data.color;
+            }
         })
 
 
@@ -351,7 +357,10 @@ class tab {
                 tabs[x].hide();
             }
         }
-        this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
+
+        if (this.customcolor != true) {
+            this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
+        }
         this.isFocused = true;
         ipcRenderer.sendSync("focusTab", this.id)
         var url = this.getUrl();
@@ -390,7 +399,9 @@ class tab {
     hide() {
         //hide tab
         this.isFocused = false;
-        this.tab_button.style.backgroundColor = "transparent";
+        if (this.customcolor != true) {
+            this.tab_button.style.backgroundColor = "transparent";
+        }
     }
 
     back() {

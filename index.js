@@ -383,6 +383,10 @@ function initMainWindow() {
             }
         });
 
+        view.webContents.on("did-change-theme-color", (e, color) => {
+            sendEvent({type: "color-change", color: color});
+        })
+
         view.webContents.on("new-window", (e, url) => {
             sendEvent({ type: "new-window", url: url });
         });
