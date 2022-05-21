@@ -129,8 +129,7 @@ const startUpdate = async () => {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
         answer("100%", true);
-        autoUpdater.on("download-progress", (e, progress) => {
-            console.log(progress.percent);
+        autoUpdater.on("download-progress", (e) => {
             mainWin.webContents.send("update-state", "Downloading...");
         })
 
