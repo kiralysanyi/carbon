@@ -91,7 +91,7 @@ function savePermissions() {
 }
 
 //init update system
-
+var info;
 const runUpdate = async () => {
     autoUpdater.on("error", (error) => {
         console.log(error)
@@ -111,7 +111,7 @@ const runUpdate = async () => {
     autoUpdater.autoDownload = false;
     autoUpdater.disableWebInstaller = true;
     
-    var info = await autoUpdater.checkForUpdates();
+    info = await autoUpdater.checkForUpdates();
     if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
         new Notification({
             title: "Carbon Update",
