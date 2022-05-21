@@ -91,7 +91,19 @@ function savePermissions() {
 }
 
 //init update system
+
 const runUpdate = async () => {
+    autoUpdater.on("error", (error) => {
+        console.log(error)
+        answer("0", true);
+        new Notification({
+            title: "Carbon Update",
+            body: "Update failed :("
+        }).show();
+        mainWin.webContents.send("update-state", "Failed :(");
+    })
+
+    mainWin.webContents.send("update-state", "Checking...");
     new Notification({
         title: "Carbon Update",
         body: "Checking for updates"
@@ -105,28 +117,26 @@ const runUpdate = async () => {
             title: "Carbon Update",
             body: "Up to date!"
         }).show();
+        mainWin.webContents.send("update-state", "Up to date");
         return;
     }
+    mainWin.webContents.send("show-update-button");
+}
+
+const startUpdate = () => {
     var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
     if (answer != false) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
-        autoUpdater.on("download-progress", (progress) => {
+        answer("100%", true);
+        autoUpdater.on("download-progress", (e, progress) => {
             console.log(progress.percent);
-            answer(progress.percent + "%", false)
-        })
-
-        autoUpdater.on("error", (error) => {
-            console.log(error)
-            answer("0", true);
-            new Notification({
-                title: "Carbon Update",
-                body: "Update failed :("
-            }).show();
+            mainWin.webContents.send("update-state", "Downloading...");
         })
 
         autoUpdater.on("update-downloaded", () => {
-            answer("100%", true)
+            answer("100%", true);
+            mainWin.webContents.send("update-state", "Downloaded, ready to install.");
         })
     }
 }
@@ -638,7 +648,11 @@ app.whenReady().then(() => {
     ipcMain.on("checkUpdate", () => {
         runUpdate();
     })
-    runUpdate();
+
+    ipcMain.on("start-update", () => {
+        startUpdate();
+    })
+
     setTimeout(() => {
         //some ipc listeners
         ipcMain.on("getVersion", (e) => {

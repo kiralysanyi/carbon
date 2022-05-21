@@ -1,3 +1,5 @@
+const { ipcRenderer } = require("electron");
+
 function showLoader() {
     document.getElementById("loader").style.display = "block";
 }
@@ -111,6 +113,11 @@ function hidePlaceHolder() {
     showCurrentTab();
 }
 
+ipcRenderer.on("update-state", (e, state) => {
+    console.log(state)
+    document.getElementById("settings_iframe").send("update-state", state);
+})
+
 function showSettingsModal() {
     document.getElementById("toolbar").style.display = "none";
     showPlaceHolder();
@@ -118,6 +125,7 @@ function showSettingsModal() {
     modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
     modal.style.display = "block";
     document.getElementById("settings_iframe").reload();
+    
 
     setTimeout(() => {
         modal.style.transform = "translate(-50%, -50%) scale(1, 1)"
@@ -216,3 +224,11 @@ urlbar.addEventListener("blur", () => {
 urlbar.addEventListener("focus", () => {
     showSuggestions();
 });
+
+ipcRenderer.on("show-update-button", (e) => {
+    document.getElementById("update-button").style.display = "block";
+})
+
+document.getElementById("update-button").addEventListener("click", () => {
+    ipcRenderer.sendSync("start-update");
+})
