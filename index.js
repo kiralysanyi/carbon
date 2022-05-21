@@ -93,7 +93,24 @@ function savePermissions() {
 //init update system
 const runUpdate = async () => {
     autoUpdater.autoDownload = false;
-    autoUpdater.checkForUpdates();
+    autoUpdater.disableWebInstaller = true;
+    var info = await autoUpdater.checkForUpdates();
+    if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
+        return;
+    }
+    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version, "updateprompt")
+    if (answer != false) {
+        autoUpdater.autoInstallOnAppQuit = true;
+        autoUpdater.downloadUpdate();
+        autoUpdater.on("download-progress", (progress) => {
+            console.log(progress.percent);
+            answer(progress.percent + "%", false)
+        })
+
+        autoUpdater.on("update-downloaded", () => {
+            answer("100%", true)
+        })
+    }
 }
 
 

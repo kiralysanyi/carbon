@@ -52,6 +52,60 @@ var confirm = (question, promptid) => {
     })
 }
 
+
+var updatePrompt = (question, promptid) => {
+    if (!promptid) {
+        console.log("No promptid provided!");
+        return false;
+    }
+
+    if (prompts[promptid] == "pending") {
+        console.log("Question already asked");
+        return false;
+    }
+
+    prompts[promptid] = "pending";
+
+    return new Promise((resolved) => {
+        const winID = uuidv4();
+        const win = new BrowserWindow({
+            width: 400,
+            height: 550,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
+        });
+        win.removeMenu();
+        win.webContents.setUserAgent(winID);
+        win.loadFile("update-gui/update.html");
+        //win.webContents.openDevTools();
+
+        ipcMain.once(winID + "updateinfo", (e) => {
+            e.returnValue = question;
+        })
+
+        ipcMain.once(winID + "answer", (e, args) => {
+            delete prompts[promptid];
+
+            if (args == false) {
+                win.close();
+                resolved(args);
+            } else {
+                resolved((percentage, exit) => {
+                    win.webContents.send("update_percentage", percentage)
+                    if (exit == true) {
+                        win.close();
+                    }
+                })
+            }
+        })
+    })
+}
+
 var alert = (text) => {
     return new Promise((resolved) => {
         const winID = uuidv4();
@@ -90,5 +144,6 @@ ipcMain.on("alert", async (e, text) => {
 
 module.exports = {
     confirm: confirm,
-    alert: alert
+    alert: alert,
+    updatePrompt: updatePrompt
 }
