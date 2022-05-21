@@ -95,7 +95,6 @@ var info;
 const runUpdate = async () => {
     autoUpdater.on("error", (error) => {
         console.log(error)
-        answer("0", true);
         mainWin.webContents.send("update-state", "Failed :(");
     })
 
@@ -120,7 +119,6 @@ const startUpdate = async () => {
             mainWin.webContents.send("update-state", "Downloading...");
         })
         autoUpdater.on("update-downloaded", () => {
-            answer(true);
             mainWin.webContents.send("update-state", "Downloaded, ready to install.");
         })
     }
