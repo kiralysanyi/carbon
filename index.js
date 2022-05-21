@@ -92,13 +92,17 @@ function savePermissions() {
 
 //init update system
 const runUpdate = async () => {
+    new Notification({
+        title: "Carbon Update",
+        body: "Checking for updates"
+    }).show();
     autoUpdater.autoDownload = false;
     autoUpdater.disableWebInstaller = true;
     var info = await autoUpdater.checkForUpdates();
     if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
         return;
     }
-    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version, "updateprompt")
+    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
     if (answer != false) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
@@ -617,6 +621,9 @@ ipcMain.on("isDebug", (e) => {
 })
 
 app.whenReady().then(() => {
+    ipcMain.on("checkUpdate", () => {
+        runUpdate();
+    })
     runUpdate();
     setTimeout(() => {
         //some ipc listeners

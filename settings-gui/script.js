@@ -231,7 +231,12 @@ version_subtitle.innerHTML = "Carbon: " + getVersion();
 version_subtitle.innerHTML += "<br>Electron: " + process.versions.electron;
 version_subtitle.innerHTML += "<br>Chrome: " + process.versions.chrome;
 version_subtitle.innerHTML += "<br>Node: " + process.versions.node;
-
+var checkForUpdates_button = document.createElement("button")
+aboutpage.container.appendChild(checkForUpdates_button)
+checkForUpdates_button.innerHTML = "Check for updates"
+checkForUpdates_button.addEventListener("click", () => {
+    ipcRenderer.send("checkUpdate")
+})
 
 
 aboutpage.container.appendChild(version_subtitle);

@@ -146,3 +146,10 @@ input:focus {
 #container {
     background-color: rgba(65, 65, 65, 0.5);
 }
+
+button {
+    background-color: teal;
+    border: none;
+    height: 40px;
+    color: white;
+}
