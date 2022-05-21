@@ -123,7 +123,7 @@ const runUpdate = async () => {
     mainWin.webContents.send("show-update-button");
 }
 
-const startUpdate = () => {
+const startUpdate = async () => {
     var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
     if (answer != false) {
         autoUpdater.autoInstallOnAppQuit = true;
