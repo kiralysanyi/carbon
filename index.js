@@ -96,27 +96,15 @@ const runUpdate = async () => {
     autoUpdater.on("error", (error) => {
         console.log(error)
         answer("0", true);
-        new Notification({
-            title: "Carbon Update",
-            body: "Update failed :("
-        }).show();
         mainWin.webContents.send("update-state", "Failed :(");
     })
 
     mainWin.webContents.send("update-state", "Checking...");
-    new Notification({
-        title: "Carbon Update",
-        body: "Checking for updates"
-    }).show();
     autoUpdater.autoDownload = false;
     autoUpdater.disableWebInstaller = true;
     
     info = await autoUpdater.checkForUpdates();
     if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
-        new Notification({
-            title: "Carbon Update",
-            body: "Up to date!"
-        }).show();
         mainWin.webContents.send("update-state", "Up to date");
         return;
     }
