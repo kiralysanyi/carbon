@@ -229,7 +229,8 @@ function initMainWindow() {
     win.maximize();
 
     setTimeout(() => {
-        win.show()
+        win.show();
+        runUpdate();
     }, 1000);
 
 
