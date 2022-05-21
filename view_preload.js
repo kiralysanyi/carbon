@@ -47,8 +47,4 @@ carbonAPI.clearHistory = () => {
 
 carbonAPI.experimental = {}
 
-carbonAPI.experimental.isBlurEnabled = () => {
-    return settings.readKeyFromFile("experimental.conf.json", "blur");
-}
-
 console.log("Gutten tag! Preload loaded");

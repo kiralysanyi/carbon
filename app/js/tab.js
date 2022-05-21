@@ -19,12 +19,12 @@ function hideBack() {
     back_button.style.opacity = 0;
     setTimeout(() => {
         back_button.style.display = "none";
-        if (isForwardButtonShown) {
-            urlbar.style.width = "calc(100% - 160px);"
+        if (isForwardButtonShown == true) {
+            urlbar.style.width = "calc(100% - 260px)"
             urlbar.style.left = "150px"
         }
         else {
-            urlbar.style.width = "calc(100% - 110px);"
+            urlbar.style.width = "calc(100% - 210px)"
             urlbar.style.left = "100px"
         }
     }, 200);
@@ -36,10 +36,12 @@ function hideForward() {
     forward_button.style.opacity = 0;
     setTimeout(() => {
         forward_button.style.display = "none";
-        if (isBackButtonShown) {
+        if (isBackButtonShown == true) {
+            urlbar.style.width = "calc(100% - 260px)"
             urlbar.style.left = "150px"
         }
         else {
+            urlbar.style.width = "calc(100% - 210px)"
             urlbar.style.left = "100px"
         }
     }, 200);
@@ -52,9 +54,11 @@ function showBack() {
     setTimeout(() => {
         back_button.style.opacity = 1;
         if (isForwardButtonShown) {
+            urlbar.style.width = "calc(100% - 310px)"
             urlbar.style.left = "200px"
         }
         else {
+            urlbar.style.width = "calc(100% - 260px)"
             urlbar.style.left = "150px"
         }
     }, 200);
@@ -67,9 +71,11 @@ function showForward() {
     setTimeout(() => {
         forward_button.style.opacity = 1;
         if (isBackButtonShown) {
+            urlbar.style.width = "calc(100% - 310px)"
             urlbar.style.left = "200px"
         }
         else {
+            urlbar.style.width = "calc(100% - 210px)"
             urlbar.style.left = "150px"
         }
     }, 200);

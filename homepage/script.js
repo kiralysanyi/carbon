@@ -237,6 +237,3 @@ carbonAPI.getHistory().then((data) => {
     }
 });
 
-if (carbonAPI.experimental.isBlurEnabled() == true) {
-    document.body.style.background = "none";
-}

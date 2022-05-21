@@ -31,7 +31,7 @@
     left: 200px;
     top: 10px;
     height: 28px;
-    width: calc(100% - 210px);
+    width: calc(100% - 100px);
     -webkit-app-region: no-drag;
     border: none;
     border-radius: 5px;
@@ -87,7 +87,6 @@
     display: inline-block; 
     vertical-align: top; 
     white-space: normal; 
-    border-radius: 5px;
     overflow: hidden;
     transition: 200ms;
 }

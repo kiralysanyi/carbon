@@ -4,7 +4,6 @@ const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
-const glasstron = require("glasstron");
 
 require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
 
@@ -68,7 +67,6 @@ var first_startup = false;
         config_exp = {};
         settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
         //default config
-        config_exp["blur"] = false;
         config_exp["immersive_interface"] = false;
         settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
     }
@@ -152,45 +150,23 @@ function initSetup() {
 }
 
 function initMainWindow() {
-    var win = null;
+    var win = new BrowserWindow({
+        minWidth: 800,
+        minHeight: 600,
+        title: "Carbon",
+        frame: false,
+        show: false,
+        webPreferences: {
+            preload: path.join(__dirname, "preload.js"),
+            spellcheck: false,
+            contextIsolation: false,
+            nodeIntegration: true,
+            webviewTag: true,
+            nodeIntegrationInSubFrames: true
+        }
+    });
 
-    if (settings.readKeyFromFile("experimental.conf.json", "blur") == false) {
-        win = new BrowserWindow({
-            minWidth: 800,
-            minHeight: 600,
-            title: "Carbon",
-            frame: false,
-            show: false,
-            webPreferences: {
-                preload: path.join(__dirname, "preload.js"),
-                spellcheck: false,
-                contextIsolation: false,
-                nodeIntegration: true,
-                webviewTag: true,
-                nodeIntegrationInSubFrames: true
-            }
-        });
-    }
-    else {
-        win = new glasstron.BrowserWindow({
-            minWidth: 800,
-            minHeight: 600,
-            title: "Carbon",
-            frame: false,
-            show: false,
-            webPreferences: {
-                preload: path.join(__dirname, "preload.js"),
-                spellcheck: false,
-                contextIsolation: false,
-                nodeIntegration: true,
-                webviewTag: true,
-                nodeIntegrationInSubFrames: true
-            }
-        });
 
-        win.blurType = "blurbehind";
-        win.setBlur(true);
-    }
 
     mainWin = win;
     win.maximize();
@@ -237,7 +213,6 @@ function initMainWindow() {
         view.webContents.setUserAgent(USERAGENT);
         win.setBrowserView(view);
         view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
-        view.setAutoResize({ width: true, height: true });
         webviews[data.uuid] = view;
         const uuid = data.uuid;
         e.returnValue = 0;
@@ -297,7 +272,7 @@ function initMainWindow() {
         view.webContents.on("did-fail-load", (e, code, description) => {
             errorTracker[uuid] = true;
             sendEvent({ type: "did-fail-load", code: code, description: description });
-            console.log("Error: ",code, description);
+            console.log("Error: ", code, description);
         })
 
         view.webContents.on("did-navigate", () => {
@@ -384,7 +359,7 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-change-theme-color", (e, color) => {
-            sendEvent({type: "color-change", color: color});
+            sendEvent({ type: "color-change", color: color });
         })
 
         view.webContents.on("new-window", (e, url) => {
@@ -411,7 +386,7 @@ function initMainWindow() {
                 y = 90;
             }
             try {
-                view.setBounds({ width: win.getBounds().width, height: win.getBounds().height, x: 0, y: y });
+                view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - y, x: 0, y: y });
             } catch (error) {
 
             }
@@ -522,7 +497,7 @@ function initMainWindow() {
 
     ipcMain.on("getBase64", (e) => {
         var view = focusedTab;
-        view.webContents.capturePage({x: 0, y: 0, width: mainWin.getBounds().width, height: 90}).then((image) => {
+        view.webContents.capturePage({ x: 0, y: 0, width: mainWin.getBounds().width, height: 90 }).then((image) => {
             e.reply("base64", image.toDataURL());
         });
     });
@@ -722,7 +697,7 @@ app.on('session-created', function () {
             callback(false);
             return false;
         }
-        
+
         if (permission == "sensors") {
             console.log("NOTE: sensor api disabled");
             callback(false);

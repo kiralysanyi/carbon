@@ -253,24 +253,6 @@ exp_settings_table.appendChild(exp_settings_head);
 exp_settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
 
 //setting up row 1
-var blur_row = document.createElement("tr");
-blur_row.innerHTML = "<td><a>Window blur (browser restart needed)</a></td>";
-
-var blur_td_2 = document.createElement("td");
-blur_row.appendChild(blur_td_2);
-var blur_switch = new switchbox();
-blur_td_2.appendChild(blur_switch.mainElement);
-
-blur_switch.changeState(experimental_config.blur);
-blur_switch.onchange = () => {
-    experimental_config.blur = blur_switch.state;
-    saveConf();
-}
-
-exp_settings_table.appendChild(blur_row);
-
-
-//setting up row 2
 var immersive_row = document.createElement("tr");
 immersive_row.innerHTML = "<td><a>Immersive interface (browser restart needed)</a></td>";
 
