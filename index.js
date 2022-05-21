@@ -113,14 +113,12 @@ const runUpdate = async () => {
 
 const startUpdate = async () => {
     var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
-    if (answer != false) {
+    if (answer == true) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
-        answer(true);
         autoUpdater.on("download-progress", (e) => {
             mainWin.webContents.send("update-state", "Downloading...");
         })
-
         autoUpdater.on("update-downloaded", () => {
             answer(true);
             mainWin.webContents.send("update-state", "Downloaded, ready to install.");

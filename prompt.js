@@ -91,16 +91,8 @@ var updatePrompt = (question, promptid) => {
         ipcMain.once(winID + "answer", (e, args) => {
             delete prompts[promptid];
 
-            if (args == false) {
-                win.close();
-                resolved(args);
-            } else {
-                resolved((exit) => {
-                    if (exit == true) {
-                        win.close();
-                    }
-                })
-            }
+            win.close();
+            resolved(args);
         })
     })
 }
