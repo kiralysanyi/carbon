@@ -120,7 +120,7 @@ const startUpdate = async () => {
         })
         autoUpdater.on("update-downloaded", () => {
             mainWin.webContents.send("update-state", "Downloaded, ready to install.");
-            mainWin.webContents.send("hide-update.button")
+            mainWin.webContents.send("hide-update-button")
         })
     }
 }

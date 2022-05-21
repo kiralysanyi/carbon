@@ -232,5 +232,5 @@ ipcRenderer.on("hide-update-button", (e) => {
 })
 
 document.getElementById("update-button").addEventListener("click", () => {
-    ipcRenderer.sendSync("start-update");
+    ipcRenderer.send("start-update");
 })
