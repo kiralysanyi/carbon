@@ -227,6 +227,10 @@ ipcRenderer.on("show-update-button", (e) => {
     document.getElementById("update-button").style.display = "block";
 })
 
+ipcRenderer.on("hide-update-button", (e) => {
+    document.getElementById("update-button").style.display = "none";
+})
+
 document.getElementById("update-button").addEventListener("click", () => {
     ipcRenderer.sendSync("start-update");
 })
