@@ -95,8 +95,7 @@ var updatePrompt = (question, promptid) => {
                 win.close();
                 resolved(args);
             } else {
-                resolved((percentage, exit) => {
-                    win.webContents.send("update_percentage", percentage)
+                resolved((exit) => {
                     if (exit == true) {
                         win.close();
                     }

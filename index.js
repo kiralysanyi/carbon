@@ -116,13 +116,13 @@ const startUpdate = async () => {
     if (answer != false) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
-        answer("100%", true);
+        answer(true);
         autoUpdater.on("download-progress", (e) => {
             mainWin.webContents.send("update-state", "Downloading...");
         })
 
         autoUpdater.on("update-downloaded", () => {
-            answer("100%", true);
+            answer(true);
             mainWin.webContents.send("update-state", "Downloaded, ready to install.");
         })
     }
