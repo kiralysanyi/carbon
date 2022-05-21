@@ -98,8 +98,13 @@ const runUpdate = async () => {
     }).show();
     autoUpdater.autoDownload = false;
     autoUpdater.disableWebInstaller = true;
+    
     var info = await autoUpdater.checkForUpdates();
     if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
+        new Notification({
+            title: "Carbon Update",
+            body: "Up to date!"
+        }).show();
         return;
     }
     var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
@@ -109,6 +114,15 @@ const runUpdate = async () => {
         autoUpdater.on("download-progress", (progress) => {
             console.log(progress.percent);
             answer(progress.percent + "%", false)
+        })
+
+        autoUpdater.on("error", (error) => {
+            console.log(error)
+            answer("0", true);
+            new Notification({
+                title: "Carbon Update",
+                body: "Update failed :("
+            }).show();
         })
 
         autoUpdater.on("update-downloaded", () => {
