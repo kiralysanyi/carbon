@@ -39,5 +39,6 @@ function readKeyFromFile(filename, key) {
 module.exports = {
     saveData: saveData,
     readData: readData,
-    readKeyFromFile: readKeyFromFile
+    readKeyFromFile: readKeyFromFile,
+    confdir: confdir
 }

@@ -1,0 +1,22 @@
+{
+    "appId": "com.kiralysanyi.carbon",
+    "productName": "Carbon",
+    "publish": [
+      {
+        "provider": "github",
+        "owner": "kiralysanyi",
+        "repo": "carbon_release"
+      }
+    ],
+    "win": {
+      "publish": ["github"],
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+}

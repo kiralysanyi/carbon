@@ -2,22 +2,19 @@
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
   "version": "0.1.9",
-  "build": {
-    "productName": "Carbon"
-  },
   "description": "Web browser",
   "main": "index.js",
   "scripts": {
     "test": "electron . --debug --trace-warnings --verbose --setup",
     "autobuild": "electron-builder",
-    "build_win": "electron-builder -w",
+    "build_win": "electron-builder -w -p always",
     "build_linux": "electron-builder -l",
     "build_all": "electron-builder -lw",
     "start": "electron ."
   },
   "repository": {
     "type": "git",
-    "url": "git+https://kiralysanyi@bitbucket.org/kiralysanyi/carbon.git"
+    "url": "https://github.com/kiralysanyi/carbon.git"
   },
   "keywords": [
     "web",
@@ -25,7 +22,7 @@
   ],
   "author": "Király Sándor",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/kiralysanyi/carbon#readme",
+  "homepage": "https://github.com/kiralysanyi/carbon",
   "devDependencies": {
     "electron": "^18.2.4",
     "electron-builder": "^22.14.13"
@@ -33,6 +30,7 @@
   "dependencies": {
     "@cliqz/adblocker-electron": "^1.23.6",
     "cross-fetch": "^3.1.5",
-    "electron-context-menu": "^3.1.2"
+    "electron-context-menu": "^3.1.2",
+    "electron-updater": "^5.0.1"
   }
 }

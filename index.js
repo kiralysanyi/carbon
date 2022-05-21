@@ -1,9 +1,13 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
+const { autoUpdater } = require("electron-updater")
+
+
+
 
 require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
 
@@ -85,6 +89,14 @@ var first_startup = false;
 function savePermissions() {
     settings.saveData("permissions.conf.json", JSON.stringify(permissions));
 }
+
+//init update system
+const runUpdate = async () => {
+    autoUpdater.autoDownload = false;
+    autoUpdater.checkForUpdates();
+}
+
+
 
 var mainWin = null;
 //check for parameter
@@ -588,6 +600,7 @@ ipcMain.on("isDebug", (e) => {
 })
 
 app.whenReady().then(() => {
+    runUpdate();
     setTimeout(() => {
         //some ipc listeners
         ipcMain.on("getVersion", (e) => {
