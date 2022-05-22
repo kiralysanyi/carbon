@@ -8,6 +8,10 @@
     <title>New Page</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="../lib/lineicons/lineicons.css">
+    <link rel="stylesheet" href="../lib/tabs/tabs.css">
+    <link rel="stylesheet" href="../lib/select/select.css">
+    <script src="../lib/select/select.js"></script>
+    <script src="../lib/tabs/tabs.js"></script>
 </head>
 
 <body>
@@ -28,14 +32,18 @@
     <div id="sidebar">
         <div id="sidebar_content">
             <!--Sidebar content here-->
-            <div>Settings</div>
+            <div onclick="showSettings()">Settings</div>
         </div>
         <a id="version_indicator"></a>
     </div>
     <div id="sidebar_open">
         <i class="lni lni-menu"></i>
     </div>
-
+    <div id="settings">
+        <button id="close_settings" onclick="hideSettings()">&times;</button>
+        <div id="tab_bar"></div>
+        <div id="container"></div>
+    </div>  
 </body>
 <script src="script.js"></script>
 <!-- Images from: https://picsum.photos/ -->

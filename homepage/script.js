@@ -84,8 +84,8 @@ if (carbonAPI.getSearchEngine() == "duckduckgo") {
     function check() {
         sendRequest(query_strings.duckduckgo + searchbox.value, (result) => {
             autocomplete_box.innerHTML = "";
-            
-            if(result.length < 6) {
+
+            if (result.length < 6) {
                 autocomplete_box.style.height = 50 * result.length + "px";
             }
             else {
@@ -141,7 +141,7 @@ if (carbonAPI.getSearchEngine() == "google") {
         sendRequest(query_strings.google + searchbox.value, (result) => {
             var results = result[1];
             autocomplete_box.innerHTML = "";
-            if(results.length < 6) {
+            if (results.length < 6) {
                 autocomplete_box.style.height = 50 * results.length + "px";
             }
             else {
@@ -197,7 +197,7 @@ function disableAutocomplete() {
     }, 100);
 }
 
-if(carbonAPI.getSearchEngine() == "bing") {
+if (carbonAPI.getSearchEngine() == "bing") {
     autocomplete_box.style.height = "50px";
     var message = document.createElement("a");
     autocomplete_box.appendChild(message);
@@ -237,3 +237,69 @@ carbonAPI.getHistory().then((data) => {
     }
 });
 
+if (!localStorage.getItem("background")) {
+    localStorage.setItem("background", "random")
+}
+
+if (localStorage.getItem("background") == "random") {
+    document.body.style.backgroundImage = 'url("https://picsum.photos/1920/1080")'
+} else {
+    document.body.style.backgroundImage = "url('" + localStorage.getItem("background").replace(/(\r\n|\n|\r)/gm, "") + "')"
+}
+
+function showSettings() {
+    const settings_element = document.getElementById("settings");
+    settings_element.style.display = "block";
+    setTimeout(() => {
+        settings_element.style.height = "100%";
+    }, 10);
+}
+
+function hideSettings() {
+    const settings_element = document.getElementById("settings");
+    settings_element.style.height = "0%";
+    setTimeout(() => {
+        settings_element.style.display = "none";
+        location.reload();
+    }, 200);
+}
+
+const background_tab = new tab("Background");
+background_tab.focus();
+const back_select = new select();
+back_select.addOption("Random", "random");
+back_select.addOption("Custom", "custom")
+back_select.mainObj.id = "selector";
+const custom_input = document.createElement("input")
+custom_input.type = "file";
+custom_input.style.display = "none";
+custom_input.accept = "image/png, image/jpeg";
+
+
+custom_input.addEventListener("change", (e) => {
+    background_image_preview.src = custom_input.files[0].path
+    var reader = new FileReader();
+    reader.onloadend = function() {
+        localStorage.setItem("background", reader.result)
+    }
+    reader.readAsDataURL(custom_input.files[0]);
+})
+
+back_select.onchange = () => {
+    if (back_select.value == "custom") {
+        custom_input.click();
+    } else {
+        localStorage.setItem("background", "random")
+    }
+}
+
+var background_image_preview = document.createElement("img")
+background_image_preview.id = "image_preview";
+background_tab.container.appendChild(background_image_preview);
+background_tab.container.appendChild(back_select.mainObj);
+
+if (localStorage.getItem("background") == "random") {
+    background_image_preview.src = "https://picsum.photos/1920/1080";
+} else {
+    background_image_preview.src = localStorage.getItem("background")
+}

@@ -1,11 +1,11 @@
 body {
-    background-image: url("https://picsum.photos/1920/1080");
     background-position: center;
     background-repeat: no-repeat;
     background-attachment: fixed;
     background-size: cover;
     font-family: Arial, Helvetica, sans-serif;
     user-select: none;
+    color: white;
 }
 
 #sidebar {
@@ -194,4 +194,67 @@ body {
 
 .history_element:hover {
     background-color: rgb(65, 65, 65);
+}
+
+#settings {
+    position: fixed;
+    top: 0%;
+    left: 0%;
+    width: 100%;
+    height: 0%;
+    background-color: rgba(31, 31, 31, 0.623);
+    backdrop-filter: blur(4px);
+    display: none;
+    transition: 200ms;
+}
+
+#close_settings {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 40px;
+    height: 40px;
+    background-color: transparent;
+    color: white;
+    border: none;
+    font-size: 23px;
+}
+
+#tab_bar {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: calc(100% - 40px);
+    height: 40px;
+}
+
+#tab_bar div {
+    position: relative;
+    height: 40px;
+    width: 150px;
+    line-height: 40px;
+    background-color: rgba(255, 255, 255, 0.123);
+    color: white;
+}
+
+#container {
+    position: absolute;
+    top: 40px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 40px);
+    text-align: center;
+}
+
+#image_preview {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 100%;
+    max-height: 300px;
+}
+
+#selector {
+    position: absolute;
+    top: 310px;
+    left: calc(50% - 100px);
 }
