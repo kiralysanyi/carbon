@@ -238,6 +238,13 @@ checkForUpdates_button.addEventListener("click", () => {
     ipcRenderer.send("checkUpdate")
 })
 
+ipcRenderer.on("show-update", () => {
+    var update_button = document.createElement("button");
+    update_button.innerHTML = "Update";
+    update_state_display.innerHTML = "Update available";
+    aboutpage.container.appendChild(update_button);
+})
+
 var update_state_display = document.createElement("h3");
 update_state_display.innerHTML = "No updates found";
 ipcRenderer.on("update-state", (e, state) => {

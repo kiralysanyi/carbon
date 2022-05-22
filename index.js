@@ -92,36 +92,43 @@ function savePermissions() {
 
 //init update system
 var info;
+autoUpdater.on("download-progress", (e) => {
+    mainWin.webContents.send("update-state", "Downloading...");
+})
+autoUpdater.on("update-downloaded", () => {
+    mainWin.webContents.send("update-state", "Downloaded, ready to install.");
+    mainWin.webContents.send("hide-update-button")
+})
+
+autoUpdater.on("error", () => {
+    mainWin.webContents.send("update-state", "Failed :(");
+})
+
 const runUpdate = async () => {
-    autoUpdater.on("error", (error) => {
-        console.log(error)
-        mainWin.webContents.send("update-state", "Failed :(");
-    })
 
     mainWin.webContents.send("update-state", "Checking...");
     autoUpdater.autoDownload = false;
     autoUpdater.disableWebInstaller = true;
-    
-    info = await autoUpdater.checkForUpdates();
-    if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
-        mainWin.webContents.send("update-state", "Up to date");
-        return;
+
+    try {
+        info = await autoUpdater.checkForUpdates();
+        if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
+            mainWin.webContents.send("update-state", "Up to date");
+            return;
+        }
+        mainWin.webContents.send("show-update-button");
+    } catch (error) {
+        mainWin.webContents.send("update-state", "Failed to check for updates :(");
+        console.error(error);
     }
-    mainWin.webContents.send("show-update-button");
+
 }
 
 const startUpdate = async () => {
-    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: " + info.updateInfo.releaseNotes, "updateprompt")
+    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
     if (answer == true) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
-        autoUpdater.on("download-progress", (e) => {
-            mainWin.webContents.send("update-state", "Downloading...");
-        })
-        autoUpdater.on("update-downloaded", () => {
-            mainWin.webContents.send("update-state", "Downloaded, ready to install.");
-            mainWin.webContents.send("hide-update-button")
-        })
     }
 }
 
@@ -312,6 +319,10 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-fail-load", (e, code, description) => {
+            if (code == "-27") {
+                console.log("Reporting of error -27 is cancelled")
+                return
+            }
             errorTracker[uuid] = true;
             sendEvent({ type: "did-fail-load", code: code, description: description });
             console.log("Error: ", code, description);
