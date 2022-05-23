@@ -91,12 +91,7 @@ function savePermissions() {
 }
 
 //init update system
-if (!settings.readKeyFromFile("general.conf.json", "update-channel")) {
-    autoUpdater.channel = "stable";
-}
-autoUpdater.channel = settings.readKeyFromFile("general.conf.json ","update-channel");
-autoUpdater.allowDowngrade = true;
-
+autoUpdater.channel = "latest";
 
 var info;
 autoUpdater.on("download-progress", (e) => {
