@@ -231,6 +231,9 @@ class historyItem {
 
 carbonAPI.getHistory().then((data) => {
     console.log(data);
+    if (Object.keys(data).length == 0) {
+        document.getElementById("clearHistory").style.display = "none";
+    }
     for (var x in data) {
         var object = data[x];
         new historyItem(object.title, object.url, object.iconURL);
