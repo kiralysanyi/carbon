@@ -123,7 +123,7 @@ const runUpdate = async () => {
 
     try {
         info = await autoUpdater.checkForUpdates();
-        if (info.updateInfo.version.includes("beta") == true && autoUpdater.channel != "beta") {
+        if (info.updateInfo.version.includes("beta") == true && settings.readKeyFromFile("general.conf.json", "update-channel") != "beta") {
             mainWin.webContents.send("update-state", "Couldn't download beta version because only stable version is allowed.");
             return;
         }
