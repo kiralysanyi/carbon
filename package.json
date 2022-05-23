@@ -24,7 +24,7 @@
   "license": "ISC",
   "homepage": "https://github.com/kiralysanyi/carbon_release",
   "devDependencies": {
-    "electron": "18.2.1",
+    "electron": "18.2.2",
     "electron-builder": "^22.14.13"
   },
   "dependencies": {
