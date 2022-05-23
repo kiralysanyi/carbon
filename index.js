@@ -92,7 +92,7 @@ function savePermissions() {
 
 //init update system
 if (!settings.readKeyFromFile("general.conf.json", "update-channel")) {
-    
+    autoUpdater.channel = "stable";
 }
 autoUpdater.channel = settings.readKeyFromFile("general.conf.json ","update-channel");
 autoUpdater.allowDowngrade = true;
@@ -123,6 +123,10 @@ const runUpdate = async () => {
 
     try {
         info = await autoUpdater.checkForUpdates();
+        if (info.updateInfo.version.includes("beta") == true && autoUpdater.channel != "beta") {
+            mainWin.webContents.send("update-state", "Couldn't download beta version because only stable version is allowed.");
+            return;
+        }
         if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
             mainWin.webContents.send("update-state", "Up to date");
             return;
