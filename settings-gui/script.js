@@ -245,6 +245,9 @@ ipcRenderer.on("show-update", () => {
     update_button.innerHTML = "Update";
     update_state_display.innerHTML = "Update available";
     aboutpage.container.appendChild(update_button);
+    update_button.addEventListener("click", () => {
+        ipcRenderer.send("start-update")
+    })
 })
 var update_channel_select = new select();
 update_channel_select.addOption("stable", "stable");
@@ -267,7 +270,7 @@ ipcRenderer.on("update-state", (e, state) => {
 aboutpage.container.appendChild(version_subtitle);
 aboutpage.container.appendChild(update_state_display);
 aboutpage.container.appendChild(update_channel_select.mainObj);
-update_channel_select.mainObj.style.marginTop = "60px"
+update_channel_select.mainObj.style.marginTop = "50px"
 
 
 //setting up experimental page
