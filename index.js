@@ -7,8 +7,6 @@ const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { autoUpdater } = require("electron-updater")
 
 
-
-
 require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
 
 //useragent
@@ -60,6 +58,7 @@ var first_startup = false;
         config["adblock"] = false;
         config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
+        config["update-channel"] = "stable";
         settings.saveData("general.conf.json", JSON.stringify(config));
         first_startup = true;
     }
@@ -91,6 +90,12 @@ function savePermissions() {
 }
 
 //init update system
+if (!settings.readKeyFromFile("general.conf.json", "update-channel")) {
+    
+}
+autoUpdater.channel = settings.readKeyFromFile("general.conf.json ","update-channel");
+autoUpdater.allowDowngrade = true;
+
 var info;
 autoUpdater.on("download-progress", (e) => {
     mainWin.webContents.send("update-state", "Downloading...");
@@ -666,7 +671,9 @@ app.whenReady().then(() => {
             e.returnValue = Object.keys(searchStrings);
         });
 
-        first_startup = checkParameter("--setup");
+        if (checkParameter("--setup")) {
+            first_startup = true;
+        }
         var openFirst = null;
 
         ipcMain.once("openFirst", (e) => {

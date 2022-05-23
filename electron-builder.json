@@ -1,6 +1,7 @@
 {
     "appId": "com.kiralysanyi.carbon",
     "productName": "Carbon",
+    "generateUpdatesFilesForAllChannels": true,
     "publish": [
       {
         "provider": "github",

@@ -244,6 +244,17 @@ ipcRenderer.on("show-update", () => {
     update_state_display.innerHTML = "Update available";
     aboutpage.container.appendChild(update_button);
 })
+var update_channel_select = new select();
+update_channel_select.addOption("stable", "stable");
+update_channel_select.addOption("beta", "beta");
+
+update_channel_select.setValue(config["update-channel"])
+
+update_channel_select.onchange = () => {
+    config["update-channel"] = update_channel_select.value;
+    saveConf();
+    update_state_display.innerHTML = "You need to restart the browser to apply changes."
+}
 
 var update_state_display = document.createElement("h3");
 update_state_display.innerHTML = "No updates found";
@@ -253,6 +264,8 @@ ipcRenderer.on("update-state", (e, state) => {
 
 aboutpage.container.appendChild(version_subtitle);
 aboutpage.container.appendChild(update_state_display);
+aboutpage.container.appendChild(update_channel_select.mainObj);
+update_channel_select.mainObj.style.marginTop = "60px"
 
 
 //setting up experimental page
