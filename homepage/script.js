@@ -299,7 +299,13 @@ background_tab.container.appendChild(background_image_preview);
 background_tab.container.appendChild(back_select.mainObj);
 
 if (localStorage.getItem("background") == "random") {
+    back_select.setValue("random");
+} else {
+    back_select.setValue("custom");
+}
+
+if (localStorage.getItem("background") == "random") {
     background_image_preview.src = "https://picsum.photos/1920/1080";
 } else {
-    background_image_preview.src = localStorage.getItem("background")
+    background_image_preview.src = localStorage.getItem("background");
 }

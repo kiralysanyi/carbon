@@ -59,6 +59,7 @@ var first_startup = false;
         config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
         config["update-channel"] = "stable";
+        config["auto-update"] = false;
         settings.saveData("general.conf.json", JSON.stringify(config));
         first_startup = true;
     }
@@ -96,6 +97,7 @@ if (!settings.readKeyFromFile("general.conf.json", "update-channel")) {
 autoUpdater.channel = settings.readKeyFromFile("general.conf.json ","update-channel");
 autoUpdater.allowDowngrade = true;
 
+
 var info;
 autoUpdater.on("download-progress", (e) => {
     mainWin.webContents.send("update-state", "Downloading...");
@@ -108,6 +110,10 @@ autoUpdater.on("update-downloaded", () => {
 autoUpdater.on("error", () => {
     mainWin.webContents.send("update-state", "Failed :(");
 })
+
+if(settings.readKeyFromFile("general.conf.json", "auto-update")) {
+    autoUpdater.autoDownload = true;
+}
 
 const runUpdate = async () => {
 

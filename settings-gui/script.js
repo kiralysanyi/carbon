@@ -151,6 +151,8 @@ home_input.value = config.homePage;
 
 settings_row3.appendChild(home_td1);
 settings_row3.appendChild(home_td2);
+
+
 //setting up permissions page
 
 function refresh() {
@@ -298,6 +300,22 @@ immersive_switch.onchange = () => {
     saveConf();
 }
 
+//setting up row 2
+var autoupdate_row = document.createElement("tr");
+autoupdate_row.innerHTML = "<td><a>Enable auto updates (browser restart needed)</a></td>";
+
+var autoupdate_td = document.createElement("td");
+autoupdate_row.appendChild(autoupdate_td);
+var autoupdate_switch = new switchbox();
+autoupdate_td.appendChild(autoupdate_switch.mainElement);
+console.log(config["auto-update"])
+autoupdate_switch.changeState(config["auto-update"]);
+autoupdate_switch.onchange = () => {
+    config["auto-update"] = autoupdate_switch.state;
+    saveConf();
+}
+
 exp_settings_table.appendChild(immersive_row);
+exp_settings_table.appendChild(autoupdate_row);
 
 general_tab.focus();
