@@ -231,6 +231,13 @@ class tab {
                 this.favicon.style.display = "none";
                 this.title.style.left = "10px";
                 this.customcolor = false;
+                this.tab_button.style.color = "white"
+                this.customcolor = false;
+                if (this.isFocused == true) {
+                    this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
+                } else {
+                    this.tab_button.style.backgroundColor = "transparent";
+                }
             }
 
             if (type == "did-start-loading") {
@@ -301,6 +308,11 @@ class tab {
             if (type == "color-change") {
                 this.customcolor = true;
                 this.tab_button.style.backgroundColor = data.color;
+                if(wc_hex_is_light(data.color)) {
+                    this.tab_button.style.color = "black";
+                } else {
+                    this.tab_button.style.color = "white";
+                }
             }
         })
 
