@@ -220,7 +220,7 @@ class tab {
 
         //connect to tabhost
         console.log("Initializing tab: ", this.id)
-        ipcRenderer.sendSync("newTab", { uuid: this.id })
+        ipcRenderer.send("newTab", { uuid: this.id })
         //event listeners
         ipcRenderer.on(this.id, (e, data) => {
             const type = data.type;
@@ -327,7 +327,7 @@ class tab {
         }
         this.focus();
         onTabUpdate();
-        ipcRenderer.sendSync("addListeners")
+        ipcRenderer.send("addListeners")
 
 
         //dynamic tab button
@@ -344,12 +344,12 @@ class tab {
     }
 
     mute() {
-        ipcRenderer.sendSync("mute", this.id);
+        ipcRenderer.send("mute", this.id);
     }
 
     navigate(url) {
         //load url
-        ipcRenderer.sendSync("navigate", { uuid: this.id, url: url });
+        ipcRenderer.send("navigate", { uuid: this.id, url: url });
     }
 
     getUrl() {
@@ -380,7 +380,7 @@ class tab {
             this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
         }
         this.isFocused = true;
-        ipcRenderer.sendSync("focusTab", this.id)
+        ipcRenderer.send("focusTab", this.id)
         var url = this.getUrl();
         if (url != "no_change") {
             document.getElementById("urlbar").value = url;
@@ -424,22 +424,22 @@ class tab {
 
     back() {
         //goback
-        ipcRenderer.sendSync("goBack", this.id)
+        ipcRenderer.send("goBack", this.id)
     }
 
     reload() {
         //reload
-        ipcRenderer.sendSync("reload", this.id);
+        ipcRenderer.send("reload", this.id);
     }
 
     forward() {
         //goforward
-        ipcRenderer.sendSync("goForward", this.id)
+        ipcRenderer.send("goForward", this.id)
     }
 
     destroy() {
         //close tab
-        ipcRenderer.sendSync("removeTab", this.id);
+        ipcRenderer.send("removeTab", this.id);
         this.tab_button.style.width = "0%";
         setTimeout(() => {
             this.tab_button.remove();
@@ -470,7 +470,7 @@ class tab {
     }
 
     devtools() {
-        ipcRenderer.sendSync("openDevTools", this.id)
+        ipcRenderer.send("openDevTools", this.id)
     }
 }
 

@@ -270,6 +270,12 @@ ipcRenderer.on("update-state", (e, state) => {
 aboutpage.container.appendChild(version_subtitle);
 aboutpage.container.appendChild(update_state_display);
 aboutpage.container.appendChild(update_channel_select.mainObj);
+update_channel_select.mainObj.style.marginTop = "20px"
+
+var spacer = document.createElement("div")
+spacer.classList.add("spacer")
+aboutpage.container.appendChild(spacer)
+
 update_channel_select.mainObj.style.marginTop = "50px"
 
 
