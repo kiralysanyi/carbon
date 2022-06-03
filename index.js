@@ -117,6 +117,7 @@ if(settings.readKeyFromFile("general.conf.json", "auto-update")) {
     autoUpdater.autoDownload = true;
 }
 
+
 const runUpdate = async () => {
 
     mainWin.webContents.send("update-state", "Checking...");

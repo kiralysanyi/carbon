@@ -229,6 +229,68 @@ class historyItem {
     }
 }
 
+
+function componentToHex(c) {
+    var hex = c.toString(16);
+    return hex.length == 1 ? "0" + hex : hex;
+}
+
+function rgbToHex(r, g, b) {
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+const colorThief = carbonAPI.experimental.ColorThief;
+
+var backgroundRGB;
+var backgroundHEX;
+
+
+
+const startTheming = async () => {
+    var color;
+    if (localStorage.getItem("background") == "random") {
+        color = await colorThief.getColor(image_string)
+    } else {
+        color = await colorThief.getColor(localStorage.getItem("background"))
+    }
+    console.log(color)
+    hex = rgbToHex(color[0], color[1], color[2])
+    console.log(hex)
+    backgroundRGB = color;
+    backgroundHEX = hex;
+    var metaThemeColor = document.querySelector("meta[name=theme-color]");
+    metaThemeColor.setAttribute("content", hex);
+    searchbox.style.backgroundColor = hex
+
+    if (carbonAPI.experimental.wc_hex_is_light(hex)) {
+        searchbox.style.color = "black"
+        autocomplete_box.style.color = "black";
+        historyDOM.style.color = "black";
+    } else {
+        searchbox.style.color = "white"
+        autocomplete_box.style.color = "white";
+        historyDOM.style.color = "white";
+
+    }
+
+    autocomplete_box.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
+    historyDOM.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
+}
+
+function toDataURL(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+        var reader = new FileReader();
+        reader.onloadend = function () {
+            callback(reader.result);
+        }
+        reader.readAsDataURL(xhr.response);
+    };
+    xhr.open('GET', url);
+    xhr.responseType = 'blob';
+    xhr.send();
+}
+
 carbonAPI.getHistory().then((data) => {
     console.log(data);
     if (Object.keys(data).length == 0) {
@@ -244,11 +306,22 @@ if (!localStorage.getItem("background")) {
     localStorage.setItem("background", "random")
 }
 
-if (localStorage.getItem("background") == "random") {
-    document.body.style.backgroundImage = 'url("https://picsum.photos/1920/1080")'
-} else {
+var image_string;
+
+toDataURL("https://picsum.photos/1920/1080", (string) => {
+    image_string = string
+    if (localStorage.getItem("background") == "random") {
+        document.body.style.backgroundImage = 'url("' + image_string.replace(/(\r\n|\n|\r)/gm, "") + '")'
+        startTheming();
+    }
+})
+
+if(localStorage.getItem("background") != "random") {
     document.body.style.backgroundImage = "url('" + localStorage.getItem("background").replace(/(\r\n|\n|\r)/gm, "") + "')"
+    startTheming();
 }
+
+
 
 function showSettings() {
     const settings_element = document.getElementById("settings");
@@ -282,7 +355,7 @@ custom_input.accept = "image/png, image/jpeg";
 custom_input.addEventListener("change", (e) => {
     background_image_preview.src = custom_input.files[0].path
     var reader = new FileReader();
-    reader.onloadend = function() {
+    reader.onloadend = function () {
         localStorage.setItem("background", reader.result)
     }
     reader.readAsDataURL(custom_input.files[0]);
@@ -312,3 +385,5 @@ if (localStorage.getItem("background") == "random") {
 } else {
     background_image_preview.src = localStorage.getItem("background");
 }
+
+
