@@ -5,13 +5,20 @@ const settings = require("./settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { autoUpdater } = require("electron-updater")
+console.log("Carbon is starting on platform: ", process.platform)
 
 
 require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
 
 //useragent
-const USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.54 Safari/537.36";
-const USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0";
+var USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
+var USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36";
+
+if(process.platform == "linux") {
+    USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
+    USERAGENT_FIREFOX = "Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0";
+}
+
 const searchStrings = {
     google: "https://google.com/search?q=",
     bing: "https://www.bing.com/search?q=",
@@ -329,8 +336,8 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-fail-load", (e, code, description) => {
-            if (code == "-27") {
-                console.log("Reporting of error -27 is cancelled")
+            if (code == "-27" || code == "-3" || code == "-30") {
+                console.log("Reporting of error "+ code +" is cancelled")
                 return
             }
             errorTracker[uuid] = true;
