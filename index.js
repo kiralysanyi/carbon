@@ -8,13 +8,12 @@ const { autoUpdater } = require("electron-updater")
 console.log("Carbon is starting on platform: ", process.platform)
 
 
-require("electron").app.commandLine.appendSwitch("enable-transparent-visuals");
 
 //useragent
 var USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
 var USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36";
 
-if(process.platform == "linux") {
+if (process.platform == "linux") {
     USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
     USERAGENT_FIREFOX = "Mozilla/5.0 (X11; Linux x86_64; rv:100.0) Gecko/20100101 Firefox/100.0";
 }
@@ -113,7 +112,7 @@ autoUpdater.on("error", () => {
     mainWin.webContents.send("update-state", "Failed :(");
 })
 
-if(settings.readKeyFromFile("general.conf.json", "auto-update")) {
+if (settings.readKeyFromFile("general.conf.json", "auto-update")) {
     autoUpdater.autoDownload = true;
 }
 
@@ -206,7 +205,7 @@ function initSetup() {
     win.loadFile("first-time-setup/index.html");
     win.show();
     attachControlHost(win);
-    if (checkParameter("--debug")) {
+    if (checkParameter("--carbon-debug")) {
         win.webContents.openDevTools();
     }
 
@@ -248,7 +247,7 @@ function initMainWindow() {
 
     attachControlHost(win);
 
-    if (checkParameter("--debug")) {
+    if (checkParameter("--carbon-debug")) {
         win.webContents.openDevTools();
     }
     var views = win.getBrowserViews();
@@ -274,7 +273,8 @@ function initMainWindow() {
         const view = new BrowserView({
             webPreferences: {
                 preload: path.join(app.getAppPath(), 'view_preload.js'),
-                contextIsolation: false
+                contextIsolation: false,
+                plugins: true
             }
         });
         view.webContents.setUserAgent(USERAGENT);
@@ -338,7 +338,7 @@ function initMainWindow() {
 
         view.webContents.on("did-fail-load", (e, code, description) => {
             if (code == "-27" || code == "-3" || code == "-30") {
-                console.log("Reporting of error "+ code +" is cancelled")
+                console.log("Reporting of error " + code + " is cancelled")
                 return
             }
             errorTracker[uuid] = true;
@@ -636,7 +636,7 @@ const menuitems = {
 
             attachControlHost(win);
 
-            if (checkParameter("--debug")) {
+            if (checkParameter("--carbon-debug")) {
                 win.webContents.openDevTools();
             }
         }
@@ -655,7 +655,7 @@ function openMenu() {
 ipcMain.on("openMenu", openMenu);
 
 ipcMain.on("isDebug", (e) => {
-    e.returnValue = checkParameter("--debug")
+    e.returnValue = checkParameter("--carbon-debug")
 })
 
 app.whenReady().then(() => {
@@ -722,6 +722,9 @@ app.whenReady().then(() => {
         else {
             initSetup();
         }
+
+
+
     }, 1000);
 });
 

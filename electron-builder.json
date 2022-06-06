@@ -1,41 +1,45 @@
 {
-    "appId": "com.kiralysanyi.carbon",
-    "productName": "Carbon",
-    "generateUpdatesFilesForAllChannels": true,
-    "publish": [
-      {
-        "provider": "github",
-        "owner": "kiralysanyi",
-        "repo": "carbon_release"
-      }
-    ],
-    "win": {
-      "publish": ["github"],
-      "target": [
-        {
-          "target": "nsis",
-          "arch": [
-            "x64"
-          ]
-        },
-        {
-          "target": "zip",
-          "arch": [
-            "x64"
-          ]
-        }
-      ]
-    },
-    "linux": {
-      "publish": ["github"],
-      "target": [
-        {
-          "target": "appimage",
-          "arch": [
-            "x64",
-            "arm64"
-          ]
-        }
-      ]
+  "appId": "com.kiralysanyi.carbon",
+  "productName": "Carbon",
+  "generateUpdatesFilesForAllChannels": true,
+  "publish": [
+    {
+      "provider": "github",
+      "owner": "kiralysanyi",
+      "repo": "carbon_release"
     }
+  ],
+  "win": {
+    "publish": [
+      "github"
+    ],
+    "target": [
+      {
+        "target": "nsis",
+        "arch": [
+          "x64"
+        ]
+      },
+      {
+        "target": "zip",
+        "arch": [
+          "x64"
+        ]
+      }
+    ]
+  },
+  "linux": {
+    "publish": [
+      "github"
+    ],
+    "target": [
+      {
+        "target": "appimage",
+        "arch": [
+          "x64",
+          "arm64"
+        ]
+      }
+    ]
+  }
 }
