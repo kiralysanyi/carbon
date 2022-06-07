@@ -7,7 +7,7 @@ const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { autoUpdater } = require("electron-updater")
 console.log("Carbon is starting on platform: ", process.platform)
 
-
+autoUpdater.allowDowngrade = false;
 
 //useragent
 var USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
@@ -566,10 +566,18 @@ function initMainWindow() {
         e.returnValue = 0;
     })
 
+    var denyRequest = false;
+    app.addListener("before-quit", () => {
+        denyRequest = true;
+    })
+
     ipcMain.on("getBase64", (e) => {
+        if (denyRequest == true) {
+            return;
+        }
         var view = focusedTab;
         view.webContents.capturePage({ x: 0, y: 0, width: mainWin.getBounds().width, height: 90 }).then((image) => {
-            e.reply("base64", image.toDataURL());
+            mainWin.webContents.send("base64", image.toDataURL())
         });
     });
 

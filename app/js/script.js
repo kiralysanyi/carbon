@@ -78,10 +78,6 @@ ipcRenderer.on("command", (e, command) => {
 
 afterinit = true;
 
-if (settings.readKeyFromFile("experimental.conf.json", "blur") == true) {
-    document.getElementById("topbar").style.backgroundColor = "rgba(27, 27, 27, 0.5)";
-}
-
 const startup_url = ipcRenderer.sendSync("openFirst");
 
 if (startup_url != "null") {
