@@ -100,15 +100,17 @@ function savePermissions() {
 //init update system
 var info;
 autoUpdater.on("download-progress", (e) => {
-    mainWin.webContents.send("update-state", "Downloading...");
+    mainWin.webContents.send("update-state", "Downloading update...");
 })
 autoUpdater.on("update-downloaded", () => {
-    mainWin.webContents.send("update-state", "Downloaded, ready to install.");
+    mainWin.webContents.send("update-state", "Update downloaded, ready to install.");
     mainWin.webContents.send("hide-update-button")
 })
 
 autoUpdater.on("error", () => {
     mainWin.webContents.send("update-state", "Failed :(");
+    mainWin.webContents.send("hide-update-button")
+    new Notification({title: "Carbon error", body: "Failed to update carbon."}).show();
 })
 
 if (settings.readKeyFromFile("general.conf.json", "auto-update")) {
@@ -135,6 +137,8 @@ const runUpdate = async () => {
         mainWin.webContents.send("show-update-button");
     } catch (error) {
         mainWin.webContents.send("update-state", "Failed to check for updates :(");
+        mainWin.webContents.send("hide-update-button")
+        new Notification({title: "Carbon error", body: "Failed to update carbon."}).show();
         console.error(error);
     }
 

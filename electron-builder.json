@@ -2,6 +2,9 @@
   "appId": "com.kiralysanyi.carbon",
   "productName": "Carbon",
   "generateUpdatesFilesForAllChannels": true,
+  "electronDownload": {
+    "version": "18.3.2"
+  },
   "publish": [
     {
       "provider": "github",
