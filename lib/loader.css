@@ -1,0 +1,16 @@
+.spinner {
+    top: 5px;
+    left: 5px;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    position: absolute;
+    border: 5px solid transparent;
+    border-top: 5px solid rgb(0, 158, 158);
+    animation: spin 1s infinite linear forwards;
+}
+
+@keyframes spin {
+    0%{transform: rotate(0deg)}
+    100%{transform: rotate(360deg)}
+}

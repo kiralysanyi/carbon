@@ -15,17 +15,17 @@
     <img src="" alt="" id="immersive_topbar" style="display: none;">
     <div id="topbar">
         <div id="toolbar">
-            <div onclick="newTab()"><i class="lni lni-plus"></i></div>
-            <div onclick="openMenu()"><i class="lni lni-menu"></i></div>
-            <div onclick="goBack()" id="back_button"><i class="lni lni-chevron-left"></i></div>
-            <div onclick="goForward()" id="forward_button"><i class="lni lni-chevron-right"></i></div>
+            <div onclick="newTab()" class="button"><i class="lni lni-plus"></i></div>
+            <div onclick="openMenu()" class="button"><i class="lni lni-menu"></i></div>
+            <div onclick="goBack()" class="button" id="back_button"><i class="lni lni-chevron-left"></i></div>
+            <div onclick="goForward()" class="button" id="forward_button"><i class="lni lni-chevron-right"></i></div>
             <input type="text" id="urlbar" placeholder="Search or type URL">
-            <div style="right: 10px; position: absolute; display: none;" id="update-button"><i class="lni lni-arrow-up-circle"></i></div>
+            <div style="right: 10px; position: absolute; display: none;" class="button" id="update-button"><i class="lni lni-arrow-up-circle"></i></div>
         </div>
         <div id="window_controls">
-            <div onclick="closewin()"><i class="lni lni-close"></i></div>
-            <div onclick="maximize()"><i class="lni lni-stop"></i></div>
-            <div onclick="minimize()"><i class="lni lni-minus"></i></div>
+            <div onclick="closewin()" class="button"><i class="lni lni-close"></i></div>
+            <div onclick="maximize()" class="button"><i class="lni lni-stop"></i></div>
+            <div onclick="minimize()" class="button"><i class="lni lni-minus"></i></div>
         </div>
         <div class="bottom_line_loader" id="loader" style="display: none;"></div>
     </div>
@@ -44,5 +44,6 @@
 </body>
 <script src="./js/tab.js"></script>
 <script src="./js/script.js"></script>
+<link rel="stylesheet" href="../lib/loader.css">
 
 </html>

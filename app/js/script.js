@@ -226,6 +226,15 @@ ipcRenderer.on("show-update-button", (e) => {
 
 ipcRenderer.on("hide-update-button", (e) => {
     document.getElementById("update-button").style.display = "none";
+    document.getElementById("update-button").innerHTML = '<i class="lni lni-arrow-up-circle"></i>'
+})
+
+ipcRenderer.on("show-update-loader", () => {
+    const button = document.getElementById("update-button");
+    var loader = document.createElement("div");
+    loader.classList.add("spinner");
+    button.innerHTML = "";
+    button.appendChild(loader);
 })
 
 document.getElementById("update-button").addEventListener("click", () => {
