@@ -8,6 +8,7 @@ const { autoUpdater } = require("electron-updater")
 console.log("Carbon is starting on platform: ", process.platform)
 
 autoUpdater.allowDowngrade = false;
+autoUpdater.allowPrerelease = false;
 
 //useragent
 var USERAGENT_FIREFOX = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:101.0) Gecko/20100101 Firefox/101.0";
@@ -97,8 +98,6 @@ function savePermissions() {
 }
 
 //init update system
-autoUpdater.channel = "latest";
-
 var info;
 autoUpdater.on("download-progress", (e) => {
     mainWin.webContents.send("update-state", "Downloading...");
@@ -142,7 +141,9 @@ const runUpdate = async () => {
 }
 
 const startUpdate = async () => {
-    var answer = await prompt.updatePrompt("Do you want to update? \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
+    var data = readFileSync(__dirname + "/package.json", "utf-8");
+    data = JSON.parse(data)
+    var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
     if (answer == true) {
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
