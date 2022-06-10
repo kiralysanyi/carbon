@@ -1,7 +1,7 @@
 {
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
-  "version": "0.2.22",
+  "version": "0.2.23",
   "description": "Web browser",
   "main": "index.js",
   "scripts": {
@@ -24,7 +24,7 @@
   "license": "ISC",
   "homepage": "https://github.com/kiralysanyi/carbon_release",
   "devDependencies": {
-    "electron": "^18.3.2",
+    "electron": "github:castlabs/electron-releases#v18.3.3+wvcus",
     "electron-builder": "^22.14.13"
   },
   "dependencies": {

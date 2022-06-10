@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell, components } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
@@ -110,7 +110,7 @@ autoUpdater.on("update-downloaded", () => {
 autoUpdater.on("error", () => {
     mainWin.webContents.send("update-state", "Failed :(");
     mainWin.webContents.send("hide-update-button")
-    new Notification({title: "Carbon error", body: "Failed to update carbon."}).show();
+    new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
 })
 
 if (settings.readKeyFromFile("general.conf.json", "auto-update")) {
@@ -138,7 +138,7 @@ const runUpdate = async () => {
     } catch (error) {
         mainWin.webContents.send("update-state", "Failed to check for updates :(");
         mainWin.webContents.send("hide-update-button")
-        new Notification({title: "Carbon error", body: "Failed to update carbon."}).show();
+        new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
         console.error(error);
     }
 
@@ -233,7 +233,8 @@ function initMainWindow() {
             contextIsolation: false,
             nodeIntegration: true,
             webviewTag: true,
-            nodeIntegrationInSubFrames: true
+            nodeIntegrationInSubFrames: true,
+            plugins: true
         }
     });
 
@@ -672,7 +673,9 @@ ipcMain.on("isDebug", (e) => {
     e.returnValue = checkParameter("--carbon-debug")
 })
 
-app.whenReady().then(() => {
+app.whenReady().then(async () => {
+    await components.whenReady();
+    console.log('components ready:', components.status());
     ipcMain.on("checkUpdate", () => {
         runUpdate();
     })

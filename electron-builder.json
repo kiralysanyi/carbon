@@ -3,7 +3,8 @@
   "productName": "Carbon",
   "generateUpdatesFilesForAllChannels": true,
   "electronDownload": {
-    "version": "18.3.2"
+    "mirror": "https://github.com/castlabs/electron-releases/releases/download/v",
+    "version": "18.3.3+wvcus"
   },
   "publish": [
     {
@@ -39,8 +40,7 @@
       {
         "target": "appimage",
         "arch": [
-          "x64",
-          "arm64"
+          "x64"
         ]
       }
     ]
