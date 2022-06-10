@@ -343,7 +343,7 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-fail-load", (e, code, description) => {
-            if (code == "-27" || code == "-3" || code == "-30") {
+            if (code == "-27" || code == "-3" || code == "-30" || code == "-20") {
                 console.log("Reporting of error " + code + " is cancelled")
                 return
             }
@@ -905,6 +905,7 @@ app.on('session-created', function () {
                 new Notification({ title: "Download information", body: "Download has been completed: " + item.getFilename() }).show()
             } else {
                 console.log(`Download failed: ${state}`)
+                new Notification({ title: "Download information", body: "Download failed: " + item.getFilename() }).show()
             }
 
             delete current_downloads[DLID];

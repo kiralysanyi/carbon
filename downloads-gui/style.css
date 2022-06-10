@@ -27,6 +27,13 @@
     text-overflow: ellipsis;
 }
 
+.downloaditem h2 {
+    width: 90%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .percentage {
     position: absolute;
     top: 0px;
