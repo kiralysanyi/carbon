@@ -21,53 +21,10 @@ var tabs = [];
 
 const search_engines = ipcRenderer.sendSync("searchEngines");
 
-class switchbox {
-    constructor() {
-        this.onchange = null;
-        this.mainElement = document.createElement("div");
-        this.mainElement.classList.add("switch");
-        this.thumb = document.createElement("div");
-        this.thumb.classList.add("thumb");
-        this.mainElement.appendChild(this.thumb);
-        this.state = false;
-        this.mainElement.onclick = () => {
-            this.toggleState();
-        };
-    }
-
-    toggleState() {
-        if (this.state == true) {
-            this.changeState(false);
-        }
-        else {
-            this.changeState(true);
-        }
-
-        if (this.onchange) {
-            this.onchange();
-        }
-    }
-
-    changeState(newState) {
-        if (newState != true && newState != false) {
-            console.error("Invalid state:", newState);
-            return;
-        }
-
-        if (newState == true) {
-            this.thumb.style.left = "45px";
-        }
-        else {
-            this.thumb.style.left = "5px";
-        }
-
-        this.state = newState;
-    }
-}
-
 //declare tabs
 var welcome_tab = new tab("Welcome");
 var search_engine_tab = new tab("Search engine");
+var extras_tab = new tab("Extras");
 var final_tab = new tab("Finish");
 
 welcome_tab.disableFocusButton();
@@ -150,7 +107,7 @@ function setupEngine() {
         select.onclick = () => {
             config["searchEngine"] = engine;
             saveConf();
-            final_tab.focus();
+            extras_tab.focus();
         }
     }
 
@@ -178,6 +135,76 @@ function setupEngine() {
 
 setupEngine();
 
+//setup extras page
+function setupExtras() {
+    var tab = extras_tab;
+    var title = document.createElement("h1");
+    title.innerHTML = "Extra features";
+    title.style.opacity = "0";
+    title.style.marginTop = "20px";
+
+    var continue_button = document.createElement("button");
+    continue_button.innerHTML = "Continue";
+    continue_button.classList.add("continue_btn");
+    continue_button.style.opacity = "0";
+
+    var back_button = document.createElement("button");
+    back_button.innerHTML = "Back";
+    back_button.classList.add("back_btn");
+    back_button.style.opacity = "0";
+
+    back_button.onclick = () => {
+        search_engine_tab.focus();
+    }
+
+    continue_button.onclick = () => {
+        final_tab.focus();
+    }
+
+    tab.container.appendChild(continue_button);
+    tab.container.appendChild(back_button);
+
+    var switch_container = document.createElement("div")
+    var adblock_switch = new switchbox();
+    adblock_switch.onchange = () => {
+        config["adblock"] = adblock_switch.state;
+        saveConf();
+    }
+
+    switch_container.style.lineHeight = "40px";
+
+    var adblock_text = document.createElement("a");
+    adblock_text.style.marginLeft = "20%";
+    adblock_text.innerHTML = "AD block";
+    var adblock_line = document.createElement("div");
+    adblock_line.classList.add("switch_line");
+    adblock_line.appendChild(adblock_text);
+    adblock_line.appendChild(adblock_switch.mainElement);
+    switch_container.appendChild(adblock_line);
+    adblock_switch.mainElement.style.marginTop = "-40px";
+
+    switch_container.style.position = "absolute";
+    switch_container.style.top = "10%";
+    switch_container.style.width = "80%";
+    switch_container.style.left = "10%";
+
+
+    tab.container.appendChild(title);
+    switch_container.style.opacity = 0;
+    tab.container.appendChild(switch_container);
+    tab.onfocus = () => {
+        setTimeout(() => {
+            title.style.opacity = "1";
+            title.style.marginTop = "0px";
+            back_button.style.opacity = 1;
+            continue_button.style.opacity = 1;
+            switch_container.style.opacity = 1;
+        }, 100);
+    }
+}
+
+setupExtras();
+
 //setup final page
 
 function setupFinal() {
@@ -198,7 +225,7 @@ function setupFinal() {
     back_button.style.opacity = "0";
 
     back_button.onclick = () => {
-        search_engine_tab.focus();
+        extras_tab.focus();
     }
 
     tab.container.appendChild(back_button);

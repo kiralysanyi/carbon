@@ -7,6 +7,13 @@
     background-color: rgb(51, 51, 51);
 }
 
+.switch_line {
+    position: relative;
+    height: 40px;
+    width: 100%;
+    line-height: 40px;
+}
+
 .tab {
     width: 200px;
     text-align: center;

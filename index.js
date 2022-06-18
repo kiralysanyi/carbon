@@ -101,6 +101,7 @@ function savePermissions() {
 var info;
 autoUpdater.on("download-progress", (e) => {
     mainWin.webContents.send("update-state", "Downloading update...");
+    mainWin.webContents.send("show-update-loader");
 })
 autoUpdater.on("update-downloaded", () => {
     mainWin.webContents.send("update-state", "Update downloaded, ready to install.");
@@ -145,7 +146,6 @@ const runUpdate = async () => {
 }
 
 const startUpdate = async () => {
-    mainWin.webContents.send("show-update-loader")
     var data = readFileSync(__dirname + "/package.json", "utf-8");
     data = JSON.parse(data)
     var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
