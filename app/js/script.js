@@ -58,8 +58,38 @@ window.addEventListener("keydown", (e) => {
 
 //initialize menu
 
+const toolbar_menu = document.getElementById("toolbar_menu");
+toolbar_menu.style.display = "none";
+
+document.getElementById("open_menu").addEventListener("click", (e) => {
+    e.stopPropagation();
+    openMenu();
+})
+
+document.getElementById("open_menu").addEventListener("blur", () => {
+    closeMenu();
+})
+
 function openMenu() {
-    ipcRenderer.send("openMenu")
+    toolbar_menu.style.display = "block";
+    setTimeout(() => {
+        toolbar_menu.style.opacity = 1;
+        toolbar_menu.style.left = "40px";
+        toolbar_menu.style.transform = "scale(1,1)";
+    }, 10);
+}
+
+function closeMenu() {
+    toolbar_menu.style.opacity = 0;
+    toolbar_menu.style.transform = "scale(0,0)";
+    toolbar_menu.style.left = "0px";
+    setTimeout(() => {
+        toolbar_menu.style.display = "none"
+    }, 300);
+}
+
+function openDownloads() {
+    ipcRenderer.send("opendownloads")
 }
 
 ipcRenderer.on("command", (e, command) => {
@@ -119,7 +149,7 @@ function showSettingsModal() {
     modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
     modal.style.display = "block";
     document.getElementById("settings_iframe").reload();
-    
+
 
     setTimeout(() => {
         modal.style.transform = "translate(-50%, -50%) scale(1, 1)"

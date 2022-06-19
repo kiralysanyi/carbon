@@ -608,66 +608,27 @@ function initMainWindow() {
     })
 }
 
-const menu = new Menu();
-const menuitems = {
-    reload: new MenuItem({
-        label: "Reload",
-        click: () => {
-            console.log("Reload")
-            mainWin.webContents.postMessage("command", "reload");
-        }
-    }),
-    devtools: new MenuItem({
-        label: "DevTools",
-        click: () => {
-            console.log("Devtools")
-            mainWin.webContents.postMessage("command", "devtools");
-        }
-    }),
-    opensettings: new MenuItem({
-        label: "Settings",
-        click: () => {
-            console.log("Settings");
-            mainWin.webContents.postMessage("command", "settings")
-        }
-    }),
-    opendownloads: new MenuItem({
-        label: "Downloads",
-        click: () => {
-            const win = new BrowserWindow({
-                minWidth: 800,
-                minHeight: 600,
-                frame: false,
-                webPreferences: {
-                    nodeIntegration: true,
-                    preload: path.join(__dirname, "preload.js"),
-                    contextIsolation: false
-                }
-            })
-
-            win.loadFile("downloads-gui/index.html");
-
-
-
-            attachControlHost(win);
-
-            if (checkParameter("--carbon-debug")) {
-                win.webContents.openDevTools();
-            }
+ipcMain.on("opendownloads", () => {
+    const win = new BrowserWindow({
+        minWidth: 800,
+        minHeight: 600,
+        frame: false,
+        webPreferences: {
+            nodeIntegration: true,
+            preload: path.join(__dirname, "preload.js"),
+            contextIsolation: false
         }
     })
 
-}
+    win.loadFile("downloads-gui/index.html");
 
-for (var x in menuitems) {
-    menu.append(menuitems[x]);
-}
+    attachControlHost(win);
 
-function openMenu() {
-    menu.popup({ x: 100, y: 50 });
-}
+    if (checkParameter("--carbon-debug")) {
+        win.webContents.openDevTools();
+    }
+})
 
-ipcMain.on("openMenu", openMenu);
 
 ipcMain.on("isDebug", (e) => {
     e.returnValue = checkParameter("--carbon-debug")
