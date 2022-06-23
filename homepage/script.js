@@ -465,6 +465,7 @@ function renderFavorites() {
         element.oncontextmenu = () => {
             delete favorites[obj.url];
             renderFavorites();
+            saveFavorites();
         }
     }
 }
