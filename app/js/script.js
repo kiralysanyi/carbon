@@ -18,14 +18,12 @@ function transformScroll(event) {
 document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 
 function validURL(str) {
-    var pattern = new RegExp(
-        '^(https?:\\/\\/)?' + // protocol1
-        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // domain name
-        '((\\d{1,3}\\.){3}\\d{1,3}))' + // OR ip (v4) address
-        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // port and path
-        '(\\?[;&a-z\\d%_.~+=-]*)?' + // query string
-        '(\\#[-a-z\\d_]*)?$', 'i'); // fragment locator
-    return !!pattern.test(str);
+    try {
+        new URL(str);
+        return true
+    } catch (error) {
+        return false;
+    }
 }
 
 var urlbar = document.getElementById("urlbar");
@@ -66,8 +64,10 @@ document.getElementById("open_menu").addEventListener("click", (e) => {
     openMenu();
 })
 
-document.getElementById("open_menu").addEventListener("blur", () => {
-    closeMenu();
+document.getElementById("open_menu").addEventListener("blur", (e) => {
+    setTimeout(() => {
+        closeMenu();
+    }, 100);
 })
 
 function openMenu() {

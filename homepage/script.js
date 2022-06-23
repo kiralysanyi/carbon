@@ -316,7 +316,7 @@ toDataURL("https://picsum.photos/1920/1080", (string) => {
     }
 })
 
-if(localStorage.getItem("background") != "random") {
+if (localStorage.getItem("background") != "random") {
     document.body.style.backgroundImage = "url('" + localStorage.getItem("background").replace(/(\r\n|\n|\r)/gm, "") + "')"
     startTheming();
 }
@@ -386,4 +386,108 @@ if (localStorage.getItem("background") == "random") {
     background_image_preview.src = localStorage.getItem("background");
 }
 
+//prompt
+function prompt(title = "?", placeholder = "") {
+    return new Promise((resolved) => {
+        const htmlObj = document.createElement("div");
+        htmlObj.classList.add("prompt");
+        const container = document.createElement("div");
+        container.classList.add("prompt_container");
+        htmlObj.appendChild(container);
 
+        const title_object = document.createElement("h1");
+        title_object.innerHTML = title;
+        container.appendChild(title_object);
+
+        const input_object = document.createElement("input");
+        input_object.type = "text";
+        input_object.placeholder = placeholder;
+        container.appendChild(input_object);
+
+        const submit_button = document.createElement("button");
+        submit_button.innerHTML = "OK";
+        container.appendChild(submit_button);
+
+        submit_button.onclick = () => {
+            resolved(input_object.value)
+            htmlObj.remove();
+        }
+
+        document.body.appendChild(htmlObj);
+    })
+}
+
+
+//favorites handling
+
+if (!localStorage.getItem("favorites")) {
+    localStorage.setItem("favorites", "{}");
+}
+
+var favorites = JSON.parse(localStorage.getItem("favorites"));
+
+function saveFavorites() {
+    localStorage.setItem("favorites", JSON.stringify(favorites));
+}
+
+document.getElementById("favorites").addEventListener("mouseenter", () => {
+    document.getElementById("favorites_hint").style.display = "block";
+})
+
+document.getElementById("favorites").addEventListener("mouseleave", () => {
+    document.getElementById("favorites_hint").style.display = "none";
+})
+
+
+function renderFavorites() {
+    const container = document.getElementById("favorites_container");
+    const htmlObj = document.getElementById("favorites");
+    htmlObj.style.width = "100px";
+    container.innerHTML = "";
+    const len = Object.keys(favorites).length;
+    htmlObj.style.width = (100 + (100 * len)) + "px"
+    container.style.width = 100 * len + "px";
+    for (var x in favorites) {
+        const obj = favorites[x];
+        const element = document.createElement("div");
+        element.classList.add("button");
+        const image = document.createElement("img");
+        image.src = obj.favicon_url;
+        const title = document.createElement("a");
+        title.innerHTML = obj.title;
+        element.appendChild(image);
+        element.appendChild(title);
+        container.appendChild(element);
+        element.onclick = () => {
+            location.href = obj.url;
+        }
+
+        element.oncontextmenu = () => {
+            delete favorites[obj.url];
+            renderFavorites();
+        }
+    }
+}
+
+setTimeout(() => {
+    renderFavorites();
+}, 1000)
+
+async function addFavorite() {
+    if (Object.keys(favorites).length >= 6) {
+        window.alert("Reached maximum amount of favorites.");
+        return;
+    }
+    const url = new URL(await prompt("Webpage url", "url"));
+    const title = await prompt("Title", "Title")
+    const favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + url.toString()
+    var object = {
+        "url": url.toString(),
+        "favicon_url": favicon_url,
+        "title": title
+    }
+
+    favorites[url] = object;
+    saveFavorites();
+    renderFavorites();
+}

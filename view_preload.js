@@ -5,6 +5,8 @@ window.alert = (text) => {
     ipcRenderer.sendSync("alert", text);
 }
 
+window.prompt = null;
+
 carbonAPI = {};
 
 carbonAPI.getSearchEngine = () => {

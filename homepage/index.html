@@ -18,6 +18,11 @@
 <body>
 
     <div id="main_content">
+        <div id="favorites">
+            <div id="favorites_container"></div>
+            <div class="button" onclick="addFavorite()" id="favorites_add">+</div>
+        </div>
+        <div id="favorites_hint">Right click on item to remove</div>
         <div id="history"></div>
         <button id="clearHistory" onclick="carbonAPI.clearHistory(); location.reload()">Clear History</button>
     
