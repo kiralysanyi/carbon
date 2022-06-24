@@ -296,6 +296,7 @@ carbonAPI.getHistory().then((data) => {
     console.log(data);
     if (Object.keys(data).length == 0) {
         document.getElementById("clearHistory").style.display = "none";
+        document.getElementById("history_toggle").style.display = "none";
     }
     for (var x in data) {
         var object = data[x];
@@ -499,4 +500,40 @@ async function addFavorite() {
     favorites[url] = object;
     saveFavorites();
     renderFavorites();
+}
+
+var historyDisplayState = false;
+const history_container = document.getElementById("history_container");
+
+function showHistory() {
+    historyDisplayState = true;
+    history_container.style.left = "0px";
+    history_container.style.display = "block";
+    history_container.style.opacity = 0;
+    setTimeout(() => {
+        history_container.style.left = "10%";
+        history_container.style.opacity = 1;
+    }, 500);
+}
+
+function hideHistory() {
+    historyDisplayState = false;
+    history_container.style.left = "0px";
+    history_container.style.opacity = 0;
+    setTimeout(() => {
+        history_container.style.display = "none"
+    }, 500);
+}
+
+function toggleHistory() {
+    document.getElementById("history_toggle").disabled = true;
+    if (historyDisplayState == true) {
+        hideHistory();
+    } else {
+        showHistory();
+    }
+
+    setTimeout(() => {
+        document.getElementById("history_toggle").disabled = false;
+    }, 500);
 }

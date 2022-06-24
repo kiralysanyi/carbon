@@ -141,19 +141,6 @@ body {
     background-color: rgba(32, 32, 32, 0.747);
 }
 
-#history {
-    position: fixed;
-    bottom: 75px;
-    max-height: calc(100% - 75px - 220px);
-    width: 80%;
-    left: 10%;
-    background-color: rgba(39, 39, 39, 0.644);
-    border-radius: 10px;
-    overflow-y: auto;
-    overflow-x: hidden;
-    backdrop-filter: blur(4px);
-}
-
 /* width */
 ::-webkit-scrollbar {
     width: 10px;
@@ -184,8 +171,8 @@ body {
 }
 
 #clearHistory {
-    position: fixed;
-    bottom: 25px;
+    position: absolute;
+    bottom: 10px;
     left: 35%;
     width: 30%;
     height: 40px;
@@ -225,6 +212,44 @@ body {
 
 .history_element:hover {
     background-color: rgb(65, 65, 65);
+}
+
+#history {
+    position: absolute;
+    bottom: 60px;
+    max-height: calc(100% - 60px);
+    width: 80%;
+    left: 10%;
+    background-color: rgba(39, 39, 39, 0.644);
+    border-radius: 10px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    backdrop-filter: blur(4px);
+}
+
+#history_container {
+    position: fixed;
+    bottom: 0px;
+    left: 10%;
+    width: 80%;
+    z-index: 10000000;
+    height: calc(100% - 220px);
+    display: none;
+    transition: 500ms;
+}
+
+#history_toggle {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
+    background-color: rgb(68, 68, 68);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    outline: 0;
+    font-size: 20px;
 }
 
 #settings {

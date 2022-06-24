@@ -23,14 +23,17 @@
             <div class="button" onclick="addFavorite()" id="favorites_add">+</div>
         </div>
         <div id="favorites_hint">Right click on item to remove</div>
-        <div id="history"></div>
-        <button id="clearHistory" onclick="carbonAPI.clearHistory(); location.reload()">Clear History</button>
+        <div id="history_container">
+            <div id="history"></div>
+            <button id="clearHistory" onclick="carbonAPI.clearHistory(); location.reload()">Clear History</button>
+        </div>
     
         <form id="searchform">
             <input id="searchbox" type="text" placeholder="Type keywords">
         </form>
 
         <div id="autocomplete_box"></div>
+        <button id="history_toggle" onclick="toggleHistory()"><i class="lni lni-timer"></i></button>
     </div>
 
     <!--Sidebar things-->

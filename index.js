@@ -5,7 +5,11 @@ const settings = require("./settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { autoUpdater } = require("electron-updater")
+const { readFileSync, existsSync } = require("fs");
 console.log("Carbon is starting on platform: ", process.platform)
+
+var package_data = readFileSync(__dirname + "/package.json", "utf-8");
+package_data = JSON.parse(package_data)
 
 autoUpdater.allowDowngrade = false;
 autoUpdater.allowPrerelease = false;
@@ -30,7 +34,6 @@ var args = process.argv;
 
 //importing prompt module
 var prompt = require("./prompt");
-const { readFileSync, existsSync } = require("fs");
 const { randomUUID } = require("crypto");
 
 //permission handling, loading saved permissions and writing permissions
@@ -56,12 +59,10 @@ var first_startup = false;
 
 (() => {
     //initializing general config file
-    var config = settings.readData("general.conf.json");
-    console.log("Configuration read: ", config);
-    if (config == "{}") {
-        config = {};
-        settings.saveData("general.conf.json", JSON.stringify(config));
+    var config = JSON.parse(settings.readData("general.conf.json"));
+    if (Object.keys(config).length == 0) {
         //default config
+        config["versionindex"] = package_data["version_index"];
         config["adblock"] = false;
         config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
@@ -69,6 +70,20 @@ var first_startup = false;
         config["auto-update"] = false;
         settings.saveData("general.conf.json", JSON.stringify(config));
         first_startup = true;
+    }
+
+    if (!config["versionindex"]) {
+        config["versionindex"] = package_data["version_index"];
+    }
+
+    if (config["versionindex"] < package_data["version_index"]) {
+        console.log("Upgrade detected");
+
+        //enable auto updates below version index 2
+        if (config["version_index"] < 0) {
+            config["auto-update"] = true;
+            settings.saveData("general.conf.json", JSON.stringify(config));
+        }
     }
 
     //initializing experimental config file
@@ -101,7 +116,6 @@ function savePermissions() {
 var info;
 autoUpdater.on("download-progress", (e) => {
     mainWin.webContents.send("update-state", "Downloading update...");
-    mainWin.webContents.send("show-update-loader");
 })
 autoUpdater.on("update-downloaded", () => {
     mainWin.webContents.send("update-state", "Update downloaded, ready to install.");
@@ -136,6 +150,12 @@ const runUpdate = async () => {
             return;
         }
         mainWin.webContents.send("show-update-button");
+        const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
+        if (autoupdate == true) {
+            mainWin.webContents.send("show-update-loader");
+            autoUpdater.autoInstallOnAppQuit = true;
+            autoUpdater.downloadUpdate();
+        }
     } catch (error) {
         mainWin.webContents.send("update-state", "Failed to check for updates :(");
         mainWin.webContents.send("hide-update-button")
@@ -150,6 +170,7 @@ const startUpdate = async () => {
     data = JSON.parse(data)
     var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
     if (answer == true) {
+        mainWin.webContents.send("show-update-loader");
         autoUpdater.autoInstallOnAppQuit = true;
         autoUpdater.downloadUpdate();
     }
