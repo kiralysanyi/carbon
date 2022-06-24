@@ -82,7 +82,8 @@ var first_startup = false;
         console.log("Upgrade detected");
 
         //enable auto updates below version index 1
-        if (config["version_index"] < 1) {
+        if (config["versionindex"] < 1) {
+            console.log("Enabling auto update");
             config["auto-update"] = true;
             settings.saveData("general.conf.json", JSON.stringify(config));
         }
