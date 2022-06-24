@@ -44,7 +44,7 @@
 
 #toolbar input[type="text"] {
     position: absolute;
-    left: 200px;
+    right: 100px;
     top: 10px;
     height: 28px;
     width: calc(100% - 100px);

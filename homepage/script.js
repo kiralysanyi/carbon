@@ -275,6 +275,7 @@ const startTheming = async () => {
 
     autocomplete_box.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
     historyDOM.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
+    document.getElementById("favorites").style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.6)"
 }
 
 function toDataURL(url, callback) {
@@ -445,8 +446,15 @@ function renderFavorites() {
     htmlObj.style.width = "100px";
     container.innerHTML = "";
     const len = Object.keys(favorites).length;
-    htmlObj.style.width = (100 + (100 * len)) + "px"
     container.style.width = 100 * len + "px";
+    const favorites_add = document.getElementById("favorites_add");
+    if (Object.keys(favorites).length >= 6) {
+        favorites_add.style.display = "none";
+        htmlObj.style.width = (100 * len) + "px";
+    } else { 
+        htmlObj.style.width = (100 + (100 * len)) + "px";
+        favorites_add.style.display = "block";
+    }
     for (var x in favorites) {
         const obj = favorites[x];
         const element = document.createElement("div");

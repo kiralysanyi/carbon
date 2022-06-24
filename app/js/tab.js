@@ -20,29 +20,25 @@ function hideBack() {
     setTimeout(() => {
         back_button.style.display = "none";
         if (isForwardButtonShown == true) {
-            urlbar.style.width = "calc(100% - 260px)"
-            urlbar.style.left = "150px"
+            urlbar.style.width = "calc(100% - 150px - 100px)"
         }
         else {
-            urlbar.style.width = "calc(100% - 210px)"
-            urlbar.style.left = "100px"
+            urlbar.style.width = "calc(100% - 100px - 100px)"
         }
     }, 200);
 }
 
 //hide forward button
 function hideForward() {
-    isBackForwardShown = false;
+    isForwardButtonShown = false;
     forward_button.style.opacity = 0;
     setTimeout(() => {
         forward_button.style.display = "none";
         if (isBackButtonShown == true) {
-            urlbar.style.width = "calc(100% - 260px)"
-            urlbar.style.left = "150px"
+            urlbar.style.width = "calc(100% - 150px - 100px)";
         }
         else {
-            urlbar.style.width = "calc(100% - 210px)"
-            urlbar.style.left = "100px"
+            urlbar.style.width = "calc(100% - 100px - 100px)";
         }
     }, 200);
 }
@@ -54,12 +50,10 @@ function showBack() {
     setTimeout(() => {
         back_button.style.opacity = 1;
         if (isForwardButtonShown) {
-            urlbar.style.width = "calc(100% - 310px)"
-            urlbar.style.left = "200px"
+            urlbar.style.width = "calc(100% - 200px - 100px)"
         }
         else {
-            urlbar.style.width = "calc(100% - 260px)"
-            urlbar.style.left = "150px"
+            urlbar.style.width = "calc(100% - 150px - 100px)"
         }
     }, 200);
 }
@@ -71,12 +65,10 @@ function showForward() {
     setTimeout(() => {
         forward_button.style.opacity = 1;
         if (isBackButtonShown) {
-            urlbar.style.width = "calc(100% - 310px)"
-            urlbar.style.left = "200px"
+            urlbar.style.width = "calc(100% - 200px - 100px)"
         }
         else {
-            urlbar.style.width = "calc(100% - 210px)"
-            urlbar.style.left = "150px"
+            urlbar.style.width = "calc(100% - 150px - 100px)"
         }
     }, 200);
 }
@@ -89,7 +81,7 @@ function resetControls() {
     back_button.style.display = "none";
     forward_button.style.opacity = 0;
     back_button.style.opacity = 0;
-    urlbar.style.left = "100px"
+    urlbar.style.width = "calc(100% - 100px - 100px)"
 }
 
 function resizeAll() {
