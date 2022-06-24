@@ -97,7 +97,7 @@ body {
     width: 70%;
     height: 50px;
     left: 15%;
-    top: 50px;
+    top: 150px;
     overflow: hidden;
 }
 
@@ -116,7 +116,7 @@ body {
 
 #autocomplete_box {
     position: fixed;
-    top: 100px;
+    top: 200px;
     left: 15%;
     width: 70%;
     height: 0px;
@@ -317,7 +317,7 @@ body {
 
 #favorites {
     position: fixed;
-    top: 110px;
+    top: 250px;
     left: 50%;
     width: 100px;
     height: 100px;

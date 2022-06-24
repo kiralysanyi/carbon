@@ -1,7 +1,7 @@
 {
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
-  "version": "0.2.26-beta.4",
+  "version": "0.2.26",
   "version_index": 1,
   "description": "Web browser",
   "main": "index.js",
