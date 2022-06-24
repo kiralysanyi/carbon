@@ -72,18 +72,23 @@ var first_startup = false;
         first_startup = true;
     }
 
-    if (!config["versionindex"]) {
+    if (config["versionindex"] == null) {
         config["versionindex"] = package_data["version_index"];
     }
 
+    console.log("Application version index: ", package_data["version_index"])
+    console.log(config["versionindex"])
     if (config["versionindex"] < package_data["version_index"]) {
         console.log("Upgrade detected");
 
-        //enable auto updates below version index 2
-        if (config["version_index"] < 0) {
+        //enable auto updates below version index 1
+        if (config["version_index"] < 1) {
             config["auto-update"] = true;
             settings.saveData("general.conf.json", JSON.stringify(config));
         }
+
+        config["versionindex"] = package_data["version_index"]
+        settings.saveData("general.conf.json", JSON.stringify(config));
     }
 
     //initializing experimental config file
