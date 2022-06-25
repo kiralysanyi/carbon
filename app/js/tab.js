@@ -151,8 +151,6 @@ class tab {
                 h: rect.height + "px"
             }
 
-            console.log(from)
-
             const to = {
                 x: "0px",
                 y: "90px",

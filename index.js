@@ -490,6 +490,7 @@ function initMainWindow() {
         view.webContents.on("new-window", (e, url) => {
             sendEvent({ type: "new-window", url: url });
         });
+
         var isFullScreen = false;
 
         view.webContents.on("enter-html-full-screen", () => {
@@ -621,7 +622,6 @@ function initMainWindow() {
     ipcMain.on("focusTab", (e, uuid) => {
         const view = webviews[uuid];
         win.setBrowserView(view);
-        win.setTopBrowserView(view);
         focusedTab = view;
         e.returnValue = 0;
     })
@@ -646,6 +646,7 @@ function initMainWindow() {
         view.webContents.capturePage().then((image) => {
             e.returnValue = image.toDataURL();
             win.removeBrowserView(focusedTab);
+            
         });
     })
 

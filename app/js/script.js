@@ -288,9 +288,11 @@ function wc_hex_is_light(color) {
 const overview = document.getElementById("overview");
 
 async function openOverview() {
+    document.body.style.backgroundColor = "rgb(56, 56, 56)";
     isOverviewOpen = true;
     document.getElementById("toolbar").style.display = "none";
     const current_tab = getTab(focused_tab);
+    overview.style.opacity = 0;
     overview.style.display = "grid";
     current_tab.updatePreview();
 
@@ -306,6 +308,10 @@ async function openOverview() {
         const from = { x: "0px", y: "90px", w: "100%", h: "calc(100% - 90px)" };
 
         animateImage(from, to, hideCurrentTab());
+        overview.style.opacity = 1;
+        setTimeout(() => {
+            document.body.style.backgroundColor = "white";
+        }, 50);
     }, 100);
 }
 
