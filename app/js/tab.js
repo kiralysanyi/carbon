@@ -132,7 +132,40 @@ class tab {
         tabs[this.id] = this;
         this.isFocused = false;
         this.error = false;
+        this.previewimage = null;
+        this.overview_tab = document.createElement("div");
 
+        //adding preview to overview
+        this.overview_tab.classList.add("overview_tab")
+        document.getElementById("overview").appendChild(this.overview_tab);
+
+        this.overview_tab_text = document.createElement("a");
+
+        this.overview_tab.addEventListener("click", () => {
+            const from = {
+                x: this.overview_tab.offsetLeft + "px",
+                y: this.overview_tab.offsetTop + "px",
+                w: this.overview_tab.clientWidth + "px",
+                h: this.overview_tab.clientHeight + "px"
+            }
+
+            console.log(from)
+
+            const to = {
+                x: "0px",
+                y: "90px",
+                w: "100%",
+                h: "calc(100% - 90px)"
+            }
+
+            animateImage(from, to, this.previewimage);
+            setTimeout(() => {
+                closeOverview();
+                this.focus();
+            }, 1000);
+        })
+        
+        this.overview_tab.appendChild(this.overview_tab_text)
         this.tab_button = document.createElement("div");
         this.title = document.createElement("a");
         this.favicon = document.createElement("img");
@@ -219,6 +252,11 @@ class tab {
             const url = data.url;
             const favicons = data.favicons;
 
+            if (type == "preview") {
+                this.previewimage = data.image;
+                this.overview_tab.style.backgroundImage = "url('" + data.image + "')"
+            }
+
             if (type == "did-navigate") {
                 this.favicon.style.display = "none";
                 this.title.style.left = "10px";
@@ -265,6 +303,7 @@ class tab {
 
             if (type == "page-title-updated") {
                 this.title.innerHTML = data.title;
+                this.overview_tab_text.innerHTML = data.title;
                 if(focused_tab == this.id) {
                     document.title = data.title + " - Carbon";
                 }
@@ -435,6 +474,7 @@ class tab {
 
     destroy() {
         //close tab
+        this.overview_tab.remove();
         ipcRenderer.send("removeTab", this.id);
         this.tab_button.style.width = "0%";
         setTimeout(() => {

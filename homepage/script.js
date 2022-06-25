@@ -1,32 +1,3 @@
-const sidebar = document.getElementById("sidebar");
-const sidebar_open = document.getElementById("sidebar_open");
-const sidebar_back = document.getElementById("sidebar_back");
-var sidebar_state = 0;
-
-sidebar_open.onclick = () => {
-    if (sidebar_state == 0) {
-        sidebar_state = 1;
-        sidebar.style.left = "0px";
-        sidebar_open.style.left = "260px";
-        sidebar_back.style.display = "block";
-    }
-    else {
-        sidebar_state = 0
-        sidebar.style.left = "-300px";
-        sidebar_open.style.left = "0px";
-        sidebar_back.style.display = "none";
-    }
-}
-
-sidebar_back.onclick = () => {
-    sidebar_state = 0
-    sidebar.style.left = "-300px";
-    sidebar_open.style.left = "0px";
-    sidebar_back.style.display = "none";
-}
-
-document.getElementById("version_indicator").innerHTML = "Version: " + carbonAPI.getVersion();
-
 //setting up searchform
 var searchform = document.getElementById("searchform");
 var searchbox = document.getElementById("searchbox");
@@ -523,22 +494,27 @@ const history_container = document.getElementById("history_container");
 
 function showHistory() {
     historyDisplayState = true;
-    history_container.style.left = "0px";
+    history_container.style.left = "-50%";
+    history_container.style.bottom = "-50%";
     history_container.style.display = "block";
-    history_container.style.opacity = 0;
+    history_container.style.transform = "scale(0,0)";
     setTimeout(() => {
         history_container.style.left = "10%";
-        history_container.style.opacity = 1;
-    }, 500);
+        history_container.style.bottom = "0px";
+        history_container.style.transform = "scale(1,1)";
+    }, 20);
 }
 
 function hideHistory() {
     historyDisplayState = false;
-    history_container.style.left = "0px";
-    history_container.style.opacity = 0;
+    history_container.style.transform = "scale(0,0)";
+    setTimeout(() => {
+        history_container.style.left = "-50%";
+        history_container.style.bottom = "-50%";
+    },100);
     setTimeout(() => {
         history_container.style.display = "none"
-    }, 500);
+    }, 600);
 }
 
 function toggleHistory() {
@@ -551,5 +527,5 @@ function toggleHistory() {
 
     setTimeout(() => {
         document.getElementById("history_toggle").disabled = false;
-    }, 500);
+    }, 600);
 }

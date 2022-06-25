@@ -252,6 +252,20 @@ body {
     font-size: 20px;
 }
 
+#settings_open {
+    position: fixed;
+    bottom: 60px;
+    left: 10px;
+    background-color: rgb(68, 68, 68);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    width: 40px;
+    height: 40px;
+    outline: 0;
+    font-size: 20px;
+}
+
 #settings {
     position: fixed;
     top: 0%;

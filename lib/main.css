@@ -14,7 +14,7 @@
     left: 0px;
     height: 100%;
     width: 190px;
-    transform: scale(0,0);
+    transform: scale(0, 0);
     z-index: 1000000;
     background-color: rgba(0, 0, 0, 0.486);
     backdrop-filter: blur(4px);
@@ -27,7 +27,7 @@
 #toolbar .button {
     -webkit-app-region: no-drag;
     position: relative;
-    float:  left;
+    float: left;
     text-align: center;
     line-height: 40px;
     width: 40px;
@@ -76,10 +76,25 @@
 }
 
 @keyframes loader {
-    0% {width: 0px; left: 0px;}
-    25% {width: 25%; left: 25%;}
-    75% {width: 50%; left: 75%;}
-    100% {left: 100%; width: 0px;}
+    0% {
+        width: 0px;
+        left: 0px;
+    }
+
+    25% {
+        width: 25%;
+        left: 25%;
+    }
+
+    75% {
+        width: 50%;
+        left: 75%;
+    }
+
+    100% {
+        left: 100%;
+        width: 0px;
+    }
 }
 
 #tab_bar {
@@ -95,14 +110,14 @@
     background-color: rgb(51, 51, 51);
 }
 
-.tab{
+.tab {
     position: relative;
     height: 40px;
     width: 0px;
     background-color: transparent;
-    display: inline-block; 
-    vertical-align: top; 
-    white-space: normal; 
+    display: inline-block;
+    vertical-align: top;
+    white-space: normal;
     overflow: hidden;
     transition: 200ms;
 }
@@ -124,7 +139,7 @@
     background-color: rgba(255, 255, 255, 0.212);
 }
 
-.tab img{
+.tab img {
     position: absolute;
     top: 5px;
     left: 5px;
@@ -239,9 +254,41 @@
     color: white;
     text-overflow: ellipsis;
     white-space: nowrap;
-    transition: 200ms; 
+    transition: 200ms;
 }
 
 #suggestions div:hover {
     background-color: rgba(255, 255, 255, 0.089);
+}
+
+#overview {
+    position: fixed;
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 50px);
+    display: none;
+    grid-template-columns: auto auto auto;
+    background-color: rgb(56, 56, 56);
+    z-index: 100;
+    overflow: auto;
+}
+
+.overview_tab {
+    position: relative;
+    background-color: black;
+    border-radius: 10px;
+    margin: 10px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.overview_tab a {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    background-color: rgba(0, 0, 0, 0.315);
+    backdrop-filter: blur(4px);
 }

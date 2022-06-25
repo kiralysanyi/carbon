@@ -343,7 +343,6 @@ function initMainWindow() {
 
 
         function sendEvent(data) {
-            console.log("Sending data to renderer: ", data);
             try {
                 win.webContents.postMessage(uuid, data);
             } catch (error) {
@@ -401,6 +400,10 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-stop-loading", () => {
+
+            view.webContents.capturePage().then((image) => {
+                sendEvent({type: "preview", image: image.toDataURL()});
+            });
             var utype = null;
             if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
                 utype = "home";
