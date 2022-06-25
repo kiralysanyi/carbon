@@ -288,27 +288,40 @@ function wc_hex_is_light(color) {
 const overview = document.getElementById("overview");
 
 async function openOverview() {
+    isOverviewOpen = true;
     document.getElementById("toolbar").style.display = "none";
     const current_tab = getTab(focused_tab);
-    overview.style.display = "inline-grid";
+    overview.style.display = "grid";
+    current_tab.updatePreview();
 
     setTimeout(() => {
+        var rect = current_tab.overview_tab.getBoundingClientRect();
         const to = {
-            x: current_tab.overview_tab.offsetLeft + "px",
-            y: current_tab.overview_tab.offsetTop + "px",
-            w: current_tab.overview_tab.clientWidth + "px",
-            h: current_tab.overview_tab.clientHeight + "px"
+            x: rect.left + "px",
+            y: rect.top + "px",
+            w: rect.width + "px",
+            h: rect.height + "px"
         }
-    
+
         const from = { x: "0px", y: "90px", w: "100%", h: "calc(100% - 90px)" };
-    
+
         animateImage(from, to, hideCurrentTab());
     }, 100);
 }
 
 function closeOverview() {
+    isOverviewOpen = false;
     document.getElementById("toolbar").style.display = "block";
     overview.style.display = "none";
+}
+
+function toggleOverview() {
+    if (isOverviewOpen == true) {
+        closeOverview();
+        showCurrentTab();
+    } else {
+        openOverview();
+    }
 }
 
 function animateImage(from, to, src) {
@@ -318,7 +331,7 @@ function animateImage(from, to, src) {
     image.style.height = from.h;
     image.style.left = from.x;
     image.style.top = from.y;
-    image.style.transition = "1s";
+    image.style.transition = "500ms";
     image.style.backgroundColor = "black";
     image.style.position = "fixed";
     image.style.zIndex = "999"
@@ -331,5 +344,11 @@ function animateImage(from, to, src) {
     }, 50);
     setTimeout(() => {
         image.remove();
-    }, 1000);
+    }, 500);
 }
+
+var isOverviewOpen = false;
+
+ipcRenderer.on("openOverview", () => {
+    toggleOverview();
+})

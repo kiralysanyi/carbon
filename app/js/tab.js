@@ -141,12 +141,14 @@ class tab {
 
         this.overview_tab_text = document.createElement("a");
 
+
         this.overview_tab.addEventListener("click", () => {
+            var rect = this.overview_tab.getBoundingClientRect();
             const from = {
-                x: this.overview_tab.offsetLeft + "px",
-                y: this.overview_tab.offsetTop + "px",
-                w: this.overview_tab.clientWidth + "px",
-                h: this.overview_tab.clientHeight + "px"
+                x: rect.left + "px",
+                y: rect.top + "px",
+                w: rect.width + "px",
+                h: rect.height + "px"
             }
 
             console.log(from)
@@ -162,7 +164,7 @@ class tab {
             setTimeout(() => {
                 closeOverview();
                 this.focus();
-            }, 1000);
+            }, 500);
         })
         
         this.overview_tab.appendChild(this.overview_tab_text)
@@ -191,6 +193,13 @@ class tab {
         }
 
         this.tab_button.onmousedown = (e) => {
+            if (e.button == 1) {
+                this.destroy();
+                return;
+            }
+        }
+
+        this.overview_tab.onmousedown = (e) => {
             if (e.button == 1) {
                 this.destroy();
                 return;
@@ -376,6 +385,10 @@ class tab {
             this.tab_button.style.width = "calc(100% / 5)"
         }
 
+    }
+
+    updatePreview() {
+        ipcRenderer.send("updatePreview", this.id)
     }
 
     mute() {

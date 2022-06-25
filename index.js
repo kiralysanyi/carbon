@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell, components } = require("electron");
+const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell, components, globalShortcut } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./settings");
@@ -303,6 +303,8 @@ function initMainWindow() {
     var focusedTab = null;
     const errorTracker = {};
 
+
+
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
             webPreferences: {
@@ -317,6 +319,15 @@ function initMainWindow() {
         webviews[data.uuid] = view;
         const uuid = data.uuid;
         e.returnValue = 0;
+
+        ipcMain.on("updatePreview", (e, id) => {
+            if (id != uuid) {
+                return;
+            }
+            view.webContents.capturePage().then((image) => {
+                sendEvent({ type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
+            });
+        })
 
         contextMenu({
             prepend: (defaultActions, parameters, browserview) => [
@@ -402,7 +413,7 @@ function initMainWindow() {
         view.webContents.on("did-stop-loading", () => {
 
             view.webContents.capturePage().then((image) => {
-                sendEvent({type: "preview", image: image.toDataURL()});
+                sendEvent({ type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
             });
             var utype = null;
             if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
@@ -432,6 +443,9 @@ function initMainWindow() {
         });
 
         view.webContents.on("page-title-updated", () => {
+            view.webContents.capturePage().then((image) => {
+                sendEvent({ type: "preview", image: image.toDataURL() });
+            });
             saveHistory();
             sendEvent({ type: "page-title-updated", title: view.webContents.getTitle() });
         });
@@ -467,6 +481,9 @@ function initMainWindow() {
         });
 
         view.webContents.on("did-change-theme-color", (e, color) => {
+            view.webContents.capturePage().then((image) => {
+                sendEvent({ type: "preview", image: image.toDataURL() });
+            });
             sendEvent({ type: "color-change", color: color });
         })
 
@@ -476,10 +493,16 @@ function initMainWindow() {
         var isFullScreen = false;
 
         view.webContents.on("enter-html-full-screen", () => {
+            view.webContents.capturePage().then((image) => {
+                sendEvent({ type: "preview", image: image.toDataURL() });
+            });
             isFullScreen = true;
         })
 
         view.webContents.on("leave-html-full-screen", () => {
+            view.webContents.capturePage().then((image) => {
+                sendEvent({ type: "preview", image: image.toDataURL() });
+            });
             isFullScreen = false;
         })
 
@@ -664,8 +687,18 @@ ipcMain.on("isDebug", (e) => {
     e.returnValue = checkParameter("--carbon-debug")
 })
 
+function openOverview() {
+    mainWin.webContents.send("openOverview")
+}
+
 app.whenReady().then(async () => {
     await components.whenReady();
+
+    globalShortcut.register('Control+Tab', () => {
+        if (mainWin.isFocused) {
+            openOverview();
+        }
+    })
     console.log('components ready:', components.status());
     ipcMain.on("checkUpdate", () => {
         runUpdate();
