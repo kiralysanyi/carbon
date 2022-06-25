@@ -81,8 +81,8 @@ var first_startup = false;
     if (config["versionindex"] < package_data["version_index"]) {
         console.log("Upgrade detected");
 
-        //enable auto updates below version index 1
-        if (config["versionindex"] < 1) {
+        //enable auto updates below version index 2
+        if (config["versionindex"] < 2) {
             console.log("Enabling auto update");
             config["auto-update"] = true;
             settings.saveData("general.conf.json", JSON.stringify(config));

@@ -447,16 +447,36 @@ function renderFavorites() {
     htmlObj.style.width = "100px";
     container.innerHTML = "";
     const len = Object.keys(favorites).length;
-    container.style.width = 100 * len + "px";
+    var overflow = 0;
+    
+    if (len >= 6) {
+        overflow = len - 5
+    }
+
+    console.log(overflow, len)
     const favorites_add = document.getElementById("favorites_add");
-    if (Object.keys(favorites).length >= 6) {
-        favorites_add.style.display = "none";
-        htmlObj.style.width = (100 * len) + "px";
+    if (len >= 6) {
+        htmlObj.style.width = (100 * (len - overflow)) + "px";
+        htmlObj.style.height = "200px";
+        favorites_add.style.top = "100px";
+        container.style.height = "200px";
     } else { 
         htmlObj.style.width = (100 + (100 * len)) + "px";
+        htmlObj.style.height = "100px";
+        favorites_add.style.top = "0px";
+    }
+
+    if (len >= 10) {
+        favorites_add.style.display = "none";
+    } else {
         favorites_add.style.display = "block";
     }
+    var i = 0
     for (var x in favorites) {
+        i++;
+        if (i == 6) {
+            container.appendChild(document.createElement("br"))
+        }
         const obj = favorites[x];
         const element = document.createElement("div");
         element.classList.add("button");
@@ -484,10 +504,6 @@ setTimeout(() => {
 }, 1000)
 
 async function addFavorite() {
-    if (Object.keys(favorites).length >= 6) {
-        window.alert("Reached maximum amount of favorites.");
-        return;
-    }
     const url = new URL(await prompt("Webpage url", "url"));
     const title = await prompt("Title", "Title")
     const favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + url.toString()
