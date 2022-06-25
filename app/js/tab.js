@@ -278,9 +278,11 @@ class tab {
             }
 
             if (type == "did-start-loading") {
-                showCurrentTab();
-                this.error = false;
-                hideErrorPage();
+                if (this.error == true) {
+                    showCurrentTab();
+                    this.error = false;
+                    hideErrorPage();
+                }
                 loadstart();
             }
 
