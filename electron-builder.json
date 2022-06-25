@@ -2,6 +2,8 @@
   "appId": "com.kiralysanyi.carbon",
   "productName": "Carbon",
   "generateUpdatesFilesForAllChannels": true,
+  "afterSign": "./signpackage.js",
+  "files": "!signpackage.js",
   "electronDownload": {
     "mirror": "https://github.com/castlabs/electron-releases/releases/download/v",
     "version": "18.3.3+wvcus"
