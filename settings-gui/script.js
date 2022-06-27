@@ -325,6 +325,6 @@ autoupdate_switch.onchange = () => {
 }
 
 exp_settings_table.appendChild(immersive_row);
-exp_settings_table.appendChild(autoupdate_row);
+settings_table.appendChild(autoupdate_row);
 
 general_tab.focus();

@@ -324,7 +324,19 @@ function initMainWindow() {
     var focusedTab = null;
     const errorTracker = {};
 
+    globalShortcut.register('F5', () => {
+        if (mainWin.isFocused) {
+            console.log(focusedTab)
+            focusedTab.webContents.reload();
+        }
+    })
 
+    globalShortcut.register('F12', () => {
+        if (mainWin.isFocused) {
+            console.log(focusedTab)
+            focusedTab.webContents.openDevTools();
+        }
+    })
 
     ipcMain.on("newTab", (e, data) => {
         const view = new BrowserView({
@@ -721,6 +733,8 @@ app.whenReady().then(async () => {
             openOverview();
         }
     })
+
+
     console.log('components ready:', components.status());
     ipcMain.on("checkUpdate", () => {
         runUpdate();

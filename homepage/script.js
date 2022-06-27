@@ -243,12 +243,19 @@ const startTheming = async () => {
         searchbox.style.color = "black"
         autocomplete_box.style.color = "black";
         historyDOM.style.color = "black";
+        document.getElementById("settings_open").style.color = "black";
+        document.getElementById("history_toggle").style.color = "black";
     } else {
         searchbox.style.color = "white"
         autocomplete_box.style.color = "white";
         historyDOM.style.color = "white";
+        document.getElementById("settings_open").style.color = "white";
+        document.getElementById("history_toggle").style.color = "white";
 
     }
+
+    document.getElementById("settings_open").style.backgroundColor = backgroundHEX;
+    document.getElementById("history_toggle").style.backgroundColor = backgroundHEX;
 
     autocomplete_box.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
     historyDOM.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
