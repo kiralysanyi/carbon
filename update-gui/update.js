@@ -14,9 +14,18 @@ confirm_button.onclick = () => {
 cancel_button.onclick = () => {
     ipcRenderer.send(winID + "answer", false);
 }
+const showButtons = ipcRenderer.sendSync(winID + "showButtons");
 
-ipcRenderer.on("update_percentage", (percentage) => {
-    question_display.innerHTML = "Downloading update, please wait!";
-    document.getElementById("statusbar").style.width = percentage;
-    document.getElementById("button_bar").style.display = "none";
+if (showButtons == false) {
+    cancel_button.style.display = "none";
+    confirm_button.style.display = "none";
+    document.getElementById("ok").style.display = "block";
+}
+
+document.getElementById("ok").addEventListener("click", () => {
+    ipcRenderer.send(winID + "close");
+})
+
+ipcRenderer.on("update_percentage", (e, percentage) => {
+    document.getElementById("statusbar").style.width = percentage + "%";
 })

@@ -52,6 +52,58 @@ var confirm = (question, promptid) => {
     })
 }
 
+class updateDisplay {
+    constructor(info) {
+        this.win = null;
+        this.winID = null;
+        this.info = info;
+    }
+
+    show() {
+        return new Promise((resolved) => {
+            this.winID = uuidv4();
+            this.win = new BrowserWindow({
+                width: 400,
+                height: 550,
+                resizable: false,
+                frame: false,
+                alwaysOnTop: true,
+                webPreferences: {
+                    nodeIntegration: true,
+                    contextIsolation: false
+                }
+            });
+            this.win.removeMenu();
+            this.win.webContents.setUserAgent(this.winID);
+            this.win.loadFile("update-gui/update.html");
+            this.win.webContents.openDevTools();
+    
+            ipcMain.once(this.winID + "updateinfo", (e) => {
+                e.returnValue = this.info;
+            })
+    
+            ipcMain.once(this.winID + "showButtons", (e) => {
+                e.returnValue = false;
+            })
+
+            ipcMain.once(this.winID + "close", () => {
+                this.close();
+            })
+        })
+    }
+
+    close() {
+        this.win.close();
+    }
+
+    update(percentage) {
+        try {
+            this.win.webContents.send("update_percentage", percentage);
+        } catch (error) {
+            
+        }
+    }
+}
 
 var updatePrompt = (question, promptid) => {
     if (!promptid) {
@@ -86,6 +138,10 @@ var updatePrompt = (question, promptid) => {
 
         ipcMain.once(winID + "updateinfo", (e) => {
             e.returnValue = question;
+        })
+
+        ipcMain.once(winID + "showButtons", (e) => {
+            e.returnValue = true;
         })
 
         ipcMain.once(winID + "answer", (e, args) => {
@@ -136,5 +192,6 @@ ipcMain.on("alert", async (e, text) => {
 module.exports = {
     confirm: confirm,
     alert: alert,
-    updatePrompt: updatePrompt
+    updatePrompt: updatePrompt,
+    updateDisplay: updateDisplay
 }

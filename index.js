@@ -120,12 +120,18 @@ function savePermissions() {
 
 //init update system
 var info;
+var update_in_progress = false;
+var update_percent = 0;
 autoUpdater.on("download-progress", (e) => {
+    update_percent = e.percent;
+    console.log("Update: ", e.percent);
     mainWin.webContents.send("update-state", "Downloading update...");
+    update_in_progress = true;
 })
 autoUpdater.on("update-downloaded", () => {
     mainWin.webContents.send("update-state", "Update downloaded, ready to install.");
-    mainWin.webContents.send("hide-update-button")
+    mainWin.webContents.send("hide-update-button");
+    mainWin.webContents.send("show-update-button");
 })
 
 autoUpdater.on("error", () => {
@@ -158,6 +164,7 @@ const runUpdate = async () => {
         mainWin.webContents.send("show-update-button");
         const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
         if (autoupdate == true) {
+            update_in_progress = true;
             mainWin.webContents.send("show-update-loader");
             autoUpdater.autoInstallOnAppQuit = true;
             autoUpdater.downloadUpdate();
@@ -174,12 +181,26 @@ const runUpdate = async () => {
 const startUpdate = async () => {
     var data = readFileSync(__dirname + "/package.json", "utf-8");
     data = JSON.parse(data)
-    var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
-    if (answer == true) {
-        mainWin.webContents.send("show-update-loader");
-        autoUpdater.autoInstallOnAppQuit = true;
-        autoUpdater.downloadUpdate();
+    if (update_in_progress == true) {
+        const update_prompt = new prompt.updateDisplay("Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes)
+        update_prompt.show();
+        var interval = setInterval(() => {
+            update_prompt.update(update_percent);
+            if (update_downloaded == true) {
+                clearInterval(interval);
+                update_prompt.update(100);
+            }
+        }, 1000);
+
+    } else {
+        var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
+        if (answer == true) {
+            mainWin.webContents.send("show-update-loader");
+            autoUpdater.autoInstallOnAppQuit = true;
+            autoUpdater.downloadUpdate();
+        }
     }
+
 }
 
 
@@ -995,3 +1016,5 @@ app.on('session-created', function () {
 process.on("uncaughtException", (e) => {
     console.error(e.name, e.message, e.stack);
 })
+
+
