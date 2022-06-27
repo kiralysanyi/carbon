@@ -41,6 +41,14 @@ carbonAPI.getHistory = () => {
     });
 }
 
+carbonAPI.removeHistoryItem = (url) => {
+    if (isHomePage()) {
+        const data = JSON.parse(settings.readData("history.json", "{}"));
+        delete data[url];
+        settings.saveData("history.json", JSON.stringify(data));
+    }
+}
+
 carbonAPI.clearHistory = () => {
     if(isHomePage()) {
         settings.saveData("history.json", "{}");

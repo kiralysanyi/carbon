@@ -197,6 +197,12 @@ class historyItem {
         this.htmlObj.onclick = () => {
             location.href = this.url;
         }
+
+        this.htmlObj.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+            this.htmlObj.remove();
+            carbonAPI.removeHistoryItem(this.url);
+        })
     }
 }
 
