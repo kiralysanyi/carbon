@@ -8,6 +8,8 @@ const { autoUpdater } = require("electron-updater")
 const { readFileSync, existsSync } = require("fs");
 var args = process.argv;
 
+
+
 function checkParameter(name) {
     for (var x in args) {
         if (args[x] == name) {
@@ -734,6 +736,13 @@ function openOverview() {
 }
 
 app.whenReady().then(async () => {
+
+    if (process.platform == "linux") {
+        if (process.env.XDG_SESSION_TYPE == "wayland") {
+            prompt.alert("We have detected that you are running carbon on Wayland. This could result in some bugs while using the application.");
+        }
+    }
+
     await components.whenReady();
 
     globalShortcut.register('Control+Tab', () => {
