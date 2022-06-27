@@ -413,7 +413,7 @@ function initMainWindow() {
         view.webContents.on("did-stop-loading", () => {
 
             view.webContents.capturePage().then((image) => {
-                sendEvent({ type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
+                sendEvent({ type: "preview", image: image.resize({ height: 400, quality: "good" }).toDataURL() });
             });
             var utype = null;
             if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
@@ -444,7 +444,7 @@ function initMainWindow() {
 
         view.webContents.on("page-title-updated", () => {
             view.webContents.capturePage().then((image) => {
-                sendEvent({ type: "preview", image: image.toDataURL() });
+                sendEvent({ type: "preview", image: image.resize({ height: 400, quality: "good" }).toDataURL() });
             });
             saveHistory();
             sendEvent({ type: "page-title-updated", title: view.webContents.getTitle() });
@@ -482,7 +482,7 @@ function initMainWindow() {
 
         view.webContents.on("did-change-theme-color", (e, color) => {
             view.webContents.capturePage().then((image) => {
-                sendEvent({ type: "preview", image: image.toDataURL() });
+                sendEvent({ type: "preview", image: image.resize({ height: 400, quality: "good" }).toDataURL() });
             });
             sendEvent({ type: "color-change", color: color });
         })
@@ -495,14 +495,14 @@ function initMainWindow() {
 
         view.webContents.on("enter-html-full-screen", () => {
             view.webContents.capturePage().then((image) => {
-                sendEvent({ type: "preview", image: image.toDataURL() });
+                sendEvent({ type: "preview", image: image.resize({ height: 400, quality: "good" }).toDataURL() });
             });
             isFullScreen = true;
         })
 
         view.webContents.on("leave-html-full-screen", () => {
             view.webContents.capturePage().then((image) => {
-                sendEvent({ type: "preview", image: image.toDataURL() });
+                sendEvent({ type: "preview", image: image.resize({ height: 400, quality: "good" }).toDataURL() });
             });
             isFullScreen = false;
         })
@@ -637,16 +637,16 @@ function initMainWindow() {
         }
         var view = focusedTab;
         view.webContents.capturePage({ x: 0, y: 0, width: mainWin.getBounds().width, height: 90 }).then((image) => {
-            mainWin.webContents.send("base64", image.toDataURL())
+            mainWin.webContents.send("base64", image.resize({ height: 400, quality: "good" }).toDataURL())
         });
     });
 
     ipcMain.on("hideCurrentTab", (e) => {
         var view = focusedTab;
         view.webContents.capturePage().then((image) => {
-            e.returnValue = image.toDataURL();
+            e.returnValue = image.resize({ height: 400, quality: "good" }).toDataURL();
             win.removeBrowserView(focusedTab);
-            
+
         });
     })
 

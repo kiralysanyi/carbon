@@ -164,7 +164,7 @@ class tab {
                 this.focus();
             }, 500);
         })
-        
+
         this.overview_tab.appendChild(this.overview_tab_text)
         this.tab_button = document.createElement("div");
         this.title = document.createElement("a");
@@ -232,7 +232,7 @@ class tab {
                     var url = this.getUrl();
                     if (url != "no_change") {
                         document.getElementById("urlbar").value = url;
-                    }            
+                    }
                 }
 
                 if (this.canGoBack() == true) {
@@ -254,6 +254,7 @@ class tab {
         console.log("Initializing tab: ", this.id)
         ipcRenderer.send("newTab", { uuid: this.id })
         //event listeners
+        this.color = null;
         ipcRenderer.on(this.id, (e, data) => {
             const type = data.type;
             const url = data.url;
@@ -313,7 +314,7 @@ class tab {
             if (type == "page-title-updated") {
                 this.title.innerHTML = data.title;
                 this.overview_tab_text.innerHTML = data.title;
-                if(focused_tab == this.id) {
+                if (focused_tab == this.id) {
                     document.title = data.title + " - Carbon";
                 }
             }
@@ -351,12 +352,16 @@ class tab {
                     this.customcolor = false;
                     return;
                 }
-                this.tab_button.style.backgroundColor = data.color;
-                if(wc_hex_is_light(data.color)) {
-                    this.tab_button.style.color = "black";
-                } else {
-                    this.tab_button.style.color = "white";
+                this.color = data.color;
+                if (this.isFocused == true) {
+                    this.tab_button.style.backgroundColor = data.color;
+                    if (wc_hex_is_light(data.color)) {
+                        this.tab_button.style.color = "black";
+                    } else {
+                        this.tab_button.style.color = "white";
+                    }
                 }
+
             }
         })
 
@@ -426,6 +431,11 @@ class tab {
 
         if (this.customcolor != true) {
             this.tab_button.style.backgroundColor = "rgba(255,255,255, 0.150)";
+        } else {
+            this.tab_button.style.backgroundColor = this.color;
+            if (wc_hex_is_light(this.color)) {
+                this.tab_button.style.color = "black";
+            }
         }
         this.isFocused = true;
         ipcRenderer.send("focusTab", this.id)
@@ -456,6 +466,7 @@ class tab {
             reloadButton.innerHTML = "Retry";
             errorPageElement.appendChild(reloadButton);
             reloadButton.onclick = () => {
+                hideErrorPage();
                 this.reload();
             }
             hideCurrentTab();
@@ -465,28 +476,38 @@ class tab {
     hide() {
         //hide tab
         this.isFocused = false;
-        if (this.customcolor != true) {
-            this.tab_button.style.backgroundColor = "transparent";
-        }
+        this.tab_button.style.backgroundColor = "transparent";
+        this.tab_button.style.color = "white";
     }
 
     back() {
         //goback
+        hideErrorPage();
+        showCurrentTab();
+        this.error = false;
         ipcRenderer.send("goBack", this.id)
     }
 
     reload() {
         //reload
+        hideErrorPage();
+        showCurrentTab();
+        this.error = false;
         ipcRenderer.send("reload", this.id);
     }
 
     forward() {
         //goforward
+        hideErrorPage();
+        showCurrentTab();
+        this.error = false;
         ipcRenderer.send("goForward", this.id)
     }
 
     destroy() {
         //close tab
+        hideErrorPage();
+        this.error = false;
         this.overview_tab.remove();
         ipcRenderer.send("removeTab", this.id);
         this.tab_button.style.width = "0%";
@@ -511,6 +532,7 @@ class tab {
             else {
                 focused_tab = null;
                 console.log("All tabs closed")
+                closewin();
                 document.getElementById("urlbar").value = "";
                 urlbar.style.display = "none";
                 resetControls();
@@ -526,9 +548,10 @@ class tab {
 function showErrorPage(code, description) {
     const element = document.getElementById("error_page");
     element.style.display = "block";
+    element.innerHTML = "";
     element.innerHTML += "<h1>An error occoured while loading the page!</h1>";
     element.innerHTML += "<p>Code: " + code + "</p>";
-    element.innerHTML += "<p>Description: "+ description +"</p>";
+    element.innerHTML += "<p>Description: " + description + "</p>";
     return element;
 }
 
@@ -579,6 +602,6 @@ if (immersiveInterfaceEnabled == true) {
     });
 
     setInterval(() => {
-        ipcRenderer.send("getBase64"); 
+        ipcRenderer.send("getBase64");
     }, 100);
 }
