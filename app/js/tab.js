@@ -235,6 +235,10 @@ class tab {
                     }
                 }
 
+                if (utype == "home") {
+                    document.getElementById("urlbar").value = "";
+                }
+
                 if (this.canGoBack() == true) {
                     showBack();
                 } else {

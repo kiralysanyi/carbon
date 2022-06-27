@@ -76,7 +76,7 @@ class updateDisplay {
             this.win.removeMenu();
             this.win.webContents.setUserAgent(this.winID);
             this.win.loadFile("update-gui/update.html");
-            this.win.webContents.openDevTools();
+            //this.win.webContents.openDevTools();
     
             ipcMain.once(this.winID + "updateinfo", (e) => {
                 e.returnValue = this.info;

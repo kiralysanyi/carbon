@@ -6,6 +6,23 @@ const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { autoUpdater } = require("electron-updater")
 const { readFileSync, existsSync } = require("fs");
+var args = process.argv;
+
+function checkParameter(name) {
+    for (var x in args) {
+        if (args[x] == name) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+if (checkParameter("--verbose") == false) {
+    console.log = () => {};
+}
+
+
 console.log("Carbon is starting on platform: ", process.platform)
 
 var package_data = readFileSync(__dirname + "/package.json", "utf-8");
@@ -30,7 +47,6 @@ const searchStrings = {
 }
 const defaultHomePage = "file://" + __dirname + "/homepage/index.html";
 //checking for command line parameters
-var args = process.argv;
 
 //importing prompt module
 var prompt = require("./prompt");
@@ -207,15 +223,7 @@ const startUpdate = async () => {
 
 var mainWin = null;
 //check for parameter
-function checkParameter(name) {
-    for (var x in args) {
-        if (args[x] == name) {
-            return true;
-        }
-    }
 
-    return false;
-}
 
 function attachControlHost(win) {
     win.webContents.on("ipc-message-sync", (e, channel) => {

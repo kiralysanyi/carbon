@@ -1,7 +1,7 @@
 {
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "version_index": 3,
   "description": "Web browser",
   "main": "index.js",
@@ -32,7 +32,7 @@
     "@cliqz/adblocker-electron": "^1.23.6",
     "colorthief": "^2.3.2",
     "cross-fetch": "^3.1.5",
-    "electron-context-menu": "^3.1.2",
+    "electron-context-menu": "^3.3.0",
     "electron-updater": "^5.0.1"
   }
 }
