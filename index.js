@@ -85,7 +85,7 @@ var first_startup = false;
         config["searchEngine"] = "duckduckgo";
         config["homePage"] = "default";
         config["update-channel"] = "stable";
-        config["auto-update"] = false;
+        config["auto-update"] = true;
         settings.saveData("general.conf.json", JSON.stringify(config));
         first_startup = true;
     }
@@ -100,7 +100,7 @@ var first_startup = false;
         console.log("Upgrade detected");
 
         //enable auto updates below version index 2
-        if (config["versionindex"] < 2) {
+        if (config["versionindex"] < 4) {
             console.log("Enabling auto update");
             config["auto-update"] = true;
             settings.saveData("general.conf.json", JSON.stringify(config));
@@ -739,7 +739,7 @@ app.whenReady().then(async () => {
 
     if (process.platform == "linux") {
         if (process.env.XDG_SESSION_TYPE == "wayland") {
-            prompt.alert("We have detected that you are running carbon on Wayland. This could result in some bugs while using the application.");
+            prompt.alert("We have detected that you are running Carbon on Wayland. This could result in some bugs while using the application.");
         }
     }
 

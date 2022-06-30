@@ -123,6 +123,7 @@ function getTab(id) {
     return tabs[id];
 }
 
+
 class tab {
     constructor(page) {
         if (afterinit == true) {
@@ -531,7 +532,9 @@ class tab {
         if (focused_tab == this.id) {
             var highest = tabs[Object.keys(tabs).sort().pop()];
             if (highest) {
-                highest.focus();
+                if (isOverviewOpen == true) {
+                    highest.focus();
+                }
             }
             else {
                 focused_tab = null;
