@@ -258,3 +258,7 @@ function setupFinal() {
 }
 
 setupFinal();
+
+if (process.platform == "win32") {
+    document.getElementById("window_controls").style.display = "none";
+}

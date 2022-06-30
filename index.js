@@ -21,7 +21,7 @@ function checkParameter(name) {
 }
 
 if (checkParameter("--verbose") == false) {
-    console.log = () => {};
+    console.log = () => { };
 }
 
 
@@ -258,7 +258,11 @@ function initSetup() {
         title: "Carbon",
         frame: false,
         titleBarStyle: 'hidden',
-        titleBarOverlay: true,
+        titleBarOverlay: {
+            height: 40,
+            color: "#1b1b1b",
+            symbolColor: "white"
+        },
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -287,7 +291,11 @@ function initMainWindow() {
         title: "Carbon",
         frame: false,
         titleBarStyle: 'hidden',
-        titleBarOverlay: true,
+        titleBarOverlay: {
+            height: 40,
+            color: "#1b1b1b",
+            symbolColor: "white"
+        },
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -683,7 +691,7 @@ function initMainWindow() {
             return;
         }
         var view = focusedTab;
-        view.webContents.capturePage({ x: 0, y: 0, width: mainWin.getBounds().width, height: 90 }).then((image) => {
+        view.webContents.capturePage({ x: 0, y: 0, width: mainWin.getBounds().width, height: 40 }).then((image) => {
             mainWin.webContents.send("base64", image.resize({ height: 400, quality: "good" }).toDataURL())
         });
     });
@@ -715,7 +723,11 @@ ipcMain.on("opendownloads", () => {
         minHeight: 600,
         frame: false,
         titleBarStyle: 'hidden',
-        titleBarOverlay: true,
+        titleBarOverlay: {
+            height: 40,
+            color: "#1b1b1b",
+            symbolColor: "white"
+        },
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
