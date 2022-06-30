@@ -532,7 +532,7 @@ class tab {
         if (focused_tab == this.id) {
             var highest = tabs[Object.keys(tabs).sort().pop()];
             if (highest) {
-                if (isOverviewOpen == true) {
+                if (isOverviewOpen == false) {
                     highest.focus();
                 }
             }

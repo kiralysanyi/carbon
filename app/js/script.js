@@ -358,3 +358,7 @@ var isOverviewOpen = false;
 ipcRenderer.on("openOverview", () => {
     toggleOverview();
 })
+
+if (process.platform == "win32") {
+    document.getElementById("window_controls").style.display = "none";
+}

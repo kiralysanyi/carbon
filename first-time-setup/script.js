@@ -30,6 +30,7 @@ var final_tab = new tab("Finish");
 welcome_tab.disableFocusButton();
 search_engine_tab.disableFocusButton();
 final_tab.disableFocusButton();
+extras_tab.disableFocusButton();
 
 //setup welcome screen
 function setupWelcome() {
@@ -174,7 +175,7 @@ function setupExtras() {
     switch_container.style.lineHeight = "40px";
 
     var adblock_text = document.createElement("a");
-    adblock_text.style.marginLeft = "20%";
+    adblock_text.style.marginLeft = "-50px";
     adblock_text.innerHTML = "AD block";
     var adblock_line = document.createElement("div");
     adblock_line.classList.add("switch_line");
@@ -182,6 +183,7 @@ function setupExtras() {
     adblock_line.appendChild(adblock_switch.mainElement);
     switch_container.appendChild(adblock_line);
     adblock_switch.mainElement.style.marginTop = "-40px";
+    adblock_switch.mainElement.style.left = "50px";
 
     switch_container.style.position = "absolute";
     switch_container.style.top = "10%";

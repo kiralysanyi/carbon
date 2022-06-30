@@ -257,6 +257,8 @@ function initSetup() {
         minHeight: 600,
         title: "Carbon",
         frame: false,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: true,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -284,6 +286,8 @@ function initMainWindow() {
         minHeight: 600,
         title: "Carbon",
         frame: false,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: true,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -710,6 +714,8 @@ ipcMain.on("opendownloads", () => {
         minWidth: 800,
         minHeight: 600,
         frame: false,
+        titleBarStyle: 'hidden',
+        titleBarOverlay: true,
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),
