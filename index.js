@@ -153,6 +153,7 @@ function initMainWindow() {
         title: "Carbon",
         frame: false,
         titleBarStyle: 'hidden',
+        icon: __dirname + "/build/icon.png",
         titleBarOverlay: {
             height: 40,
             color: "#1b1b1b",
