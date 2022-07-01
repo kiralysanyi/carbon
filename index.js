@@ -1,10 +1,9 @@
 const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell, components, globalShortcut } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
-const settings = require("./settings");
+const settings = require("./main-js/settings");
 const path = require("path");
 const { ElectronBlocker } = require("@cliqz/adblocker-electron")
-const { autoUpdater } = require("electron-updater")
 const { readFileSync, existsSync } = require("fs");
 var args = process.argv;
 
@@ -30,17 +29,6 @@ console.log("Carbon is starting on platform: ", process.platform)
 var package_data = readFileSync(__dirname + "/package.json", "utf-8");
 package_data = JSON.parse(package_data)
 
-autoUpdater.allowDowngrade = false;
-autoUpdater.allowPrerelease = false;
-
-//useragent
-var USERAGENT_FIREFOX = 'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:FXVERSION.0) Gecko/20100101 Firefox/FXVERSION.0';
-var USERAGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.63 Safari/537.36";
-
-if (process.platform == "linux") {
-    USERAGENT = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.0.0 Safari/537.36";
-    USERAGENT_FIREFOX = "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:FXVERSION.0) Gecko/20100101 Firefox/FXVERSION.0";
-}
 
 const searchStrings = {
     google: "https://google.com/search?q=",
@@ -51,8 +39,12 @@ const defaultHomePage = "file://" + __dirname + "/homepage/index.html";
 //checking for command line parameters
 
 //importing prompt module
-var prompt = require("./prompt");
+var prompt = require("./main-js/prompt");
 const { randomUUID } = require("crypto");
+
+//getting the useragent
+const { USERAGENT, USERAGENT_FIREFOX } = require("./main-js/useragent-provider");
+const { runUpdate, startUpdate } = require("./main-js/update-management");
 
 //permission handling, loading saved permissions and writing permissions
 var permissions = {};
@@ -137,12 +129,21 @@ function savePermissions() {
 }
 
 //init update system
-var info;
-var update_in_progress = false;
-var update_percent = 0;
+const updateManager = require("./main-js/update-management");
+var info = updateManager.info;
+var update_in_progress = updateManager.update_in_progress;
+var update_percent = updateManager.update_percent;
+const autoUpdater = updateManager.autoUpdater;
+
+updateManager.onInfoUpdate = () => {
+    info = updateManager.info;
+    update_in_progress = updateManager.update_in_progress;
+    update_percent = updateManager.update_percent;
+}
+
+
 autoUpdater.on("download-progress", (e) => {
     update_percent = e.percent;
-    console.log("Update: ", e.percent);
     mainWin.webContents.send("update-state", "Downloading update...");
     update_in_progress = true;
 })
@@ -155,70 +156,10 @@ autoUpdater.on("update-downloaded", () => {
 autoUpdater.on("error", () => {
     mainWin.webContents.send("update-state", "Failed :(");
     mainWin.webContents.send("hide-update-button")
-    new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
 })
 
 if (settings.readKeyFromFile("general.conf.json", "auto-update")) {
     autoUpdater.autoDownload = true;
-}
-
-
-const runUpdate = async () => {
-
-    mainWin.webContents.send("update-state", "Checking...");
-    autoUpdater.autoDownload = false;
-    autoUpdater.disableWebInstaller = true;
-
-    try {
-        info = await autoUpdater.checkForUpdates();
-        if (info.updateInfo.version.includes("beta") == true && settings.readKeyFromFile("general.conf.json", "update-channel") != "beta") {
-            mainWin.webContents.send("update-state", "Couldn't download beta version because only stable version is allowed.");
-            return;
-        }
-        if (autoUpdater.currentVersion.compare(info.updateInfo.version) == 0) {
-            mainWin.webContents.send("update-state", "Up to date");
-            return;
-        }
-        mainWin.webContents.send("show-update-button");
-        const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
-        if (autoupdate == true) {
-            update_in_progress = true;
-            mainWin.webContents.send("show-update-loader");
-            autoUpdater.autoInstallOnAppQuit = true;
-            autoUpdater.downloadUpdate();
-        }
-    } catch (error) {
-        mainWin.webContents.send("update-state", "Failed to check for updates :(");
-        mainWin.webContents.send("hide-update-button")
-        new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
-        console.error(error);
-    }
-
-}
-
-const startUpdate = async () => {
-    var data = readFileSync(__dirname + "/package.json", "utf-8");
-    data = JSON.parse(data)
-    if (update_in_progress == true) {
-        const update_prompt = new prompt.updateDisplay("Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes)
-        update_prompt.show();
-        var interval = setInterval(() => {
-            update_prompt.update(update_percent);
-            if (update_downloaded == true) {
-                clearInterval(interval);
-                update_prompt.update(100);
-            }
-        }, 1000);
-
-    } else {
-        var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
-        if (answer == true) {
-            mainWin.webContents.send("show-update-loader");
-            autoUpdater.autoInstallOnAppQuit = true;
-            autoUpdater.downloadUpdate();
-        }
-    }
-
 }
 
 
@@ -315,7 +256,7 @@ function initMainWindow() {
 
     setTimeout(() => {
         win.show();
-        runUpdate();
+        runUpdate(mainWin);
     }, 1000);
 
 
@@ -772,11 +713,11 @@ app.whenReady().then(async () => {
 
     console.log('components ready:', components.status());
     ipcMain.on("checkUpdate", () => {
-        runUpdate();
+        runUpdate(mainWin);
     })
 
     ipcMain.on("start-update", () => {
-        startUpdate();
+        startUpdate(mainWin);
     })
 
     setTimeout(() => {

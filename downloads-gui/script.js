@@ -1,5 +1,5 @@
 const { ipcRenderer } = require("electron");
-const settings = require("../settings");
+const settings = require("../main-js/settings");
 
 var downloads_saved = JSON.parse(settings.readData("download.history.json"));
 

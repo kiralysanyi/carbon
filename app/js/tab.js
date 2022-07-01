@@ -1,5 +1,5 @@
 const { ipcRenderer } = require("electron");
-const settings = require("../settings");
+const settings = require("../main-js/settings");
 
 //ipc crap
 var afterinit = false;
