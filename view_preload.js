@@ -50,7 +50,7 @@ carbonAPI.removeHistoryItem = (url) => {
 }
 
 carbonAPI.clearHistory = () => {
-    if(isHomePage()) {
+    if (isHomePage()) {
         settings.saveData("history.json", "{}");
     }
 }
@@ -73,3 +73,49 @@ function wc_hex_is_light(color) {
 carbonAPI.experimental.wc_hex_is_light = wc_hex_is_light;
 
 console.log("Gutten tag! Preload loaded");
+
+function createShareWindow() {
+    return new Promise((resolved) => {
+        const selected = ipcRenderer.sendSync("capturePrompt");
+        resolved(selected)
+    });
+}
+
+
+async function sharePrompt() {
+    return new Promise(async (done) => {
+        var sources = ipcRenderer.sendSync("getSources");
+        console.log("Sources: ", sources);
+        const selected = await createShareWindow(sources);
+        console.log("Selected: ", sources[selected], selected);
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                  mandatory: {
+                    chromeMediaSource: 'desktop',
+                    chromeMediaSourceId: sources[selected].id,
+                    minWidth: 1280,
+                    maxWidth: 1280,
+                    minHeight: 720,
+                    maxHeight: 720
+                  }
+                }
+              })
+            console.log("Da stream: ", stream);
+            done(stream);
+        } catch (error) {
+            console.error(error);
+        }
+    });
+}
+
+async function screenshare() {
+    return new Promise(async (gotstream) => {
+        var src = await sharePrompt();
+        gotstream(src);
+    });
+}
+
+
+navigator.mediaDevices.getDisplayMedia = screenshare

@@ -8,7 +8,8 @@ const path = require("path");
 const { readFileSync, existsSync } = require("fs");
 require("./main-js/configurator");
 require("./main-js/download_backend");
-require("./main-js/adblock")
+require("./main-js/adblock");
+require("./main-js/capture_backend")
 const persistent = require("./main-js/persistent_variables")
 var args = process.argv;
 
