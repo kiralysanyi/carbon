@@ -94,7 +94,7 @@ async function sharePrompt() {
                 video: {
                   mandatory: {
                     chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: sources[selected].id,
+                    chromeMediaSourceId: sources[selected - 1].id,
                     minWidth: 1280,
                     maxWidth: 1280,
                     minHeight: 720,
@@ -103,6 +103,13 @@ async function sharePrompt() {
                 }
               })
             console.log("Da stream: ", stream);
+            ipcRenderer.once("stopSharing", () => {
+                console.log("Stopping capture")
+                const tracks = stream.getTracks();
+                for(var x in tracks) {
+                    tracks[x].stop();
+                }
+            })
             done(stream);
         } catch (error) {
             console.error(error);

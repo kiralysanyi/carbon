@@ -1,4 +1,4 @@
-const { desktopCapturer, ipcMain, BrowserWindow } = require("electron");
+const { desktopCapturer, ipcMain, BrowserWindow, globalShortcut, app, Notification } = require("electron");
 const getSources = () => {
     return new Promise(async (resolved) => {
         const sources = await desktopCapturer.getSources({
@@ -31,6 +31,10 @@ async function createShareWindow(sources) {
             e.returnValue = null;
             console.log(args);
             done(args);
+            new Notification({
+                body: "Press F1 to stop capture",
+                title: "Screen capture"
+            }).show();
         });
 
         win.once("closed", () => {
@@ -45,11 +49,21 @@ async function createShareWindow(sources) {
     });
 }
 
+var requesters = [];
 
 ipcMain.on("getSources", async (e) => {
     e.returnValue = await getSources();
 })
 
 ipcMain.on("capturePrompt", async (e) => {
+    requesters.push(e.sender);
     e.returnValue = await createShareWindow(e.sources);
 })
+
+app.whenReady().then(() => {
+    globalShortcut.register("F1", () => {
+        for(var x in requesters) {
+            requesters[x].send("stopSharing")
+        }
+    })
+});
