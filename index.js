@@ -1,4 +1,6 @@
 const { app, BrowserWindow, ipcMain, BrowserView, components, globalShortcut } = require("electron");
+console.log(__dirname)
+
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./main-js/settings");

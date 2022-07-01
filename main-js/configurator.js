@@ -1,7 +1,9 @@
-const { readFileSync } = require("original-fs");
+const { readFileSync } = require("fs");
 const settings = require("./settings");
+const path = require("path")
 
-var package_data = readFileSync("./package.json", "utf-8");
+
+var package_data = readFileSync(path.join(__dirname, "/../package.json"), "utf-8");
 package_data = JSON.parse(package_data)
 
 

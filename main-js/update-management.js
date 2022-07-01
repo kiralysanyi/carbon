@@ -1,5 +1,5 @@
 const { autoUpdater } = require("electron-updater");
-const { readFileSync } = require("original-fs");
+const { readFileSync } = require("fs");
 const prompt = require("./prompt");
 const {Notification, app} = require("electron");
 const settings = require("./settings")
