@@ -1,12 +1,14 @@
-const { app, BrowserWindow, ipcMain, session, BrowserView, MenuItem, Menu, webContents, Notification, shell, components, globalShortcut } = require("electron");
+const { app, BrowserWindow, ipcMain, BrowserView, components, globalShortcut } = require("electron");
 app.commandLine.appendSwitch("enable-transparent-visuals");
 const contextMenu = require('electron-context-menu');
 const settings = require("./main-js/settings");
 const path = require("path");
-const { ElectronBlocker } = require("@cliqz/adblocker-electron")
 const { readFileSync, existsSync } = require("fs");
+require("./main-js/configurator");
+require("./main-js/download_backend");
+require("./main-js/adblock")
+const persistent = require("./main-js/persistent_variables")
 var args = process.argv;
-
 
 
 function checkParameter(name) {
@@ -25,10 +27,7 @@ if (checkParameter("--verbose") == false) {
 
 
 console.log("Carbon is starting on platform: ", process.platform)
-
-var package_data = readFileSync(__dirname + "/package.json", "utf-8");
-package_data = JSON.parse(package_data)
-
+var first_startup = false;
 
 const searchStrings = {
     google: "https://google.com/search?q=",
@@ -40,93 +39,12 @@ const defaultHomePage = "file://" + __dirname + "/homepage/index.html";
 
 //importing prompt module
 var prompt = require("./main-js/prompt");
-const { randomUUID } = require("crypto");
 
 //getting the useragent
 const { USERAGENT, USERAGENT_FIREFOX } = require("./main-js/useragent-provider");
 const { runUpdate, startUpdate } = require("./main-js/update-management");
+const permission_handler = require("./main-js/permission")
 
-//permission handling, loading saved permissions and writing permissions
-var permissions = {};
-
-function loadPermissions() {
-    return new Promise((resolved) => {
-        var data = settings.readData("permissions.conf.json")
-        if (data == false) {
-            console.log("No permission config file found");
-            resolved(false);
-        }
-        else {
-            permissions = JSON.parse(data);
-            console.log("Loaded permission config");
-            resolved(true);
-        }
-    })
-}
-
-loadPermissions();
-var first_startup = false;
-
-(() => {
-    //initializing general config file
-    var config = JSON.parse(settings.readData("general.conf.json"));
-    if (Object.keys(config).length == 0) {
-        //default config
-        config["versionindex"] = package_data["version_index"];
-        config["adblock"] = false;
-        config["searchEngine"] = "duckduckgo";
-        config["homePage"] = "default";
-        config["update-channel"] = "stable";
-        config["auto-update"] = true;
-        settings.saveData("general.conf.json", JSON.stringify(config));
-        first_startup = true;
-    }
-
-    if (config["versionindex"] == null) {
-        config["versionindex"] = package_data["version_index"];
-    }
-
-    console.log("Application version index: ", package_data["version_index"])
-    console.log(config["versionindex"])
-    if (config["versionindex"] < package_data["version_index"]) {
-        console.log("Upgrade detected");
-
-        //enable auto updates below version index 2
-        if (config["versionindex"] < 4) {
-            console.log("Enabling auto update");
-            config["auto-update"] = true;
-            settings.saveData("general.conf.json", JSON.stringify(config));
-        }
-
-        config["versionindex"] = package_data["version_index"]
-        settings.saveData("general.conf.json", JSON.stringify(config));
-    }
-
-    //initializing experimental config file
-    var config_exp = settings.readData("experimental.conf.json");
-    console.log("Configuration read: ", config_exp);
-    if (config_exp == "{}") {
-        config_exp = {};
-        settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
-        //default config
-        config_exp["immersive_interface"] = false;
-        settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
-    }
-
-    //initializing download history
-
-    var dlhistory = settings.readData("download.history.json");
-    console.log("Download history read");
-    if (dlhistory == "{}") {
-        dlhistory = {};
-        settings.saveData("download.history.json", JSON.stringify(dlhistory));
-    }
-
-})()
-
-function savePermissions() {
-    settings.saveData("permissions.conf.json", JSON.stringify(permissions));
-}
 
 //init update system
 const updateManager = require("./main-js/update-management");
@@ -698,7 +616,10 @@ app.whenReady().then(async () => {
 
     if (process.platform == "linux") {
         if (process.env.XDG_SESSION_TYPE == "wayland") {
-            prompt.alert("We have detected that you are running Carbon on Wayland. This could result in some bugs while using the application.");
+            if (persistent.readVariable("wayland_error_shown") != true) {
+                persistent.setVariable("wayland_error_shown", true)
+                prompt.alert("We have detected that you are running Carbon on Wayland. This could result in some bugs while using the application.");
+            }
         }
     }
 
@@ -776,235 +697,9 @@ app.whenReady().then(async () => {
             initSetup();
         }
 
-
-
     }, 1000);
 });
-
 app.on("window-all-closed", app.exit);
-
-app.on('session-created', function () {
-    //permission handling
-    session.defaultSession.setPermissionRequestHandler(async (webcontents, permission, callback) => {
-        await loadPermissions();
-        const host = new URL(webcontents.getURL()).hostname;
-
-        console.log(host + " wants permission for: " + permission);
-
-        if (permissions[host] && permissions[host][permission]) {
-            callback(permissions[host][permission]);
-            console.log("Access granted automatically:", permission);
-            return permissions[host][permission];
-        }
-        else {
-            if (permissions[host] && permissions[host][permission] == false) {
-                callback(permissions[host][permission]);
-                console.log("Access denied automatically", permission);
-                return permissions[host][permission];
-            }
-        }
-
-        if (permissions[host] && permissions[host][permission]) {
-            callback(permissions[host][permission]);
-            return permissions[host][permission];
-        }
-
-        if (permission == "fullscreen") {
-            callback(true);
-            return true;
-        }
-
-        if (permission == "pointerLock") {
-            callback(true);
-            return true;
-        }
-
-        if (permission == "background-sync") {
-            callback(true);
-            return true;
-        }
-
-        if (permission == "window-placement") {
-            callback(true);
-            return true;
-        }
-
-        if (permission == "notifications") {
-            console.log("NOTE: push notifications not supported");
-            callback(false);
-            return false;
-        }
-
-        if (permission == "sensors") {
-            console.log("NOTE: sensor api disabled");
-            callback(false);
-            return false;
-        }
-
-        if (permission == "media") {
-            var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?", host + permission);
-            if (permissions[host]) {
-                permissions[host][permission] = answer;
-            }
-            else {
-                permissions[host] = {};
-                permissions[host][permission] = answer;
-            }
-            savePermissions();
-            callback(answer);
-            return answer;
-        }
-
-        console.log(host, " asked for permission: ", permission)
-        var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?", host + permission);
-        if (permissions[host]) {
-            permissions[host][permission] = answer;
-        }
-        else {
-            permissions[host] = {};
-            permissions[host][permission] = answer;
-        }
-        savePermissions();
-        return answer;
-
-    });
-
-    session.defaultSession.setPermissionCheckHandler(async (webcontents, permission, origin, details) => {
-        await loadPermissions();
-        const host = new URL(origin).hostname;
-        try {
-            if (permission == "media") {
-                return true;
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    });
-
-    //download handling 
-
-    var current_downloads = {};
-    var dlitems = {};
-
-    session.defaultSession.on("will-download", (e, item, webcontents) => {
-        new Notification({ title: "Download information", body: "Download has been started: " + item.getFilename() }).show()
-        const DLID = randomUUID();
-        dlitems[DLID] = item;
-        var received0 = 0
-        var speed = 0;
-        var received = 0;
-        item.on('updated', (event, state) => {
-            if (state == 'interrupted') {
-                console.log('Download is interrupted but can be resumed');
-                current_downloads[DLID] = {
-                    "state": "paused",
-                    "received": received,
-                    "file": item.getFilename(),
-                    "url": item.getURL(),
-                    "total": item.getTotalBytes(),
-                    "speed": 0
-                }
-            } else if (state === 'progressing') {
-                if (item.isPaused()) {
-                    console.log('Download is paused')
-                    current_downloads[DLID] = {
-                        "state": "paused",
-                        "received": received,
-                        "file": item.getFilename(),
-                        "url": item.getURL(),
-                        "total": item.getTotalBytes(),
-                        "speed": 0
-                    }
-                } else {
-                    received = item.getReceivedBytes();
-                    speed = received - received0;
-                    received0 = received;
-                    current_downloads[DLID] = {
-                        "state": state,
-                        "received": received,
-                        "file": item.getFilename(),
-                        "url": item.getURL(),
-                        "total": item.getTotalBytes(),
-                        "speed": speed
-                    }
-                }
-            }
-        })
-        item.once('done', (event, state) => {
-            if (state == 'completed') {
-                var date = new Date();
-                console.log('Download successfully')
-                var saved_downloads = JSON.parse(settings.readData("download.history.json"));
-                saved_downloads[DLID] = {
-                    "file": item.getFilename(),
-                    "url": item.getURL(),
-                    "time": date.getTime()
-                }
-                settings.saveData("download.history.json", JSON.stringify(saved_downloads));
-                new Notification({ title: "Download information", body: "Download has been completed: " + item.getFilename() }).show()
-            } else {
-                console.log(`Download failed: ${state}`)
-                new Notification({ title: "Download information", body: "Download failed: " + item.getFilename() }).show()
-            }
-
-            delete current_downloads[DLID];
-        })
-
-    })
-
-    ipcMain.on("cancel", (e, dlid) => {
-        console.log("Download cancelled", dlid);
-        dlitems[dlid].cancel();
-    })
-
-    ipcMain.on("pause", (e, dlid) => {
-        console.log("Download paused", dlid);
-        if (dlitems[dlid].isPaused()) {
-            dlitems[dlid].resume();
-        }
-        else {
-            dlitems[dlid].pause();
-        }
-    })
-
-    ipcMain.on("getDownloads", (e) => {
-        e.returnValue = JSON.stringify(current_downloads);
-    })
-
-    //adblock
-    const fetch = require("cross-fetch").fetch
-
-    ElectronBlocker.fromPrebuiltAdsAndTracking(fetch).then(async (blocker) => {
-        function enable() {
-            blocker.enableBlockingInSession(session.defaultSession);
-            console.log("Adblock enabled")
-        }
-
-        function disable() {
-            blocker.disableBlockingInSession(session.defaultSession);
-            console.log("Adblock disabled")
-        }
-
-        const isEnabled = JSON.parse(settings.readData("general.conf.json")).adblock;
-
-        if (isEnabled) {
-            enable();
-        }
-
-        ipcMain.on("enableAdblock", (e) => {
-            enable();
-            e.returnValue = 0;
-        })
-        ipcMain.on("disableAdblock", (e) => {
-            disable();
-            e.returnValue = 0;
-        })
-    });
-
-});
-
 process.on("uncaughtException", (e) => {
     console.error(e.name, e.message, e.stack);
 })
-
-
