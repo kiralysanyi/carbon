@@ -92,21 +92,21 @@ async function sharePrompt() {
             const stream = await navigator.mediaDevices.getUserMedia({
                 audio: false,
                 video: {
-                  mandatory: {
-                    chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: sources[selected - 1].id,
-                    minWidth: 1280,
-                    maxWidth: 1280,
-                    minHeight: 720,
-                    maxHeight: 720
-                  }
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: sources[selected - 1].id,
+                        minWidth: 1280,
+                        maxWidth: 1280,
+                        minHeight: 720,
+                        maxHeight: 720
+                    }
                 }
-              })
+            })
             console.log("Da stream: ", stream);
             ipcRenderer.once("stopSharing", () => {
                 console.log("Stopping capture")
                 const tracks = stream.getTracks();
-                for(var x in tracks) {
+                for (var x in tracks) {
                     tracks[x].stop();
                 }
             })

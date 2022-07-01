@@ -242,7 +242,7 @@ urlbar.addEventListener("blur", () => {
         hideSuggestions();
         suggestion_dom.innerHTML = "";
         suggestion_dom.style.height = "0px";
-    }, 100);
+    }, 200);
 })
 
 urlbar.addEventListener("focus", () => {

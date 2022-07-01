@@ -9,7 +9,7 @@ const { readFileSync, existsSync } = require("fs");
 require("./main-js/configurator");
 require("./main-js/download_backend");
 require("./main-js/adblock");
-require("./main-js/capture_backend")
+require("./main-js/capture_backend");
 const persistent = require("./main-js/persistent_variables")
 var args = process.argv;
 
@@ -228,7 +228,8 @@ function initMainWindow() {
             webPreferences: {
                 preload: path.join(app.getAppPath(), 'view_preload.js'),
                 contextIsolation: false,
-                plugins: true
+                plugins: true,
+                nodeIntegration: false
             }
         });
         view.webContents.setUserAgent(USERAGENT);

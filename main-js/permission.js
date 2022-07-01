@@ -79,12 +79,6 @@ app.on("session-created", () => {
             return false;
         }
 
-        if (permission == "sensors") {
-            console.log("NOTE: sensor api disabled");
-            callback(false);
-            return false;
-        }
-
         if (permission == "media") {
             var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?", host + permission);
             if (permissions[host]) {
