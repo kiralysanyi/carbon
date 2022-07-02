@@ -108,14 +108,7 @@ ipcRenderer.on("command", (e, command) => {
 
 afterinit = true;
 
-const startup_url = ipcRenderer.sendSync("openFirst");
-
-if (startup_url != "null") {
-    newTab(startup_url);
-}
-else {
-    newTab();
-}
+newTab();
 
 function hideCurrentTab() {
     return ipcRenderer.sendSync("hideCurrentTab");

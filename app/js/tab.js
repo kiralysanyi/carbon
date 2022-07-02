@@ -1,6 +1,12 @@
 const { ipcRenderer } = require("electron");
 const settings = require("../main-js/settings");
 
+const senddata = ipcRenderer.sendSync;
+ipcRenderer.sendSync = (channel, data) => {
+    console.log(channel,data);
+    return senddata(channel,data);
+}
+
 //ipc crap
 var afterinit = false;
 
@@ -257,7 +263,7 @@ class tab {
 
         //connect to tabhost
         console.log("Initializing tab: ", this.id)
-        ipcRenderer.send("newTab", { uuid: this.id })
+        ipcRenderer.sendSync("newTab", { uuid: this.id })
         //event listeners
         this.color = null;
         ipcRenderer.on(this.id, (e, data) => {
@@ -381,7 +387,7 @@ class tab {
         }
         this.focus();
         onTabUpdate();
-        ipcRenderer.send("addListeners")
+        ipcRenderer.sendSync("addListeners")
 
 
         //dynamic tab button
@@ -402,12 +408,12 @@ class tab {
     }
 
     mute() {
-        ipcRenderer.send("mute", this.id);
+        ipcRenderer.sendSync("mute", this.id);
     }
 
     navigate(url) {
         //load url
-        ipcRenderer.send("navigate", { uuid: this.id, url: url });
+        ipcRenderer.sendSync("navigate", { uuid: this.id, url: url });
     }
 
     getUrl() {
@@ -443,7 +449,7 @@ class tab {
             }
         }
         this.isFocused = true;
-        ipcRenderer.send("focusTab", this.id)
+        ipcRenderer.sendSync("focusTab", this.id)
         var url = this.getUrl();
         if (url != "no_change") {
             document.getElementById("urlbar").value = url;
@@ -490,7 +496,7 @@ class tab {
         hideErrorPage();
         showCurrentTab();
         this.error = false;
-        ipcRenderer.send("goBack", this.id)
+        ipcRenderer.sendSync("goBack", this.id)
     }
 
     reload() {
@@ -498,7 +504,7 @@ class tab {
         hideErrorPage();
         showCurrentTab();
         this.error = false;
-        ipcRenderer.send("reload", this.id);
+        ipcRenderer.sendSync("reload", this.id);
     }
 
     forward() {
@@ -506,7 +512,7 @@ class tab {
         hideErrorPage();
         showCurrentTab();
         this.error = false;
-        ipcRenderer.send("goForward", this.id)
+        ipcRenderer.sendSync("goForward", this.id)
     }
 
     destroy() {
@@ -514,7 +520,7 @@ class tab {
         hideErrorPage();
         this.error = false;
         this.overview_tab.remove();
-        ipcRenderer.send("removeTab", this.id);
+        ipcRenderer.sendSync("removeTab", this.id);
         this.tab_button.style.width = "0%";
         setTimeout(() => {
             this.tab_button.remove();
@@ -548,7 +554,7 @@ class tab {
     }
 
     devtools() {
-        ipcRenderer.send("openDevTools", this.id)
+        ipcRenderer.sendSync("openDevTools", this.id)
     }
 }
 
@@ -609,6 +615,6 @@ if (immersiveInterfaceEnabled == true) {
     });
 
     setInterval(() => {
-        ipcRenderer.send("getBase64");
+        ipcRenderer.sendSync("getBase64");
     }, 100);
 }
