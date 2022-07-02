@@ -197,6 +197,10 @@ function refresh() {
                 })()
             }
         }
+        permission_container.appendChild(document.createElement("br"))
+        permission_container.appendChild(document.createElement("br"))
+        permission_container.appendChild(document.createElement("br"))
+        permission_container.appendChild(document.createElement("br"))
     }
     hideLoader();
 }
@@ -215,9 +219,10 @@ var refresh_button = document.createElement("button");
 refresh_button.innerHTML = "Refresh";
 refresh_button.id = "refresh_button";
 refresh_button.onclick = refresh;
-permission_tab.container.appendChild(refresh_button);
+permission_container.appendChild(refresh_button);
 
 permission_tab.container.appendChild(permission_container);
+
 
 refresh();
 

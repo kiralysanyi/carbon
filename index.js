@@ -232,6 +232,7 @@ function initMainWindow() {
                 nodeIntegration: false
             }
         });
+
         view.webContents.setUserAgent(USERAGENT);
         win.setBrowserView(view);
         view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
