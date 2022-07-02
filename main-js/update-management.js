@@ -1,7 +1,7 @@
 const { autoUpdater } = require("electron-updater");
 const { readFileSync } = require("fs");
 const prompt = require("./prompt");
-const {Notification, app} = require("electron");
+const { Notification, app } = require("electron");
 const settings = require("./settings")
 
 var info;
@@ -11,6 +11,16 @@ var update_downloaded = false;
 
 autoUpdater.allowDowngrade = false;
 autoUpdater.allowPrerelease = false;
+const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
+
+app.whenReady().then(() => {
+    if (autoupdate == true) {
+        runUpdate();
+        setInterval(() => {
+            runUpdate();
+        }, 1800000);
+    }
+});
 
 
 const runUpdate = async (ipc_callback) => {
@@ -29,7 +39,6 @@ const runUpdate = async (ipc_callback) => {
             return;
         }
         ipc_callback("show-update-button");
-        const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
         if (autoupdate == true) {
             update_in_progress = true;
             ipc_callback("show-update-loader");

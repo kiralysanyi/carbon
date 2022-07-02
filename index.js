@@ -93,9 +93,6 @@ const sendToAll = (channel, data) => {
     }
 }
 
-app.whenReady().then(() => {
-    runUpdate(sendToAll)
-})
 
 var focused_window = null;
 app.whenReady().then(() => {
