@@ -620,6 +620,23 @@ function openOverview() {
 
 app.whenReady().then(async () => {
 
+    const gotTheLock = app.requestSingleInstanceLock()
+
+    if (!gotTheLock) {
+        console.log("Cannot lock instance")
+        app.quit()
+    } else {
+        app.on('second-instance', (event, commandLine, workingDirectory) => {
+            // Someone tried to run a second instance, we should focus our window.
+            if (mainWin) {
+                if (mainWin.isMinimized()) {
+                    mainWin.restore();
+                }
+                mainWin.focus();
+            }
+        })
+    }
+
     if (process.platform == "linux") {
         if (process.env.XDG_SESSION_TYPE == "wayland") {
             if (persistent.readVariable("wayland_error_shown") != true) {
@@ -709,3 +726,4 @@ app.on("window-all-closed", app.exit);
 process.on("uncaughtException", (e) => {
     console.error(e.name, e.message, e.stack);
 })
+
