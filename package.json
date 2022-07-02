@@ -1,7 +1,7 @@
 {
   "name": "sanyicraft-carbon",
   "displayName": "Carbon",
-  "version": "0.3.8-beta.2",
+  "version": "0.3.8",
   "version_index": 8,
   "description": "Web browser",
   "main": "index.js",
@@ -11,7 +11,7 @@
     "autobuild": "electron-builder",
     "build_win": "electron-builder -w -p always",
     "build_linux": "electron-builder -l -p always",
-    "build_all": "electron-builder -lw",
+    "build_all": "electron-builder -lw -p always",
     "start": "electron ."
   },
   "repository": {

@@ -153,14 +153,14 @@ function initMainWindow() {
     const errorTracker = {};
 
     globalShortcut.register('F5', () => {
-        if (win.isFocused) {
+        if (win.isFocused()) {
             console.log(focusedTab)
             focusedTab.webContents.reload();
         }
     })
 
     globalShortcut.register('F12', () => {
-        if (win.isFocused) {
+        if (win.isFocused()) {
             console.log(focusedTab)
             focusedTab.webContents.openDevTools();
         }
