@@ -45,10 +45,8 @@ const runUpdate = async (mainWin) => {
 }
 
 const startUpdate = async (mainWin) => {
-    var data = readFileSync("../package.json", "utf-8");
-    data = JSON.parse(data)
     if (update_in_progress == true) {
-        const update_prompt = new prompt.updateDisplay("Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes)
+        const update_prompt = new prompt.updateDisplay("Current Version: " + app.getVersion() + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes)
         update_prompt.show();
         var interval = setInterval(() => {
             update_prompt.update(update_percent);

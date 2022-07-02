@@ -229,7 +229,7 @@ function initMainWindow() {
                 preload: path.join(app.getAppPath(), 'view_preload.js'),
                 contextIsolation: false,
                 plugins: true,
-                nodeIntegration: false
+                nodeIntegration: false,
             }
         });
 
