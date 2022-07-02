@@ -244,16 +244,19 @@ checkForUpdates_button.innerHTML = "Check for updates"
 checkForUpdates_button.addEventListener("click", () => {
     ipcRenderer.send("checkUpdate")
 })
-
+var update_button = document.createElement("button");
+update_button.innerHTML = "Update";
+update_state_display.innerHTML = "Update available";
+aboutpage.container.appendChild(update_button);
+update_button.style.display = "none";
 ipcRenderer.on("show-update", () => {
-    var update_button = document.createElement("button");
-    update_button.innerHTML = "Update";
-    update_state_display.innerHTML = "Update available";
-    aboutpage.container.appendChild(update_button);
-    update_button.addEventListener("click", () => {
-        ipcRenderer.send("start-update")
-    })
+    update_button.style.display = "block";
 })
+
+update_button.addEventListener("click", () => {
+    ipcRenderer.send("start-update")
+})
+
 var update_channel_select = new select();
 update_channel_select.addOption("stable", "stable");
 update_channel_select.addOption("beta", "beta");
