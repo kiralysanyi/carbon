@@ -97,6 +97,39 @@ app.whenReady().then(() => {
     runUpdate(sendToAll)
 })
 
+var focused_window = null;
+app.whenReady().then(() => {
+    globalShortcut.register('F5', () => {
+        if (focused_window == null) {
+            return;
+        };
+        if (focused_window.win.isFocused()) {
+            console.log(focused_window.focusedTab);
+            focused_window.focusedTab.webContents.reload();
+        };
+    })
+
+    globalShortcut.register('F12', () => {
+        if (focused_window == null) {
+            return;
+        };
+        if (focused_window.win.isFocused()) {
+            console.log(focused_window.focusedTab);
+            focused_window.focusedTab.webContents.openDevTools();
+        }
+    })
+
+    globalShortcut.register("Ctrl+Tab", () => {
+        if (focused_window == null) {
+            return;
+        };
+        if (focused_window.win.isFocused()) {
+            focused_window.win.webContents.send("openOverview")
+        }
+    })
+});
+
+
 function initMainWindow() {
     const win = new BrowserWindow({
         minWidth: 800,
@@ -131,6 +164,13 @@ function initMainWindow() {
         win.webContents.openDevTools();
     }
 
+    win.on("focus", () => {
+        focused_window = {
+            win: win,
+            focusedTab: focusedTab
+        };
+    })
+
     win.on("close", () => {
         delete windows[winID];
         for (var x in webviews) {
@@ -151,20 +191,6 @@ function initMainWindow() {
     var webviews = {};
     var focusedTab = null;
     const errorTracker = {};
-
-    globalShortcut.register('F5', () => {
-        if (win.isFocused()) {
-            console.log(focusedTab)
-            focusedTab.webContents.reload();
-        }
-    })
-
-    globalShortcut.register('F12', () => {
-        if (win.isFocused()) {
-            console.log(focusedTab)
-            focusedTab.webContents.openDevTools();
-        }
-    })
 
     win.webContents.on("ipc-message-sync", (e, channel, data) => {
         if (channel == "addListeners") {
@@ -189,7 +215,7 @@ function initMainWindow() {
             });
 
             view.webContents.setUserAgent(USERAGENT);
-        
+
             win.setBrowserView(view);
             view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 90, x: 0, y: 90 });
             webviews[data.uuid] = view;
@@ -499,6 +525,12 @@ function initMainWindow() {
             win.setBrowserView(view);
             focusedTab = view;
             e.returnValue = 0;
+            if (win.isFocused()) {
+                focused_window = {
+                    win: win,
+                    focusedTab: focusedTab
+                };
+            };
         }
 
         if (channel == "getBase64") {
@@ -534,15 +566,7 @@ function initMainWindow() {
     })
 
 
-    function openOverview() {
-        win.webContents.send("openOverview");
-    }
 
-    globalShortcut.register("Ctrl+Tab", () => {
-        if (win.isFocused()) {
-            openOverview();
-        }
-    })
 
     var denyRequest = false;
     app.addListener("before-quit", () => {
