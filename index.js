@@ -48,6 +48,17 @@ const { USERAGENT, USERAGENT_FIREFOX } = require("./main-js/useragent-provider")
 const { runUpdate, startUpdate } = require("./main-js/update-management");
 const permission_handler = require("./main-js/permission")
 
+const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
+
+app.whenReady().then(() => {
+    if (autoupdate == true) {
+        runUpdate(sendToAll);
+        setInterval(() => {
+            runUpdate();
+        }, 1800000);
+    }
+});
+
 
 //init update system
 const updateManager = require("./main-js/update-management");
@@ -752,7 +763,9 @@ app.whenReady().then(async () => {
         }
 
         if (first_startup == false) {
-            initMainWindow();
+            if (checkParameter("--nowindowinit") == false) {
+                initMainWindow();
+            }
         }
         else {
             initSetup();

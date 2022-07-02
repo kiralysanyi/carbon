@@ -1,5 +1,4 @@
 const { autoUpdater } = require("electron-updater");
-const { readFileSync } = require("fs");
 const prompt = require("./prompt");
 const { Notification, app } = require("electron");
 const settings = require("./settings")
@@ -12,15 +11,6 @@ var update_downloaded = false;
 autoUpdater.allowDowngrade = false;
 autoUpdater.allowPrerelease = false;
 const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
-
-app.whenReady().then(() => {
-    if (autoupdate == true) {
-        runUpdate();
-        setInterval(() => {
-            runUpdate();
-        }, 1800000);
-    }
-});
 
 
 const runUpdate = async (ipc_callback) => {
@@ -48,7 +38,6 @@ const runUpdate = async (ipc_callback) => {
     } catch (error) {
         ipc_callback("update-state", "Failed to check for updates :(");
         ipc_callback("hide-update-button")
-        new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
         console.error(error);
     }
 
