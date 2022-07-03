@@ -2,6 +2,7 @@ const { readFileSync } = require("fs");
 const settings = require("./settings");
 const path = require("path")
 
+var first_startup = false;
 
 var package_data = readFileSync(path.join(__dirname, "/../package.json"), "utf-8");
 package_data = JSON.parse(package_data)
@@ -65,5 +66,6 @@ module.exports = {
     config,
     config_exp,
     dlhistory,
-    package_data
+    package_data,
+    first_startup
 }

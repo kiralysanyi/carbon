@@ -246,10 +246,10 @@ checkForUpdates_button.addEventListener("click", () => {
 })
 var update_button = document.createElement("button");
 update_button.innerHTML = "Update";
-update_state_display.innerHTML = "Update available";
 aboutpage.container.appendChild(update_button);
 update_button.style.display = "none";
 ipcRenderer.on("show-update", () => {
+    update_state_display.innerHTML = "Update available";
     update_button.style.display = "block";
 })
 
@@ -272,7 +272,8 @@ update_channel_select.onchange = () => {
 var update_state_display = document.createElement("h3");
 update_state_display.innerHTML = "No updates found";
 ipcRenderer.on("update-state", (e, state) => {
-    update_state_display.innerHTML = state
+    console.log(state)
+    update_state_display.innerHTML = ""
 })
 
 aboutpage.container.appendChild(version_subtitle);

@@ -6,10 +6,11 @@ const contextMenu = require('electron-context-menu');
 const settings = require("./main-js/settings");
 const path = require("path");
 const { readFileSync, existsSync } = require("fs");
-require("./main-js/configurator");
+const configurator = require("./main-js/configurator");
 require("./main-js/download_backend");
 require("./main-js/adblock");
 require("./main-js/capture_backend");
+require("./main-js/autostart");
 const persistent = require("./main-js/persistent_variables")
 var args = process.argv;
 
@@ -29,8 +30,9 @@ if (checkParameter("--verbose") == false) {
 }
 
 
-console.log("Carbon is starting on platform: ", process.platform)
-var first_startup = false;
+console.log("Carbon is starting on platform: ", process.platform);
+console.log("Version: ", app.getVersion())
+var first_startup = configurator.first_startup;
 
 const searchStrings = {
     google: "https://google.com/search?q=",
@@ -716,9 +718,7 @@ app.whenReady().then(async () => {
     setTimeout(() => {
         //some ipc listeners
         ipcMain.on("getVersion", (e) => {
-            var data = readFileSync(__dirname + "/package.json", "utf-8");
-            data = JSON.parse(data)
-            e.returnValue = data.version;
+            e.returnValue = app.getVersion();
         })
 
         ipcMain.on("searchString", (e) => {
