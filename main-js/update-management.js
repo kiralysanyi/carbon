@@ -1,6 +1,6 @@
 const { autoUpdater } = require("electron-updater");
 const prompt = require("./prompt");
-const { Notification, app } = require("electron");
+const { Notification, app, BrowserWindow } = require("electron");
 const settings = require("./settings")
 
 var info;
@@ -92,9 +92,16 @@ autoUpdater.on("update-downloaded", () => {
     runInfoUpdate();
 })
 
+function errorNotify() {
+    if(BrowserWindow.getAllWindows().length == 0) {
+        return;
+    }
+    new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
+}
+
 autoUpdater.on("error", () => {
     runInfoUpdate();
-    new Notification({ title: "Carbon error", body: "Failed to update carbon." }).show();
+    errorNotify();
 })
 
 
