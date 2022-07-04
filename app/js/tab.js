@@ -1,12 +1,6 @@
 const { ipcRenderer } = require("electron");
 const settings = require("../main-js/settings");
 
-const senddata = ipcRenderer.sendSync;
-ipcRenderer.sendSync = (channel, data) => {
-    console.log(channel,data);
-    return senddata(channel,data);
-}
-
 //ipc crap
 var afterinit = false;
 

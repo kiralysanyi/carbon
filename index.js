@@ -1,7 +1,28 @@
 const { app, BrowserWindow, ipcMain, BrowserView, components, globalShortcut } = require("electron");
-console.log(__dirname)
+const gotTheLock = app.requestSingleInstanceLock()
 
-app.commandLine.appendSwitch("enable-transparent-visuals");
+if (!gotTheLock) {
+    console.log("Cannot lock instance")
+    app.exit()
+} else {
+    app.on('second-instance', (event, commandLine, workingDirectory) => {
+        console.log(commandLine)
+        var starturl = null;
+        for (var x in commandLine) {
+            if (x > 0) {
+                try {
+                    new URL(commandLine[x]);
+                    console.log("Argument is url: ", commandLine[x]);
+                    starturl = commandLine[x];
+                } catch (error) {
+                    console.log("Argument is not url: ", commandLine[x]);
+                }
+            }
+        }
+        initMainWindow(starturl);
+    })
+}
+
 const contextMenu = require('electron-context-menu');
 const settings = require("./main-js/settings");
 const path = require("path");
@@ -13,7 +34,6 @@ require("./main-js/capture_backend");
 require("./main-js/autostart");
 const persistent = require("./main-js/persistent_variables")
 var args = process.argv;
-
 
 function checkParameter(name) {
     for (var x in args) {
@@ -140,7 +160,8 @@ app.whenReady().then(() => {
 });
 
 
-function initMainWindow() {
+function initMainWindow(startupURL = null) {
+    console.log(startupURL)
     const win = new BrowserWindow({
         minWidth: 800,
         minHeight: 600,
@@ -201,7 +222,7 @@ function initMainWindow() {
     var webviews = {};
     var focusedTab = null;
     const errorTracker = {};
-
+    var isFirstOpen = true;
     win.webContents.on("ipc-message-sync", (e, channel, data) => {
         if (channel == "addListeners") {
             views = win.getBrowserViews();
@@ -215,6 +236,7 @@ function initMainWindow() {
 
         //new tab
         if (channel == "newTab") {
+
             const view = new BrowserView({
                 webPreferences: {
                     preload: path.join(app.getAppPath(), 'view_preload.js'),
@@ -224,6 +246,15 @@ function initMainWindow() {
                 }
             });
 
+            if (isFirstOpen == true) {
+                if (startupURL != null) {
+                    view.webContents.once("dom-ready", () => {
+                        view.webContents.loadURL(startupURL);
+                    })
+                }
+            }   
+
+            isFirstOpen = false;
             view.webContents.setUserAgent(USERAGENT);
 
             win.setBrowserView(view);
@@ -232,14 +263,13 @@ function initMainWindow() {
             const uuid = data.uuid;
             e.returnValue = 0;
 
-            win.webContents.on("ipc-message", (e, channel, id) => {
-                if (channel == "updatePreview") {
-                    view.webContents.capturePage().then((image) => {
-                        sendEvent({ type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
-                    });
+            if (channel == "updatePreview") {
+                view.webContents.capturePage().then((image) => {
+                    sendEvent({ type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
+                });
 
-                }
-            })
+            }
+
 
 
             contextMenu({
@@ -533,6 +563,9 @@ function initMainWindow() {
         if (channel == "focusTab") {
             const view = webviews[uuid];
             win.setBrowserView(view);
+            view.webContents.capturePage().then((image) => {
+                win.webContents.postMessage(uuid, { type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
+            });
             focusedTab = view;
             e.returnValue = 0;
             if (win.isFocused()) {
@@ -680,19 +713,6 @@ ipcMain.on("isDebug", (e) => {
 
 
 app.whenReady().then(async () => {
-
-    const gotTheLock = app.requestSingleInstanceLock()
-
-    if (!gotTheLock) {
-        console.log("Cannot lock instance")
-        app.quit()
-    } else {
-        app.on('second-instance', (event, commandLine, workingDirectory) => {
-            // Someone tried to run a second instance, we should focus our window.
-            initMainWindow();
-        })
-    }
-
     if (process.platform == "linux") {
         if (process.env.XDG_SESSION_TYPE == "wayland") {
             if (persistent.readVariable("wayland_error_shown") != true) {
@@ -764,7 +784,7 @@ app.whenReady().then(async () => {
 
         if (first_startup == false) {
             if (checkParameter("--nowindowinit") == false) {
-                initMainWindow();
+                initMainWindow(openFirst);
             }
         }
         else {

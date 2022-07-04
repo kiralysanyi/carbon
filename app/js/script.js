@@ -287,7 +287,6 @@ async function openOverview() {
     const current_tab = getTab(focused_tab);
     overview.style.opacity = 0;
     overview.style.display = "grid";
-    current_tab.updatePreview();
 
     setTimeout(() => {
         var rect = current_tab.overview_tab.getBoundingClientRect();
