@@ -199,8 +199,8 @@
     position: fixed;
     top: 50%;
     left: 50%;
-    width: 70%;
-    height: 60%;
+    width: 80%;
+    height: 80%;
     transform: translate(-50%, -50%);
     background-color: rgba(27, 27, 27, 0.616);
     border-radius: 10px;
