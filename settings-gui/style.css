@@ -4,17 +4,13 @@ html {
 
 #container {
     position: fixed;
-    top: 90px;
-    left: 0px;
-    width: 100%;
+    top: 50px;
+    left: 180px;
+    width: calc(100% - 180px);
     height: calc(100% - 50px);
     background-color: rgb(51, 51, 51);
 }
 
-.tab {
-    width: 200px;
-    text-align: center;
-}
 
 .tab a {
     position: relative;
@@ -24,7 +20,7 @@ html {
 .content {
     position: absolute;
     width: 100%;
-    height: calc(100% - 40px);
+    height: 100%;
     top: 0px;
     left: 0px;
     display: block;
@@ -43,14 +39,16 @@ html {
 table {
     position: absolute;
     top: 60px;
-    left: 0px;
-    width: 100%;
+    left: 20%;
+    width: 60%;
     height: auto;
 }
 
-th, td {
-    border-bottom: 1px solid white;
-    text-align: center;
+@media screen and (max-width: 1000px) {
+    table {
+        width: 100%;
+        left: 0px;
+    }
 }
 
 #pcontainer {
@@ -100,8 +98,6 @@ th, td {
     width: 80px;
     height: 40px;
     background-color: rgba(255, 255, 255, 0.11);
-    margin-left: auto;
-    margin-right: auto;
 }
 
 .switch .thumb {
@@ -115,8 +111,6 @@ th, td {
 }
 
 .select {
-    margin-left: auto;
-    margin-right: auto;
     margin-top: -40px;
 }
 
@@ -135,9 +129,6 @@ input:focus {
     background-color: rgba(255, 255, 255, 0.171);
 }
 
-#tab_bar div {
-    width: calc(100% / 4);
-}
 
 #topbar {
     background-color: rgba(32, 32, 32, 0.5);
@@ -157,4 +148,29 @@ button {
 .spacer {
     position: relative;
     height: 200px;
+}
+
+#tab_bar {
+    position: absolute;
+    top: 50px;
+    left: 0px;
+    width: 180px;
+    height: calc(100% - 50px);
+    display: block;
+    overflow-y: hidden;
+    overflow-x: auto;
+    white-space: nowrap;
+    background-color: rgb(51, 51, 51);
+}
+
+.tab {
+    position: relative;
+    text-align: center;
+    height: 40px;
+    width: 180px;
+    background-color: transparent;
+    display: block;
+    overflow: hidden;
+    line-height: 40px;
+    transition: 200ms;
 }

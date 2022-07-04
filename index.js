@@ -214,6 +214,7 @@ function initMainWindow(startupURL = null) {
     win.loadFile("app/index.html");
     win.removeMenu();
 
+
     attachControlHost(win);
 
     var views = win.getBrowserViews();

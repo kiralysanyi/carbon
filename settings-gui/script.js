@@ -51,11 +51,6 @@ general_tab.container.appendChild(general_title);
 var settings_table = document.createElement("table");
 general_tab.container.appendChild(settings_table);
 
-//setting up head row
-var settings_head = document.createElement("tr");
-settings_table.appendChild(settings_head);
-settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
-
 //setting up row1
 var settings_row1 = document.createElement("tr");
 settings_table.appendChild(settings_row1);
@@ -105,6 +100,7 @@ settings_row2.style.height = "40px";
 
 //setting up search engine selector
 var search_select = new select();
+search_select.mainObj.style.width = "100%";
 var engines = ipcRenderer.sendSync("searchEngines");
 for (var x in engines) {
     search_select.addOption(engines[x], engines[x]);
@@ -131,6 +127,8 @@ home_reset.style.height = "40px";
 
 var home_input = document.createElement("input");
 home_input.type = "text";
+home_input.style.width = "70%";
+home_reset.style.width = "20%";
 
 home_reset.onclick = () => {
     home_input.value = "default";
@@ -182,6 +180,7 @@ function refresh() {
                     permission_container.appendChild(sub_data);
 
                     var selector = new select();
+                    selector.mainObj.style.marginLeft = "200px"
                     selector.addOption("Allowed", true);
                     selector.addOption("Denied", false);
                     selector.setValue(permissions[host][perm]);
@@ -258,6 +257,8 @@ update_button.addEventListener("click", () => {
 })
 
 var update_channel_select = new select();
+update_channel_select.mainObj.style.marginLeft = "auto";
+update_channel_select.mainObj.style.marginRight = "auto";
 update_channel_select.addOption("stable", "stable");
 update_channel_select.addOption("beta", "beta");
 
@@ -297,11 +298,6 @@ experimental_page.container.appendChild(experimental_title);
 
 var exp_settings_table = document.createElement("table");
 experimental_page.container.appendChild(exp_settings_table);
-
-//setting up head row
-var exp_settings_head = document.createElement("tr");
-exp_settings_table.appendChild(exp_settings_head);
-exp_settings_head.innerHTML = "<th>Option</th><th>Switch</th>"
 
 //setting up row 1
 var immersive_row = document.createElement("tr");

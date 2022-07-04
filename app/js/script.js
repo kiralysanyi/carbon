@@ -136,16 +136,17 @@ ipcRenderer.on("update-state", (e, state) => {
 })
 
 function showSettingsModal() {
+    document.getElementById("hideSettings").style.display = "block";
     document.getElementById("toolbar").style.display = "none";
     showPlaceHolder();
     const modal = document.getElementById("settings_modal");
-    modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
+    modal.style.transform = "scale(0, 0)"
     modal.style.display = "block";
     document.getElementById("settings_iframe").reload();
 
 
     setTimeout(() => {
-        modal.style.transform = "translate(-50%, -50%) scale(1, 1)"
+        modal.style.transform = "scale(1, 1)"
     }, 10);
 
     if (isDebug()) {
@@ -155,7 +156,10 @@ function showSettingsModal() {
     document.getElementById("settings_modal_back").style.backdropFilter = "blur(32px)";
 }
 
+document.getElementById("hideSettings").style.display = "none";
+
 function hideSettingsModal() {
+    document.getElementById("hideSettings").style.display = "none";
     if (isDebug()) {
         document.getElementById("settings_iframe").closeDevTools();
     }

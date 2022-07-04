@@ -14,6 +14,7 @@
 <body>
     <img src="" alt="" id="immersive_topbar" style="display: none;">
     <div id="topbar">
+        <div class="button" id="hideSettings" onclick="hideSettingsModal()"><i class="lni lni-close"></i></div>
         <div id="toolbar">
             <div onclick="newTab()" class="button"><i class="lni lni-plus"></i></div>
             <div id="open_menu" class="button" tabindex="1"><i class="lni lni-menu"></i></div>
@@ -29,9 +30,9 @@
             <div style="right: 10px; position: absolute; display: none;" class="button" id="update-button"><i class="lni lni-arrow-up-circle"></i></div>
         </div>
         <div id="window_controls">
-            <div onclick="closewin()" class="button"><i class="lni lni-close"></i></div>
-            <div onclick="maximize()" class="button"><i class="lni lni-stop"></i></div>
-            <div onclick="minimize()" class="button"><i class="lni lni-minus"></i></div>
+            <div onclick="closewin()"><i class="lni lni-close"></i></div>
+            <div onclick="maximize()"><i class="lni lni-stop"></i></div>
+            <div onclick="minimize()"><i class="lni lni-minus"></i></div>
         </div>
         <div class="bottom_line_loader" id="loader" style="display: none;"></div>
     </div>

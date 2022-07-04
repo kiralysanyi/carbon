@@ -24,7 +24,7 @@
     overflow: hidden;
 }
 
-#toolbar .button {
+.button {
     -webkit-app-region: no-drag;
     position: relative;
     float: left;
@@ -38,7 +38,7 @@
     margin-right: 0px;
 }
 
-#toolbar .button:hover {
+.button:hover {
     background-color: rgba(255, 255, 255, 0.164);
 }
 
@@ -197,13 +197,11 @@
 
 #settings_modal {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 80%;
-    height: 80%;
-    transform: translate(-50%, -50%);
+    top: 50px;
+    left: 0px;
+    width: 100%;
+    height: calc(100% - 50px);
     background-color: rgba(27, 27, 27, 0.616);
-    border-radius: 10px;
     display: none;
     z-index: 100000;
     transition: 300ms;
