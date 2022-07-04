@@ -273,7 +273,7 @@ var update_state_display = document.createElement("h3");
 update_state_display.innerHTML = "No updates found";
 ipcRenderer.on("update-state", (e, state) => {
     console.log(state)
-    update_state_display.innerHTML = ""
+    update_state_display.innerHTML = state
 })
 
 aboutpage.container.appendChild(version_subtitle);
