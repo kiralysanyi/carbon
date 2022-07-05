@@ -142,7 +142,6 @@ function showSettingsModal() {
     const modal = document.getElementById("settings_modal");
     modal.style.transform = "scale(0, 0)"
     modal.style.display = "block";
-    document.getElementById("settings_iframe").reload();
 
 
     setTimeout(() => {
@@ -249,6 +248,10 @@ urlbar.addEventListener("focus", () => {
 ipcRenderer.on("show-update-button", (e) => {
     document.getElementById("update-button").style.display = "block";
     document.getElementById("settings_iframe").send("show-update");
+})
+
+ipcRenderer.on("hide-update", () => {
+    document.getElementById("settings_iframe").send("hide-update");
 })
 
 ipcRenderer.on("hide-update-button", (e) => {

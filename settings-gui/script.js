@@ -218,7 +218,7 @@ var refresh_button = document.createElement("button");
 refresh_button.innerHTML = "Refresh";
 refresh_button.id = "refresh_button";
 refresh_button.onclick = refresh;
-permission_container.appendChild(refresh_button);
+permission_tab.container.appendChild(refresh_button);
 
 permission_tab.container.appendChild(permission_container);
 
@@ -237,7 +237,7 @@ version_subtitle.innerHTML = "Carbon: " + getVersion();
 version_subtitle.innerHTML += "<br>Electron: " + process.versions.electron;
 version_subtitle.innerHTML += "<br>Chrome: " + process.versions.chrome;
 version_subtitle.innerHTML += "<br>Node: " + process.versions.node;
-var checkForUpdates_button = document.createElement("button")
+var checkForUpdates_button = document.createElement("button");
 aboutpage.container.appendChild(checkForUpdates_button)
 checkForUpdates_button.innerHTML = "Check for updates"
 checkForUpdates_button.addEventListener("click", () => {
@@ -245,11 +245,20 @@ checkForUpdates_button.addEventListener("click", () => {
 })
 var update_button = document.createElement("button");
 update_button.innerHTML = "Update";
+update_button.style.marginLeft = "auto";
+update_button.style.marginRight = "auto";
+update_button.style.marginTop = "5px";
 aboutpage.container.appendChild(update_button);
 update_button.style.display = "none";
 ipcRenderer.on("show-update", () => {
     update_state_display.innerHTML = "Update available";
     update_button.style.display = "block";
+    checkForUpdates_button.style.display = "none";
+})
+
+ipcRenderer.on("hide-update", () => {
+    update_button.style.display = "none";
+    checkForUpdates_button.style.display = "none";
 })
 
 update_button.addEventListener("click", () => {
@@ -333,3 +342,15 @@ exp_settings_table.appendChild(immersive_row);
 settings_table.appendChild(autoupdate_row);
 
 general_tab.focus();
+
+const restartButton = document.createElement("button");
+restartButton.id = "restart_btn";
+document.body.appendChild(restartButton);
+restartButton.innerHTML = "Restart browser"
+restartButton.onclick = () => {
+    restartBrowser();
+}
+
+function restartBrowser() {
+    ipcRenderer.send("restart");
+}

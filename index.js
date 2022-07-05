@@ -800,3 +800,8 @@ process.on("uncaughtException", (e) => {
 
 
 app.on('window-all-closed', e => e.preventDefault())
+
+ipcMain.on("restart", () => {
+    app.relaunch();
+    app.quit();
+})

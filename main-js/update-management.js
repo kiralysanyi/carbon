@@ -30,6 +30,7 @@ const runUpdate = async (ipc_callback) => {
         }
         ipc_callback("show-update-button");
         if (autoupdate == true) {
+            ipc_callback("hide-update");
             update_in_progress = true;
             ipc_callback("show-update-loader");
             autoUpdater.autoInstallOnAppQuit = true;
@@ -56,11 +57,12 @@ const startUpdate = async (ipc_callback) => {
         }, 1000);
 
     } else {
-        var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + data.version + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
+        var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + app.getVersion() + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
         runInfoUpdate();
         if (answer == true) {
             runInfoUpdate();
             ipc_callback("show-update-loader");
+            ipc_callback("hide-update");
             autoUpdater.autoInstallOnAppQuit = true;
             autoUpdater.downloadUpdate();
         }
