@@ -253,7 +253,7 @@ function initMainWindow(startupURL = null) {
                         view.webContents.loadURL(startupURL);
                     })
                 }
-            }   
+            }
 
             isFirstOpen = false;
             view.webContents.setUserAgent(USERAGENT);
@@ -577,16 +577,6 @@ function initMainWindow(startupURL = null) {
             };
         }
 
-        if (channel == "getBase64") {
-            if (denyRequest == true) {
-                return;
-            }
-            var view = focusedTab;
-            view.webContents.capturePage({ x: 0, y: 0, width: win.getBounds().width, height: 40 }).then((image) => {
-                win.webContents.send("base64", image.resize({ height: 400, quality: "good" }).toDataURL());
-            });
-        }
-
         if (channel == "hideCurrentTab") {
             var view = focusedTab;
             view.webContents.capturePage().then((image) => {
@@ -608,13 +598,28 @@ function initMainWindow(startupURL = null) {
         }
 
     })
-
-
-
-
     var denyRequest = false;
-    app.addListener("before-quit", () => {
+
+    var interval;
+    if (configurator.config_exp["immersive_interface"] == true) {
+        console.log("Enabling immersive interface");
+        interval = setInterval(() => {
+            if (denyRequest == true) {
+                return;
+            }
+            var view = focusedTab;
+            view.webContents.capturePage({ x: 0, y: 0, width: win.getBounds().width, height: 40 }).then((image) => {
+                win.webContents.send("base64", image.toDataURL());
+            });
+        }, 100);
+    }
+
+
+    win.once("close", () => {
         denyRequest = true;
+        if (interval) {
+            clearInterval(interval);
+        }
     })
 }
 

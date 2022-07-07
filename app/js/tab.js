@@ -609,6 +609,6 @@ if (immersiveInterfaceEnabled == true) {
     });
 
     setInterval(() => {
-        ipcRenderer.sendSync("getBase64");
+        ipcRenderer.send("getBase64");
     }, 100);
 }

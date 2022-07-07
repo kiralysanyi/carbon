@@ -14,6 +14,8 @@
     <script src="../lib/select/select.js"></script>
     <link rel="stylesheet" href="../lib/select/select.css">
     <link rel="stylesheet" href="style.css">
+    <script src="../lib/dasui.js"></script>
+
 </head>
 
 <body>
@@ -23,12 +25,102 @@
         </div>
         <div class="bottom_line_loader" id="loader" style="display: none;"></div>
     </div>
-    <div id="tab_bar"></div>
-    <div id="container">
+    <div id="tabs">
+        <div class="sidebar">
+            <div class="tab_btn" contentid="0">General</div>
+            <div class="tab_btn" contentid="1">Permissions</div>
+            <div class="tab_btn" contentid="2">Experimental</div>
+            <div class="tab_btn" contentid="3">About</div>
+        </div>
+        <div class="content" contentid="0">
+            <h1>General</h1>
+            <table>
+                <tr>
+                    <td>Adblock</td>
+                    <td>
+                        <div class="switchbox" id="adblock_switch"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Automatic updates (restart needed)</td>
+                    <td>
+                        <div class="switchbox" id="autoupdate_switch"></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Search engine</td>
+                    <td>
+                        <select name="searchengine" id="search_select">
+                            <option value="duckduckgo">DuckDuckGo</option>
+                            <option value="google">Google</option>
+                            <option value="bing">Bing</option>
+                        </select>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="content" contentid="1">
+            <h1>Permissions</h1>
+            <button id="refresh_btn">Refresh</button>
+            <div id="permission_container"></div>
+        </div>
+        <div class="content" contentid="2">
+            <h1>Experimental</h1>
+            <table>
+                <td>Immersive interface (restart needed)</td>
+                <td><div class="switchbox" id="immersive_switch"></div></td>
+            </table>
+        </div>
+        <div class="content" contentid="3">
+            <h1>About</h1>
+            <h2 id="version_display"></h2>
+            <h3 id="node_display"></h3>
+            <h3 id="electron_display"></h3>
+            <h3 id="chromium_display"></h3>
+            <div id="update_container">
+                <h2 id="update_state_display"></h2>
+                <p>
+                    Update channel:
+                    <select id="channel_select">
+                        <option value="stable">Stable</option>
+                        <option value="beta">Beta</option>
+                    </select>
+                </p>
+                <button id="checkUpdate">Check for updates</button>
+                <button id="downloadUpdate">Download Update</button>
+            </div>
+        </div>
 
     </div>
 </body>
-<script src="../lib/tabs/tabs.js"></script>
 <script src="./script.js"></script>
+<style>
+    .mainContent {
+        width: 100%;
+        height: calc(100% - 50px);
+        top: 50px;
+        left: 0px;
+        position: fixed;
+        background-color: transparent;
+    }
+
+    .sidebar {
+        position: fixed;
+        width: 180px;
+        height: calc(100% - 50px);
+        top: 50px;
+        background-color: rgba(36, 36, 36, 0.664);
+    }
+
+    .content {
+        position: fixed;
+        left: 180px;
+        width: calc(100% - 180px);
+        height: calc(100% - 50px);
+        top: 50px;
+        background-color: rgba(53, 53, 53, 0.281);
+        padding-left: 10px;
+    }
+</style>
 
 </html>

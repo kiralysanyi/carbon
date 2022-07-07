@@ -51,6 +51,8 @@ if (config_exp == "{}") {
     //default config
     config_exp["immersive_interface"] = false;
     settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
+} else {
+    config_exp = JSON.parse(config_exp);
 }
 
 //initializing download history
