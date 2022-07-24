@@ -145,7 +145,7 @@ app.whenReady().then(() => {
         };
         if (focused_window.win.isFocused()) {
             console.log(focused_window.focusedTab);
-            focused_window.focusedTab.webContents.openDevTools();
+            focused_window.focusedTab.webContents.openDevTools({mode: "detach"});
         }
     })
 
@@ -192,7 +192,7 @@ function initMainWindow(startupURL = null) {
 
     win.show();
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools();
+        win.webContents.openDevTools({mode: "detach"});
     }
 
     win.on("focus", () => {
@@ -494,7 +494,7 @@ function initMainWindow(startupURL = null) {
 
         if (channel == "openDevTools") {
             const view = webviews[uuid];
-            view.webContents.openDevTools();
+            view.webContents.openDevTools({mode: "detach"});
             e.returnValue = 0;
         }
 
@@ -676,7 +676,7 @@ function initSetup() {
     win.show();
     attachControlHost(win);
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools();
+        win.webContents.openDevTools({mode: "detach"});
     }
 
     win.on("closed", () => {
@@ -708,7 +708,7 @@ ipcMain.on("opendownloads", () => {
     attachControlHost(win);
 
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools();
+        win.webContents.openDevTools({mode: "detach"});
     }
 })
 

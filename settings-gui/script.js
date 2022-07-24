@@ -34,7 +34,7 @@ document.getElementById("adblock_switch").setAttribute("value", config["adblock"
 document.getElementById("autoupdate_switch").setAttribute("value", config["auto-update"]);
 document.getElementById("search_select").value = config["searchEngine"];
 document.getElementById("immersive_switch").setAttribute("value", experimental_config["immersive_interface"]);
-
+document.getElementById("startup_switch").setAttribute("value", config["auto-start"]);
 
 //setting up permissions page
 
@@ -136,6 +136,12 @@ adblock_switch.onchange = () => {
 
 autoupdate_switch.onchange = () => {
     config["auto-update"] = autoupdate_switch.checked;
+    saveConf();
+}
+
+document.getElementById("startup_switch").onchange = () => {
+    config["auto-start"] = document.getElementById("startup_switch").checked;
+    console.log(config["auto-start"])
     saveConf();
 }
 

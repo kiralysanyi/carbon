@@ -18,6 +18,7 @@ if (Object.keys(config).length == 0) {
     config["homePage"] = "default";
     config["update-channel"] = "stable";
     config["auto-update"] = true;
+    config["auto-start"] = true;
     settings.saveData("general.conf.json", JSON.stringify(config));
     first_startup = true;
 }
@@ -36,6 +37,10 @@ if (config["versionindex"] < package_data["version_index"]) {
         console.log("Enabling auto update");
         config["auto-update"] = true;
         settings.saveData("general.conf.json", JSON.stringify(config));
+    }
+
+    if (config["versionIndex"] < 9) {
+        config["auto-start"] = true;
     }
 
     config["versionindex"] = package_data["version_index"]
