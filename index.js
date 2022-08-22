@@ -223,6 +223,7 @@ function initMainWindow(startupURL = null) {
                     preload: path.join(app.getAppPath(), 'view_preload.js'),
                     contextIsolation: false,
                     plugins: true,
+                    sandbox: false,
                     nodeIntegration: false,
                 }
             });
