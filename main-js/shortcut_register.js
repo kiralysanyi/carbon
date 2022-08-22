@@ -6,18 +6,19 @@ const register = (window) => {
             return;
         };
         if (window.win.isFocused()) {
-            console.log(window.focusedTab);
-            window.focusedTab.webContents.reload();
+            console.log(window.focusedTab());
+            window.focusedTab().webContents.reload();
         };
     })
 
+    //FIXME: make F12 shortcut working
     globalShortcut.register('F12', () => {
         if (window == null) {
             return;
         };
         if (window.win.isFocused()) {
-            console.log(window.focusedTab);
-            window.focusedTab.webContents.openDevTools({mode: "detach"});
+            console.log(window.focusedTab());
+            window.focusedTab().webContents.openDevTools({mode: "detach"});
         }
     })
 

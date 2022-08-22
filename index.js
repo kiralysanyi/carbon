@@ -169,7 +169,9 @@ function initMainWindow(startupURL = null) {
     win.on("focus", () => {
         focused_window = {
             win: win,
-            focusedTab: focusedTab
+            focusedTab: () => {
+                return focusedTab;
+            }
         };
         shortcutRegister.unregister();
         shortcutRegister.register(focused_window);
