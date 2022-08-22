@@ -32,7 +32,8 @@ require("./main-js/download_backend");
 require("./main-js/adblock");
 require("./main-js/capture_backend");
 require("./main-js/autostart");
-const persistent = require("./main-js/persistent_variables")
+const shortcutRegister = require("./main-js/shortcut_register");
+const persistent = require("./main-js/persistent_variables");
 var args = process.argv;
 
 function checkParameter(name) {
@@ -128,36 +129,6 @@ const sendToAll = (channel, data) => {
 
 
 var focused_window = null;
-app.whenReady().then(() => {
-    globalShortcut.register('F5', () => {
-        if (focused_window == null) {
-            return;
-        };
-        if (focused_window.win.isFocused()) {
-            console.log(focused_window.focusedTab);
-            focused_window.focusedTab.webContents.reload();
-        };
-    })
-
-    globalShortcut.register('F12', () => {
-        if (focused_window == null) {
-            return;
-        };
-        if (focused_window.win.isFocused()) {
-            console.log(focused_window.focusedTab);
-            focused_window.focusedTab.webContents.openDevTools({mode: "detach"});
-        }
-    })
-
-    globalShortcut.register("Ctrl+Tab", () => {
-        if (focused_window == null) {
-            return;
-        };
-        if (focused_window.win.isFocused()) {
-            focused_window.win.webContents.send("openOverview")
-        }
-    })
-});
 
 
 function initMainWindow(startupURL = null) {
@@ -200,6 +171,8 @@ function initMainWindow(startupURL = null) {
             win: win,
             focusedTab: focusedTab
         };
+        shortcutRegister.unregister();
+        shortcutRegister.register(focused_window);
     })
 
     win.on("close", () => {
@@ -208,6 +181,11 @@ function initMainWindow(startupURL = null) {
             const view = webviews[x];
             view.webContents.destroy();
         }
+        shortcutRegister.unregister();
+    })
+
+    win.on("blur", () => {
+        shortcutRegister.unregister();
     })
 
 
