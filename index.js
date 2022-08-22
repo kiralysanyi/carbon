@@ -440,6 +440,10 @@ function initMainWindow(startupURL = null) {
                     y = 90;
                 }
                 try {
+                    if (process.platform == "win32" && win.isMaximized() == true && isFullScreen == false) {
+                        view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 100, x: 0, y: y });
+                        return;
+                    }
                     view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - y, x: 0, y: y });
                 } catch (error) {
 
