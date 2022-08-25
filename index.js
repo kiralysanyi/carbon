@@ -444,7 +444,7 @@ function initMainWindow(startupURL = null) {
                 }
                 try {
                     if (process.platform == "win32" && win.isMaximized() == true && isFullScreen == false) {
-                        view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - 100, x: 0, y: y });
+                        view.setBounds({ width: win.getBounds().width - 15, height: win.getBounds().height - 105, x: 0, y: y });
                         return;
                     }
                     view.setBounds({ width: win.getBounds().width, height: win.getBounds().height - y, x: 0, y: y });
