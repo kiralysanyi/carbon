@@ -245,18 +245,21 @@ const startTheming = async () => {
         historyDOM.style.color = "black";
         document.getElementById("settings_open").style.color = "black";
         document.getElementById("history_toggle").style.color = "black";
+        document.getElementById("history_header").style.color = "black";
+        document.getElementById("history_close").style.color = "black";
     } else {
         searchbox.style.color = "white"
         autocomplete_box.style.color = "white";
         historyDOM.style.color = "white";
+        document.getElementById("history_header").style.color = "white";
         document.getElementById("settings_open").style.color = "white";
         document.getElementById("history_toggle").style.color = "white";
-
+        document.getElementById("history_close").style.color = "white";
     }
 
     document.getElementById("settings_open").style.backgroundColor = backgroundHEX;
     document.getElementById("history_toggle").style.backgroundColor = backgroundHEX;
-
+    document.getElementById("history_header").style.backgroundColor = backgroundHEX;
     autocomplete_box.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
     historyDOM.style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.4)"
     document.getElementById("favorites").style.backgroundColor = "rgba(" + color[0] + ", " + color[1] + ", " + color[2] + ", 0.6)"
@@ -313,13 +316,15 @@ function showSettings() {
     const settings_element = document.getElementById("settings");
     settings_element.style.display = "block";
     setTimeout(() => {
-        settings_element.style.height = "100%";
+        settings_element.style.opacity = "1";
+        settings_element.style.left = "0px";
     }, 10);
 }
 
 function hideSettings() {
     const settings_element = document.getElementById("settings");
-    settings_element.style.height = "0%";
+    settings_element.style.left = "-20px";
+    settings_element.style.opacity = "0";
     setTimeout(() => {
         settings_element.style.display = "none";
         location.reload();
@@ -507,24 +512,21 @@ const history_container = document.getElementById("history_container");
 
 function showHistory() {
     historyDisplayState = true;
-    history_container.style.left = "-50%";
-    history_container.style.bottom = "-50%";
     history_container.style.display = "block";
-    history_container.style.transform = "scale(0,0)";
     setTimeout(() => {
-        history_container.style.left = "10%";
-        history_container.style.bottom = "0px";
-        history_container.style.transform = "scale(1,1)";
+        history_container.style.left = "0px";
+        history_container.style.opacity = "1";
     }, 20);
 }
 
+document.getElementById("history_close").addEventListener("click", () => {
+    hideHistory();
+})
+
 function hideHistory() {
     historyDisplayState = false;
-    history_container.style.transform = "scale(0,0)";
-    setTimeout(() => {
-        history_container.style.left = "-50%";
-        history_container.style.bottom = "-50%";
-    },100);
+    history_container.style.left = "-20px";
+    history_container.style.opacity = "0";
     setTimeout(() => {
         history_container.style.display = "none"
     }, 600);

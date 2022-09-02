@@ -55,7 +55,7 @@ app.on("session-created", () => {
         item.once('done', (event, state) => {
             if (state == 'completed') {
                 var date = new Date();
-                console.log('Download successfully')
+                console.log('Downloaded file successfully')
                 var saved_downloads = JSON.parse(settings.readData("download.history.json"));
                 saved_downloads[DLID] = {
                     "file": item.getFilename(),
