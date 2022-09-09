@@ -11,10 +11,9 @@
 #toolbar_menu {
     position: absolute;
     top: 0px;
-    left: 0px;
+    left: 45px;
     height: 100%;
-    width: 190px;
-    transform: scale(0, 0);
+    width: 0px;
     z-index: 1000000;
     background-color: rgba(0, 0, 0, 0.486);
     backdrop-filter: blur(4px);
@@ -22,6 +21,7 @@
     transition: 300ms;
     transition-timing-function: ease-in-out;
     overflow: hidden;
+    display: none;
 }
 
 .button {
@@ -36,6 +36,7 @@
     transition: 200ms;
     border-radius: 5px;
     margin-right: 0px;
+    outline: 0;
 }
 
 .button:hover {

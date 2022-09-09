@@ -70,19 +70,44 @@ document.getElementById("open_menu").addEventListener("blur", (e) => {
     }, 100);
 })
 
+const toolbar_menu_items = document.getElementsByClassName("toolbar_button");
+
+function animateButtons() {
+    for (let i = 0; i < toolbar_menu_items.length; i++) {
+        toolbar_menu_items[i].style.transition = "0ms";
+        toolbar_menu_items[i].style.bottom = "-40px";
+        setTimeout(() => {
+            toolbar_menu_items[i].style.transition = "200ms";
+        }, 20);
+    }
+    
+    let x = 0;
+    const animate = () => {
+        if (x >= toolbar_menu_items.length) {
+            return;
+        }
+        toolbar_menu_items[x].style.bottom = "0px";
+        x += 1;
+        setTimeout(() => {
+            animate();
+        }, 100);
+    }
+
+    animate();
+}
+
 function openMenu() {
     toolbar_menu.style.display = "block";
     setTimeout(() => {
         toolbar_menu.style.opacity = 1;
-        toolbar_menu.style.left = "40px";
-        toolbar_menu.style.transform = "scale(1,1)";
+        animateButtons();
+        toolbar_menu.style.width = "190px";
     }, 10);
 }
 
 function closeMenu() {
     toolbar_menu.style.opacity = 0;
-    toolbar_menu.style.transform = "scale(0,0)";
-    toolbar_menu.style.left = "0px";
+    toolbar_menu.style.width = "0px";
     setTimeout(() => {
         toolbar_menu.style.display = "none"
     }, 300);
