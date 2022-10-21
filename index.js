@@ -807,3 +807,20 @@ ipcMain.on("restart", () => {
     app.relaunch();
     app.quit();
 })
+
+if (process.platform == "darwin") {
+    var isAllClosed = false;
+    app.on("window-all-closed", () => {
+        isAllClosed = true;
+    })
+
+    app.on("browser-window-created", () => {
+        isAllClosed = false;
+    })
+
+    app.on("activate", () => {
+        if (isAllClosed == true) {
+            initMainWindow();
+        }
+    })
+}

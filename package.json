@@ -12,7 +12,8 @@
     "autobuild": "electron-builder",
     "build_win": "electron-builder -w -p always",
     "build_linux": "electron-builder -l -p always",
-    "build_all": "electron-builder -lw -p always",
+    "build_mac": "electron-builder -m -p always",
+    "build_all": "electron-builder -lwm -p always",
     "start": "electron ."
   },
   "repository": {

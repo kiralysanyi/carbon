@@ -10,4 +10,12 @@ exports.default = async () => {
     } else {
         console.log("Windows package signing skipped");
     }
+
+    if (fs.existsSync("./dist/mac")) {
+        console.log("Signing macOS package");
+        execSync("python3 -m castlabs_evs.vmp sign-pkg --persistent ./dist/mac");
+        console.log("Package signed.")
+    } else {
+        console.log("macOS package signing skipped");
+    }
 }
