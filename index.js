@@ -23,6 +23,17 @@ if (!gotTheLock) {
     })
 }
 
+var overlayConf = {
+    height: 40,
+    color: "#1b1b1b",
+    symbolColor: "white"
+}
+
+const trafficLightPosition = {
+    x: 10,
+    y: 15
+}
+
 const contextMenu = require('electron-context-menu');
 const settings = require("./main-js/settings");
 const path = require("path");
@@ -131,20 +142,18 @@ const sendToAll = (channel, data) => {
 var focused_window = null;
 
 
+
 function initMainWindow(startupURL = null) {
     console.log(startupURL)
     const win = new BrowserWindow({
+        trafficLightPosition: trafficLightPosition,
         minWidth: 800,
         minHeight: 600,
         title: "Carbon",
         frame: false,
         titleBarStyle: 'hidden',
         icon: __dirname + "/build/icon.png",
-        titleBarOverlay: {
-            height: 40,
-            color: "#1b1b1b",
-            symbolColor: "white"
-        },
+        titleBarOverlay: overlayConf,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -190,6 +199,15 @@ function initMainWindow(startupURL = null) {
         shortcutRegister.unregister();
     })
 
+    if (process.platform == "darwin") {
+        win.on("enter-full-screen", () => {
+            win.webContents.send("enter_fullscreen_darwin")
+        })
+    
+        win.on("leave-full-screen", () => {
+            win.webContents.send("leave_fullscreen_darwin")
+        })
+    }
 
     win.loadFile("app/index.html");
     win.removeMenu();
@@ -638,16 +656,13 @@ function attachControlHost(win) {
 
 function initSetup() {
     const win = new BrowserWindow({
+        trafficLightPosition: trafficLightPosition,
         minWidth: 800,
         minHeight: 600,
         title: "Carbon",
         frame: false,
         titleBarStyle: 'hidden',
-        titleBarOverlay: {
-            height: 40,
-            color: "#1b1b1b",
-            symbolColor: "white"
-        },
+        titleBarOverlay: overlayConf,
         show: false,
         webPreferences: {
             preload: path.join(__dirname, "preload.js"),
@@ -672,15 +687,12 @@ function initSetup() {
 
 ipcMain.on("opendownloads", () => {
     const win = new BrowserWindow({
+        trafficLightPosition: trafficLightPosition,
         minWidth: 800,
         minHeight: 600,
         frame: false,
         titleBarStyle: 'hidden',
-        titleBarOverlay: {
-            height: 40,
-            color: "#1b1b1b",
-            symbolColor: "white"
-        },
+        titleBarOverlay: overlayConf,
         webPreferences: {
             nodeIntegration: true,
             preload: path.join(__dirname, "preload.js"),

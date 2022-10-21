@@ -162,6 +162,11 @@ ipcRenderer.on("update-state", (e, state) => {
 
 function showSettingsModal() {
     document.getElementById("hideSettings").style.display = "block";
+    if (process.platform == "darwin") {
+        document.getElementById("hideSettings").style.left = "unset";
+        document.getElementById("hideSettings").style.right = "0px";
+        document.getElementById("hideSettings").style.position = "fixed";
+    }
     document.getElementById("toolbar").style.display = "none";
     showPlaceHolder();
     const modal = document.getElementById("settings_modal");
@@ -383,6 +388,20 @@ ipcRenderer.on("openOverview", () => {
     toggleOverview();
 })
 
-if (process.platform == "win32") {
+if (process.platform == "win32" || process.platform == "darwin") {
     document.getElementById("window_controls").style.display = "none";
 }
+
+if(process.platform == "darwin") {
+    document.getElementById("toolbar").style.left = "80px";
+}
+
+ipcRenderer.on("enter_fullscreen_darwin", () => {
+    document.getElementById("toolbar").style.left = "10px";
+
+});
+
+ipcRenderer.on("leave_fullscreen_darwin", () => {
+    document.getElementById("toolbar").style.left = "80px";
+
+});

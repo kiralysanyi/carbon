@@ -259,6 +259,10 @@ function setupFinal() {
 
 setupFinal();
 
-if (process.platform == "win32") {
+if (process.platform == "win32" || process.platform == "darwin") {
     document.getElementById("window_controls").style.display = "none";
+}
+
+if(process.platform == "darwin") {
+    document.getElementById("toolbar").style.left = "80px";
 }
