@@ -31,7 +31,7 @@ var overlayConf = {
 
 const trafficLightPosition = {
     x: 10,
-    y: 15
+    y: 16
 }
 
 const contextMenu = require('electron-context-menu');

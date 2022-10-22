@@ -164,7 +164,7 @@ function showSettingsModal() {
     document.getElementById("hideSettings").style.display = "block";
     if (process.platform == "darwin") {
         document.getElementById("hideSettings").style.left = "unset";
-        document.getElementById("hideSettings").style.right = "0px";
+        document.getElementById("hideSettings").style.right = "10px";
         document.getElementById("hideSettings").style.position = "fixed";
     }
     document.getElementById("toolbar").style.display = "none";
@@ -335,8 +335,9 @@ async function openOverview() {
         }
 
         const from = { x: "0px", y: "90px", w: "100%", h: "calc(100% - 90px)" };
-
-        animateImage(from, to, hideCurrentTab());
+        let image = hideCurrentTab();
+        current_tab.overview_tab.style.backgroundImage = "url('" + image + "')"
+        animateImage(from, to, image);
         overview.style.opacity = 1;
         setTimeout(() => {
             document.body.style.backgroundColor = "white";
