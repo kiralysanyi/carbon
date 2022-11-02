@@ -249,11 +249,22 @@
     position: relative;
     width: 100%;
     height: 40px;
+    padding-left: 40px;
     line-height: 40px;
     color: white;
     text-overflow: ellipsis;
     white-space: nowrap;
     transition: 200ms;
+}
+
+#suggestions div img{
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    width: 30px;
+    height: 30px;
+    border: none;
+    background-color: transparent;
 }
 
 #suggestions div:hover {

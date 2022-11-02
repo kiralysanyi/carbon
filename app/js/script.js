@@ -17,13 +17,14 @@ function transformScroll(event) {
 
 document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 
-function validURL(str) {
-    try {
-        new URL(str);
-        return true
-    } catch (error) {
-        return false;
-    }
+function validURL(str = "") {
+    var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
+    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
+    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
+    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
+    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
+    '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
+  return !!urlPattern.test(str);
 }
 
 var urlbar = document.getElementById("urlbar");
@@ -80,7 +81,7 @@ function animateButtons() {
             toolbar_menu_items[i].style.transition = "200ms";
         }, 20);
     }
-    
+
     let x = 0;
     const animate = () => {
         if (x >= toolbar_menu_items.length) {
@@ -216,6 +217,7 @@ function showSuggestions() {
     suggestion_dom.style.display = "block";
     suggestion_dom.style.left = urlbar.offsetLeft + 50 + "px";
     suggestion_dom.style.width = urlbar.clientWidth + "px";
+    updateSuggestions(urlbar.value);
 
 }
 const suggestion_dom = document.getElementById("suggestions");
@@ -241,7 +243,10 @@ function updateSuggestions(searchtext) {
         const obj = data[x];
         if (obj.url.search(searchtext) > 0) {
             const element = document.createElement("div");
-            element.innerHTML = obj.url;
+            const favicon = document.createElement("img");
+            favicon.src = obj.iconURL;
+            element.innerHTML = obj.title + "   -   " + obj.url;
+            element.appendChild(favicon);
             suggestion_dom.appendChild(element);
             object_count++;
             element.onclick = () => {
@@ -398,7 +403,7 @@ if (process.platform == "win32" || process.platform == "darwin") {
     document.getElementById("window_controls").style.display = "none";
 }
 
-if(process.platform == "darwin") {
+if (process.platform == "darwin") {
     document.getElementById("toolbar").style.left = "80px";
 }
 
