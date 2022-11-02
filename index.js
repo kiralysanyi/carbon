@@ -142,7 +142,7 @@ const sendToAll = (channel, data) => {
 var focused_window = null;
 
 
-
+//main window creation
 function initMainWindow(startupURL = null) {
     console.log(startupURL)
     const win = new BrowserWindow({
@@ -175,6 +175,7 @@ function initMainWindow(startupURL = null) {
         win.webContents.openDevTools({mode: "detach"});
     }
 
+    //main window event handling
     win.on("focus", () => {
         focused_window = {
             win: win,
@@ -233,6 +234,140 @@ function initMainWindow(startupURL = null) {
             e.returnValue = 0;
         }
 
+        var uuid = data;
+
+        //remove tab
+        if (channel == "removeTab") {
+            const view = webviews[uuid];
+            view.webContents.destroy();
+            delete webviews[uuid];
+            e.returnValue = 0;
+        }
+
+        //mute audio of current tab
+        if (channel == "mute") {
+            e.returnValue = 0;
+            console.log("Mute requested to tab: " + uuid);
+            const view = webviews[uuid];
+            console.log(view);
+            if (view.webContents.isAudioMuted() == false) {
+                view.webContents.setAudioMuted(true);
+            }
+            else {
+                view.webContents.setAudioMuted(false);
+            }
+        }
+
+
+        //open developer tools for current tab
+        if (channel == "openDevTools") {
+            const view = webviews[uuid];
+            view.webContents.openDevTools({mode: "detach"});
+            e.returnValue = 0;
+        }
+
+
+        //navigate to the given URL in the current tab
+        if (channel == "navigate") {
+            const view = webviews[data.uuid];
+            if (data.url == "home") {
+                var home = settings.readKeyFromFile("general.conf.json", "homePage");
+                if (home == "default") {
+                    view.webContents.loadURL(defaultHomePage);
+                }
+                else {
+                    view.webContents.loadURL(home);
+                }
+            }
+            else {
+                view.webContents.loadURL(data.url);
+            }
+            e.returnValue = 0;
+        }
+
+        if (channel == "reload") {
+            const view = webviews[uuid];
+            view.webContents.reload();
+            e.returnValue = 0;
+        }
+
+        if (channel == "goBack") {
+            const view = webviews[uuid];
+            view.webContents.goBack();
+            e.returnValue = 0;
+        }
+
+        if (channel == "goForward") {
+            const view = webviews[uuid];
+            view.webContents.goForward();
+            e.returnValue = 0;
+        }
+
+        if (channel == "canGoBack") {
+            const view = webviews[uuid];
+            e.returnValue = view.webContents.canGoBack();
+        }
+
+        if (channel == "canGoForward") {
+            const view = webviews[uuid];
+            e.returnValue = view.webContents.canGoForward();
+        }
+
+        if (channel == "getUrl") {
+            if (errorTracker[uuid] != true) {
+                const view = webviews[uuid];
+                try {
+                    if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
+                        e.returnValue = "";
+                        return;
+                    }
+                } catch (error) {
+
+                }
+
+                e.returnValue = view.webContents.getURL();
+            } else {
+                e.returnValue = "no_change";
+            }
+        }
+
+        if (channel == "focusTab") {
+            const view = webviews[uuid];
+            win.setBrowserView(view);
+            view.webContents.capturePage().then((image) => {
+                win.webContents.postMessage(uuid, { type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
+            });
+            focusedTab = view;
+            e.returnValue = 0;
+            if (win.isFocused()) {
+                focused_window = {
+                    win: win,
+                    focusedTab: focusedTab
+                };
+            };
+        }
+
+        //hide current tab and send back a preview of the tab
+        if (channel == "hideCurrentTab") {
+            var view = focusedTab;
+            view.webContents.capturePage().then((image) => {
+                e.returnValue = image.resize({ height: 400, quality: "good" }).toDataURL();
+                win.removeBrowserView(focusedTab);
+
+            });
+        }
+
+        if (channel == "showCurrentTab") {
+            win.setBrowserView(focusedTab);
+            e.returnValue = 0;
+        }
+
+        if (channel == "hideTab") {
+            const view = webviews[uuid];
+            win.removeBrowserView(view);
+            e.returnValue = 0;
+        }
+
         //new tab
         if (channel == "newTab") {
 
@@ -271,9 +406,23 @@ function initMainWindow(startupURL = null) {
             }
 
 
-
+            //adding context menu to webview
             contextMenu({
                 prepend: (defaultActions, parameters, browserview) => [
+                    {
+                        label: "Back",
+                        visible: view.webContents.canGoBack(),
+                        click: () => {
+                            view.webContents.goBack();
+                        }
+                    },
+                    {
+                        label: "Forward",
+                        visible: view.webContents.canGoForward(),
+                        click: () => {
+                            view.webContents.goForward();
+                        }
+                    },
                     {
                         label: 'Search Google for “{selection}”',
                         // Only show it when right-clicking text
@@ -296,6 +445,7 @@ function initMainWindow(startupURL = null) {
             });
 
 
+            //sending event to renderer (main window)
             function sendEvent(data) {
                 try {
                     win.webContents.postMessage(uuid, data);
@@ -304,6 +454,7 @@ function initMainWindow(startupURL = null) {
                 }
             }
 
+            //webview event handling
             view.webContents.on("did-navigate", () => {
                 if (new URL(view.webContents.getURL()).href != new URL(defaultHomePage).href && errorTracker[uuid] != true) {
                     saveHistory();
@@ -451,7 +602,7 @@ function initMainWindow(startupURL = null) {
             })
 
 
-
+            //workaround for inappropriate webview resize on windows
             setInterval(() => {
                 var y = 0;
                 if (isFullScreen == true) {
@@ -471,133 +622,6 @@ function initMainWindow(startupURL = null) {
                 }
             }, 500);
 
-        }
-        var uuid = data;
-
-        //remove tab
-        if (channel == "removeTab") {
-            const view = webviews[uuid];
-            view.webContents.destroy();
-            delete webviews[uuid];
-            e.returnValue = 0;
-        }
-
-        if (channel == "mute") {
-            e.returnValue = 0;
-            console.log("Mute requested to tab: " + uuid);
-            const view = webviews[uuid];
-            console.log(view);
-            if (view.webContents.isAudioMuted() == false) {
-                view.webContents.setAudioMuted(true);
-            }
-            else {
-                view.webContents.setAudioMuted(false);
-            }
-        }
-
-        if (channel == "openDevTools") {
-            const view = webviews[uuid];
-            view.webContents.openDevTools({mode: "detach"});
-            e.returnValue = 0;
-        }
-
-        if (channel == "navigate") {
-            const view = webviews[data.uuid];
-            if (data.url == "home") {
-                var home = settings.readKeyFromFile("general.conf.json", "homePage");
-                if (home == "default") {
-                    view.webContents.loadURL(defaultHomePage);
-                }
-                else {
-                    view.webContents.loadURL(home);
-                }
-            }
-            else {
-                view.webContents.loadURL(data.url);
-            }
-            e.returnValue = 0;
-        }
-
-        if (channel == "reload") {
-            const view = webviews[uuid];
-            view.webContents.reload();
-            e.returnValue = 0;
-        }
-
-        if (channel == "goBack") {
-            const view = webviews[uuid];
-            view.webContents.goBack();
-            e.returnValue = 0;
-        }
-
-        if (channel == "goForward") {
-            const view = webviews[uuid];
-            view.webContents.goForward();
-            e.returnValue = 0;
-        }
-
-        if (channel == "canGoBack") {
-            const view = webviews[uuid];
-            e.returnValue = view.webContents.canGoBack();
-        }
-
-        if (channel == "canGoForward") {
-            const view = webviews[uuid];
-            e.returnValue = view.webContents.canGoForward();
-        }
-
-        if (channel == "getUrl") {
-            if (errorTracker[uuid] != true) {
-                const view = webviews[uuid];
-                try {
-                    if (new URL(view.webContents.getURL()).href == new URL(defaultHomePage).href) {
-                        e.returnValue = "";
-                        return;
-                    }
-                } catch (error) {
-
-                }
-
-                e.returnValue = view.webContents.getURL();
-            } else {
-                e.returnValue = "no_change";
-            }
-        }
-
-        if (channel == "focusTab") {
-            const view = webviews[uuid];
-            win.setBrowserView(view);
-            view.webContents.capturePage().then((image) => {
-                win.webContents.postMessage(uuid, { type: "preview", image: image.resize({ height: 800, quality: "good" }).toDataURL() });
-            });
-            focusedTab = view;
-            e.returnValue = 0;
-            if (win.isFocused()) {
-                focused_window = {
-                    win: win,
-                    focusedTab: focusedTab
-                };
-            };
-        }
-
-        if (channel == "hideCurrentTab") {
-            var view = focusedTab;
-            view.webContents.capturePage().then((image) => {
-                e.returnValue = image.resize({ height: 400, quality: "good" }).toDataURL();
-                win.removeBrowserView(focusedTab);
-
-            });
-        }
-
-        if (channel == "showCurrentTab") {
-            win.setBrowserView(focusedTab);
-            e.returnValue = 0;
-        }
-
-        if (channel == "hideTab") {
-            const view = webviews[uuid];
-            win.removeBrowserView(view);
-            e.returnValue = 0;
         }
 
     })

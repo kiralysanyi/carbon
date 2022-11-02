@@ -227,7 +227,7 @@
     background-color: rgba(0, 0, 0, 0.596);
     z-index: 10000;
     display: none;
-    transition: 300ms;
+    transition: 100ms;
 }
 
 #suggestions {
@@ -277,7 +277,7 @@
 
 .overview_tab {
     position: relative;
-    background-color: black;
+    background-color: white;
     border-radius: 10px;
     margin: 10px;
     background-position: center;

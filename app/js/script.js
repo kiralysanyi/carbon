@@ -170,19 +170,22 @@ function showSettingsModal() {
     document.getElementById("toolbar").style.display = "none";
     showPlaceHolder();
     const modal = document.getElementById("settings_modal");
-    modal.style.transform = "scale(0, 0)"
+    const modal_back = document.getElementById("settings_modal_back");
+    modal.style.left = "-100px";
+    modal.style.opacity = "0";
     modal.style.display = "block";
 
 
     setTimeout(() => {
-        modal.style.transform = "scale(1, 1)"
+        modal.style.left = "0px";
+        modal.style.opacity = "1";
     }, 10);
 
     if (isDebug()) {
         document.getElementById("settings_iframe").openDevTools();
     }
-    document.getElementById("settings_modal_back").style.display = "block";
-    document.getElementById("settings_modal_back").style.backdropFilter = "blur(32px)";
+    modal_back.style.display = "block";
+    modal_back.style.backdropFilter = "blur(32px)";
 }
 
 document.getElementById("hideSettings").style.display = "none";
@@ -194,11 +197,13 @@ function hideSettingsModal() {
     }
     document.getElementById("toolbar").style.display = "block";
     const modal = document.getElementById("settings_modal");
-    modal.style.transform = "translate(-50%, -50%) scale(0, 0)"
+    const modal_back = document.getElementById("settings_modal_back");
+    modal.style.left = "-100px";
+    modal.style.opacity = "0";
     setTimeout(() => {
         modal.style.display = "none";
-        document.getElementById("settings_modal_back").style.display = "none";
-        document.getElementById("settings_modal_back").style.backdropFilter = "blur(0px)";
+        modal_back.style.display = "none";
+        modal_back.style.backdropFilter = "blur(0px)";
         hidePlaceHolder();
     }, 300);
 }
@@ -368,7 +373,7 @@ function animateImage(from, to, src) {
     image.style.left = from.x;
     image.style.top = from.y;
     image.style.transition = "500ms";
-    image.style.backgroundColor = "black";
+    image.style.backgroundColor = "white";
     image.style.position = "fixed";
     image.style.zIndex = "999"
     document.body.appendChild(image);
