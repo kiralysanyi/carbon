@@ -1,7 +1,7 @@
 # README #
 
 ## About the project ##
-I got bored so I started doing a crappy web browser.
+I got bored so I started making this useless garbage..
 
 ## Command Line options ##
 `--verbose` : Additional debug information

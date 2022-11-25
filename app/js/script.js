@@ -18,13 +18,13 @@ function transformScroll(event) {
 document.getElementById("tab_bar").addEventListener("wheel", transformScroll)
 
 function validURL(str = "") {
-    var urlPattern = new RegExp('^(https?:\\/\\/)?'+ // validate protocol
-    '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // validate domain name
-    '((\\d{1,3}\\.){3}\\d{1,3}))'+ // validate OR ip (v4) address
-    '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // validate port and path
-    '(\\?[;&a-z\\d%_.~+=-]*)?'+ // validate query string
-    '(\\#[-a-z\\d_]*)?$','i'); // validate fragment locator
-  return !!urlPattern.test(str);
+    var urlPattern = new RegExp('^(https?:\\/\\/)?' + // validate protocol
+        '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' + // validate domain name
+        '((\\d{1,3}\\.){3}\\d{1,3}))' + // validate OR ip (v4) address
+        '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + // validate port and path
+        '(\\?[;&a-z\\d%_.~+=-]*)?' + // validate query string
+        '(\\#[-a-z\\d_]*)?$', 'i'); // validate fragment locator
+    return !!urlPattern.test(str);
 }
 
 var urlbar = document.getElementById("urlbar");
@@ -209,14 +209,20 @@ function hideSettingsModal() {
     }, 300);
 }
 
-
 function showSuggestions() {
     showPlaceHolder();
     const placeholder = document.getElementById("tab_placeholder");
     placeholder.style.filter = "blur(32px)";
     suggestion_dom.style.display = "block";
     suggestion_dom.style.left = urlbar.offsetLeft + 50 + "px";
+    if (process.platform == "darwin") {
+        suggestion_dom.style.left = urlbar.offsetLeft + 80 + "px";
+    }
     suggestion_dom.style.width = urlbar.clientWidth + "px";
+    urlbar.style.borderBottomLeftRadius = "0px";
+    urlbar.style.borderBottomRightRadius = "0px";
+    urlbar.style.height = "38px";
+    urlbar.style.fontSize = "18px";
     updateSuggestions(urlbar.value);
 
 }
@@ -232,6 +238,10 @@ function hideSuggestions() {
     hidePlaceHolder();
     const placeholder = document.getElementById("tab_placeholder");
     placeholder.style.filter = "blur(0px)";
+    urlbar.style.borderBottomLeftRadius = "5px";
+    urlbar.style.borderBottomRightRadius = "5px";
+    urlbar.style.height = "28px";
+    urlbar.style.fontSize = "15px";
 }
 
 function updateSuggestions(searchtext) {
