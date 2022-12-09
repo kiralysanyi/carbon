@@ -224,7 +224,6 @@ function showSuggestions() {
     urlbar.style.height = "38px";
     urlbar.style.fontSize = "18px";
     updateSuggestions(urlbar.value);
-
 }
 const suggestion_dom = document.getElementById("suggestions");
 
@@ -248,6 +247,30 @@ function updateSuggestions(searchtext) {
     suggestion_dom.innerHTML = "";
     const data = JSON.parse(settings.readData("history.json", "{}"));
     var object_count = 0;
+    if (searchtext == "") {
+        for (var x in data) {
+            const obj = data[x];
+            const element = document.createElement("div");
+            const favicon = document.createElement("img");
+            favicon.src = obj.iconURL;
+            element.innerHTML = obj.title + "   -   " + obj.url;
+            element.appendChild(favicon);
+            suggestion_dom.appendChild(element);
+            object_count++;
+            element.onclick = () => {
+                navigate(obj.url);
+            }
+
+        }
+        if (object_count < 10) {
+            suggestion_dom.style.height = object_count * 40 + "px";
+            suggestion_dom.style.overflowY = "hidden";
+        } else {
+            suggestion_dom.style.height = "400px";
+            suggestion_dom.style.overflowY = "scroll";
+        }
+        return;
+    }
 
     for (var x in data) {
         const obj = data[x];
