@@ -14,6 +14,9 @@ I got bored so I started making this useless garbage..
 
 ## Keyboard Shortcuts ##
 `Control+F12` : Open devtools for focused tab
+
 `Control+Tab` : Open tab overview
+
 `F5` : Reload page
+
 `F1` : Stop screen sharing
