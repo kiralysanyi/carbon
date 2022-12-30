@@ -25,9 +25,12 @@ async function createShareWindow(sources) {
         });
 
         win.removeMenu();
-        win.webContents.openDevTools();
-        ipcMain.once("source", (e, args) => {
+        let gotSource = false;
+        
+        //win.webContents.openDevTools();
+        const sourceHandler = (e, args) => {
             win.close();
+            gotSource = true;
             e.returnValue = null;
             console.log(args);
             done(args);
@@ -35,10 +38,16 @@ async function createShareWindow(sources) {
                 body: "Press F1 to stop capture",
                 title: "Screen capture"
             }).show();
-        });
+        }
+
+        ipcMain.once("source", sourceHandler);
 
         win.once("closed", () => {
             console.log("Window closed");
+            if (gotSource == false) {
+                ipcMain.removeListener("source", sourceHandler);
+                done(null);
+            }
         });
 
         win.webContents.on("did-finish-load", () => {

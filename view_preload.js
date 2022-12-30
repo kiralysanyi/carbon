@@ -87,6 +87,11 @@ async function sharePrompt() {
         var sources = ipcRenderer.sendSync("getSources");
         console.log("Sources: ", sources);
         const selected = await createShareWindow(sources);
+        if (selected == null) {
+            console.log(selected);
+            console.log("Screen share cancelled");
+            return null;
+        }
         console.log("Selected: ", sources[selected], selected);
         try {
             const stream = await navigator.mediaDevices.getUserMedia({
