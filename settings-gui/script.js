@@ -30,11 +30,19 @@ function saveConf() {
     settings.saveData("experimental.conf.json", JSON.stringify(experimental_config));
 }
 
+function checkStartup() {
+    return ipcRenderer.sendSync("isAutoStarting");
+}
+
+function updateStartupConfig(bool) {
+    ipcRenderer.send("updateAutoStartConfig", bool);
+}
+
 document.getElementById("adblock_switch").setAttribute("value", config["adblock"]);
 document.getElementById("autoupdate_switch").setAttribute("value", config["auto-update"]);
 document.getElementById("search_select").value = config["searchEngine"];
 document.getElementById("immersive_switch").setAttribute("value", experimental_config["immersive_interface"]);
-document.getElementById("startup_switch").setAttribute("value", config["auto-start"]);
+document.getElementById("startup_switch").setAttribute("value", checkStartup());
 
 //setting up permissions page
 
@@ -140,9 +148,7 @@ autoupdate_switch.onchange = () => {
 }
 
 document.getElementById("startup_switch").onchange = () => {
-    config["auto-start"] = document.getElementById("startup_switch").checked;
-    console.log(config["auto-start"])
-    saveConf();
+    updateStartupConfig(document.getElementById("startup_switch").checked);
 }
 
 search_select.onchange = () => {

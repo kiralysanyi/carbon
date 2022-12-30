@@ -60,10 +60,13 @@ ipcMain.on("capturePrompt", async (e) => {
     e.returnValue = await createShareWindow(e.sources);
 })
 
-app.whenReady().then(() => {
-    globalShortcut.register("F1", () => {
-        for(var x in requesters) {
-            requesters[x].send("stopSharing")
-        }
-    })
-});
+const endCapture = () => {
+    console.log("Stopping screenshare");
+    for(var x in requesters) {
+        requesters[x].send("stopSharing")
+    }
+}
+
+module.exports = {
+    endCapture
+}

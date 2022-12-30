@@ -36,9 +36,16 @@ function readKeyFromFile(filename, key) {
     return data[key];
 }
 
+function writeKeyToFile(filename, key, data) {
+    let parsed = JSON.parse(readData(filename));
+    parsed[key] = data
+    saveData(filename, JSON.stringify(parsed));
+}
+
 module.exports = {
     saveData: saveData,
     readData: readData,
     readKeyFromFile: readKeyFromFile,
+    writeKeyToFile,
     confdir: confdir
 }

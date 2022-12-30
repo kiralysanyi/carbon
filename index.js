@@ -41,11 +41,20 @@ const { readFileSync, existsSync } = require("fs");
 const configurator = require("./main-js/configurator");
 require("./main-js/download_backend");
 require("./main-js/adblock");
-require("./main-js/capture_backend");
-require("./main-js/autostart");
+const {getStartupConfig, updateStartupConfig} = require("./main-js/autostart");
 const shortcutRegister = require("./main-js/shortcut_register");
 const persistent = require("./main-js/persistent_variables");
 var args = process.argv;
+const { endCapture } = require("./main-js/capture_backend");
+
+ipcMain.on("isAutoStarting", (e) => {
+    console.log("Startup config: ", getStartupConfig());
+    e.returnValue = getStartupConfig();
+})
+
+ipcMain.on("updateAutoStartConfig", (e, value) => {
+    updateStartupConfig(value);
+})
 
 function checkParameter(name) {
     for (var x in args) {
@@ -55,6 +64,14 @@ function checkParameter(name) {
     }
 
     return false;
+}
+
+let startup = getStartupConfig();
+
+if (checkParameter("--nowindowinit")) {
+    if (startup == false) {
+        app.exit();
+    }    
 }
 
 if (checkParameter("--verbose") == false) {
@@ -75,7 +92,7 @@ const defaultHomePage = "file://" + __dirname + "/homepage/index.html";
 //checking for command line parameters
 
 //importing prompt module
-var prompt = require("./main-js/prompt");
+const prompt = require("./main-js/prompt");
 
 //getting the useragent
 const { USERAGENT, USERAGENT_FIREFOX } = require("./main-js/useragent-provider");
@@ -88,7 +105,7 @@ app.whenReady().then(() => {
     if (autoupdate == true) {
         runUpdate(sendToAll);
         setInterval(() => {
-            runUpdate();
+            runUpdate(sendToAll);
         }, 1800000);
     }
 });
@@ -184,7 +201,7 @@ function initMainWindow(startupURL = null) {
             }
         };
         shortcutRegister.unregister();
-        shortcutRegister.register(focused_window);
+        shortcutRegister.register(focused_window, endCapture);
     })
 
     win.on("close", () => {

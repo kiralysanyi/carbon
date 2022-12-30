@@ -94,7 +94,7 @@ async function sharePrompt() {
                 video: {
                     mandatory: {
                         chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: sources[selected - 1].id,
+                        chromeMediaSourceId: sources[selected].id,
                         minWidth: 1280,
                         maxWidth: 1280,
                         minHeight: 720,

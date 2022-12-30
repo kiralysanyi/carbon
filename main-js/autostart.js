@@ -1,25 +1,23 @@
 const { app } = require("electron");
-const { readKeyFromFile } = require("./settings");
 
-function checkParameter(name) {
-    for (var x in args) {
-        if (args[x] == name) {
-            return true;
-        }
+const updateStartupConfig = (startup) =>{
+    app.setLoginItemSettings({
+        args: ["--nowindowinit"],
+        openAtLogin: startup
+    })
+}
+
+const getStartupConfig = () => {
+    try {
+        console.log(app.getLoginItemSettings());
+        return app.getLoginItemSettings().executableWillLaunchAtLogin;
+    } catch (error) {
+        console.log("Error: ", error);
+        return false;
     }
-
-    return false;
 }
 
-const startup = readKeyFromFile("general.conf.json", "auto-start");
-var args = process.argv;
-if (checkParameter("--nowindowinit")) {
-    if (startup == false) {
-        app.exit();
-    }    
+module.exports = {
+    updateStartupConfig,
+    getStartupConfig
 }
-
-app.setLoginItemSettings({
-    args: ["--nowindowinit"],
-    openAtLogin: startup
-})
