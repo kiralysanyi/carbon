@@ -598,9 +598,10 @@ function initMainWindow(startupURL = null) {
                 sendEvent({ type: "color-change", color: color });
             })
 
-            view.webContents.on("new-window", (e, url) => {
-                sendEvent({ type: "new-window", url: url });
-            });
+            view.webContents.setWindowOpenHandler((details) => {
+                sendEvent({ type: "new-window", url: details.url });
+                return { action: 'deny' }
+              })
 
             var isFullScreen = false;
 
