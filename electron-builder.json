@@ -6,7 +6,7 @@
   "files": ["!**/signpackage.js"],
   "electronDownload": {
     "mirror": "https://github.com/castlabs/electron-releases/releases/download/v",
-    "version": "21.2.0+wvcus"
+    "version": "23.3.6+wvcus"
   },
   "publish": [
     {

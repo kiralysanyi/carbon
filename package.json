@@ -28,7 +28,7 @@
   "license": "ISC",
   "homepage": "https://github.com/kiralysanyi/carbon",
   "devDependencies": {
-    "electron": "github:castlabs/electron-releases#v21.2.0+wvcus",
+    "electron": "github:castlabs/electron-releases#v23.3.6+wvcus",
     "electron-builder": "^23.6.0"
   },
   "dependencies": {
