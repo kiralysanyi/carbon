@@ -93,6 +93,8 @@ function readCurrent() {
                 console.log("Pausing: ", x)
                 ipcRenderer.send("pause", x);
             }
+
+            pause_btn.id = "p" + x;
             element.appendChild(cancel_btn);
             element.appendChild(pause_btn);
         }
@@ -106,6 +108,11 @@ function readCurrent() {
         info_container.innerHTML += "<a class='percentage'>" + percentage + "%</a>";
         info_container.innerHTML += "<a class='speed'>" + speed + "MB/s</a>"
         info_container.innerHTML += "<div class='progress_bar' style='width: " + percentage + "%;'></div>";
+        if (item.state == "paused") {
+            document.getElementById("p" + x).innerHTML = '<i class="lni lni-play"></i>';
+        } else {
+            document.getElementById("p" + x).innerHTML = '<i class="lni lni-pause"></i>';
+        }
         try {
             clearTimeout(timeouts[x]);
         } catch (error) {

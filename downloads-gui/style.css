@@ -70,6 +70,7 @@
     transition: 200ms;
     border-radius: 5px;
     margin: 2.5px;
+    margin-right: 5px;
 }
 
 .downloaditem button:hover {
@@ -79,7 +80,7 @@
 .pause_btn {
     position: absolute;
     top: 0px;
-    right: 40px;
+    right: 50px;
 }
 
 .cancel_btn {
