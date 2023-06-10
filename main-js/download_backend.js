@@ -11,6 +11,7 @@ app.on("session-created", () => {
     session.defaultSession.on("will-download", (e, item, webcontents) => {
         new Notification({ title: "Download information", body: "Download has been started: " + item.getFilename() }).show()
         const DLID = randomUUID();
+        console.log("Download started: " + DLID);
         dlitems[DLID] = item;
         var received0 = 0
         var speed = 0;

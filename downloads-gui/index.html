@@ -14,7 +14,12 @@
 
 <body>
     <div id="topbar">
-        <div id="toolbar" style="left: 20px;"><a style="line-height: 50px; top: 0px; font-size: 24px;">Downloads</a></div>
+        <div id="toolbar" style="left: 20px;">
+            <a style="position: absolute; line-height: 50px; left: 0px; top: 0px; font-size: 24px;">Downloads</a>
+            <div class="button" style="position: absolute; left: 120px; top: 0px;" id="clearDownloads">
+                <i class="lni lni-trash-can"></i>
+            </div>
+        </div>
         <div id="window_controls">
             <div onclick="closewin()"><i class="lni lni-close"></i></div>
             <div onclick="maximize()"><i class="lni lni-stop"></i></div>
@@ -23,7 +28,7 @@
         <div class="bottom_line_loader" id="loader" style="display: none;"></div>
     </div>
     <div id="container">
-        
+
     </div>
 </body>
 <script src="./script.js"></script>
