@@ -689,9 +689,7 @@ function attachControlHost(win) {
         applyTheme();
     });
 
-    ipcMain.on("applyTheme", () => {
-        applyTheme();
-    })
+    ipcMain.on("applyTheme", applyTheme)
 
     win.once("closed", () => {
         ipcMain.removeListener("applyTheme", applyTheme);
