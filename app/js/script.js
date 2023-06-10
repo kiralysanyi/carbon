@@ -148,6 +148,11 @@ function showCurrentTab() {
 
 function showPlaceHolder() {
     const placeholder = document.getElementById("tab_placeholder");
+    if (isBlurDisabled == true) {
+        placeholder.style.transform = "scale(1)";
+    } else {
+        placeholder.style.transform = "scale(1.2)";
+    }
     placeholder.style.display = "block";
     placeholder.src = hideCurrentTab();
 }
@@ -218,7 +223,13 @@ function hideSettingsModal() {
 function showSuggestions() {
     showPlaceHolder();
     const placeholder = document.getElementById("tab_placeholder");
-    placeholder.style.filter = "blur(32px)";
+    if (isBlurDisabled == false) {
+        placeholder.style.filter = "blur(32px)";
+        placeholder.style.transform = "scale(1.2)"
+    } else {
+        placeholder.style.filter = "blur(0px)";
+        placeholder.style.transform = "scale(1)"
+    }
     suggestion_dom.style.display = "block";
     suggestion_dom.style.left = urlbar.offsetLeft + 50 + "px";
     if (process.platform == "darwin") {
@@ -411,6 +422,7 @@ function toggleOverview() {
 
 function animateImage(from, to, src) {
     const image = document.createElement("img");
+    image.classList.add("animated_img");
     image.src = src;
     image.style.width = from.w;
     image.style.height = from.h;
@@ -485,15 +497,18 @@ function applyTheme(theme) {
 
 function removeBlur(bool) {
     if (bool == true) {
-        document.head.innerHTML += '<style id="noblur">body * {backdrop-filter: blur(0px);}</style>'
+        document.getElementById("toolbar_menu").style.backdropFilter = "blur(0px)";
         document.getElementById("tab_placeholder").style.filter = "blur(0px)";
         if (document.getElementById("settings_modal_back").style.display == "block") {
             document.getElementById("settings_modal_back").style.backdropFilter = "blur(0px)";
+            document.getElementById("tab_placeholder").style.transform = "scale(1)";
         }
     } else {
         try {
+            document.getElementById("toolbar_menu").style.backdropFilter = "blur(4px)";
             if (document.getElementById("settings_modal_back").style.display == "block") {
                 document.getElementById("settings_modal_back").style.backdropFilter = "blur(32px)";
+                document.getElementById("tab_placeholder").style.transform = "scale(1.2)";
             }
             document.getElementById("noblur").remove();
         } catch (error) {

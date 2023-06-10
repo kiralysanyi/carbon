@@ -195,6 +195,7 @@ if (carbonAPI.getSearchEngine() == "bing") {
     message.style.color = "white";
     message.innerHTML = "Autocomplete not supported with bing";
 }
+const domainIcons = {};
 
 const historyDOM = document.getElementById("history");
 
@@ -215,6 +216,9 @@ class historyItem {
         this.htmlObj.onclick = () => {
             location.href = this.url;
         }
+        //add icon to domainIcons
+        let domain = new URL(this.url).host;
+        domainIcons[domain] = this.iconURL;
 
         this.htmlObj.addEventListener("contextmenu", (e) => {
             e.preventDefault();
@@ -532,8 +536,11 @@ setTimeout(() => {
 
 async function addFavorite() {
     const url = new URL(await prompt("Webpage url", "url"));
-    const title = await prompt("Title", "Title")
-    const favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + url.toString()
+    const title = await prompt("Title", "Title");
+    let favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + url.toString();
+    if (domainIcons[url.host] != undefined) {
+        favicon_url = domainIcons[url.host];
+    }
     var object = {
         "url": url.toString(),
         "favicon_url": favicon_url,

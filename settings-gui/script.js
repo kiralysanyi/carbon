@@ -45,6 +45,7 @@ document.getElementById("immersive_switch").setAttribute("value", experimental_c
 document.getElementById("fstart_switch").setAttribute("value", experimental_config["disableFastStartup"]);
 document.getElementById("startup_switch").setAttribute("value", checkStartup());
 document.getElementById("theme_select").value = config["theme"];
+document.getElementById("noblur_switch").setAttribute("value", experimental_config["remove_blur"]);
 
 //setting up permissions page
 
@@ -130,7 +131,6 @@ const immersive_switch = document.getElementById("immersive_switch");
 const fstart_switch = document.getElementById("fstart_switch");
 const theme_select = document.getElementById("theme_select");
 const noblur_switch = document.getElementById("noblur_switch");
-noblur_switch.setAttribute("value", experimental_config["remove_blur"]);
 
 immersive_switch.onchange = () => {
     experimental_config["immersive_interface"] = immersive_switch.checked;
