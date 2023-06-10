@@ -826,6 +826,10 @@ app.whenReady().then(async () => {
             e.returnValue = openFirst;
         });
 
+        ipcMain.on("getTheme", (e) => {
+            e.returnValue = settings.readKeyFromFile("general.conf.json", "theme");
+        });
+
         for (var x in process.argv) {
             if (x > 0) {
                 try {
