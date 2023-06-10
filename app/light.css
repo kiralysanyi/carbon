@@ -1,0 +1,28 @@
+#topbar {
+    background-color: white;
+    color: black;
+}
+
+#toolbar_menu {
+    background-color: rgba(255, 255, 255, 0.886);
+}
+
+.button:hover {
+    background-color: rgba(0, 0, 0, 0.126);
+}
+
+#toolbar input[type="text"]:hover {
+    background-color: rgba(0, 0, 0, 0.126);
+}
+
+#toolbar input[type="text"]:focus {
+    background-color: rgba(0, 0, 0, 0.126);
+}
+
+#toolbar input[type="text"] {
+    color: black;
+}
+
+#overview {
+    background-color: rgb(223, 223, 223);
+}

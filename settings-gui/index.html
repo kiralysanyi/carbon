@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Settings</title>
+
     <link rel="stylesheet" href="../lib/lineicons/lineicons.css">
     <link rel="stylesheet" href="./style.css">
     <link rel="stylesheet" href="../lib/base/base.css">
@@ -15,6 +16,34 @@
     <link rel="stylesheet" href="../lib/select/select.css">
     <link rel="stylesheet" href="style.css">
     <script src="../lib/dasui.js"></script>
+    <style>
+        .mainContent {
+            width: 100%;
+            height: calc(100% - 50px);
+            top: 50px;
+            left: 0px;
+            position: fixed;
+            background-color: transparent;
+        }
+    
+        .sidebar {
+            position: fixed;
+            width: 180px;
+            height: calc(100% - 50px);
+            top: 50px;
+            background-color: rgba(36, 36, 36, 0.664);
+        }
+    
+        .content {
+            position: fixed;
+            left: 180px;
+            width: calc(100% - 180px);
+            height: calc(100% - 50px);
+            top: 50px;
+            background-color: rgba(53, 53, 53, 0.281);
+            padding-left: 10px;
+        }
+    </style>
 
 </head>
 
@@ -60,6 +89,15 @@
                             <option value="duckduckgo">DuckDuckGo</option>
                             <option value="google">Google</option>
                             <option value="bing">Bing</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Theme</td>
+                    <td>
+                        <select name="theme" id="theme_select">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
                         </select>
                     </td>
                 </tr>
@@ -110,33 +148,6 @@
     </div>
 </body>
 <script src="./script.js"></script>
-<style>
-    .mainContent {
-        width: 100%;
-        height: calc(100% - 50px);
-        top: 50px;
-        left: 0px;
-        position: fixed;
-        background-color: transparent;
-    }
 
-    .sidebar {
-        position: fixed;
-        width: 180px;
-        height: calc(100% - 50px);
-        top: 50px;
-        background-color: rgba(36, 36, 36, 0.664);
-    }
-
-    .content {
-        position: fixed;
-        left: 180px;
-        width: calc(100% - 180px);
-        height: calc(100% - 50px);
-        top: 50px;
-        background-color: rgba(53, 53, 53, 0.281);
-        padding-left: 10px;
-    }
-</style>
 
 </html>

@@ -673,6 +673,30 @@ ipcMain.on("getHomeURL", (e) => {
 })
 
 function attachControlHost(win) {
+    let applyTheme = () => {
+        if (settings.readKeyFromFile("general.conf.json", "theme") == "light") {
+            overlayConf.color = "#FFFFFF"
+            overlayConf.symbolColor = "black";
+        } else {
+            overlayConf.color = "#1b1b1b";
+            overlayConf.symbolColor = "white";
+        };
+        win.setTitleBarOverlay(overlayConf);
+        win.webContents.send("applyTheme", settings.readKeyFromFile("general.conf.json", "theme"));
+    }
+
+    win.webContents.on("did-finish-load", () => {
+        applyTheme();
+    });
+
+    ipcMain.on("applyTheme", () => {
+        applyTheme();
+    })
+
+    win.once("closed", () => {
+        ipcMain.removeListener("applyTheme", applyTheme);
+    })
+
     win.webContents.on("ipc-message-sync", (e, channel) => {
         if (channel == "minimize") {
             win.minimize();

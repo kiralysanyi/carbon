@@ -18,6 +18,7 @@ if (Object.keys(config).length == 0) {
     config["homePage"] = "default";
     config["update-channel"] = "stable";
     config["auto-update"] = true;
+    config["theme"] = "dark";
     settings.saveData("general.conf.json", JSON.stringify(config));
     first_startup = true;
 }
@@ -58,6 +59,10 @@ if (config["versionindex"] < package_data["version_index"]) {
 
     if (config["versionindex"] < 11) {
         config_exp["disableFastStartup"] = false;
+    }
+
+    if (config["versionindex"] < 12) {
+        config["theme"] = "dark";
     }
 
     config["versionindex"] = package_data["version_index"]

@@ -1,0 +1,44 @@
+body {
+    color: black;
+}
+
+.mainContent {
+    width: 100%;
+    height: calc(100% - 50px);
+    top: 50px;
+    left: 0px;
+    position: fixed;
+    background-color: transparent;
+}
+
+.sidebar {
+    position: fixed;
+    width: 180px;
+    height: calc(100% - 50px);
+    top: 50px;
+    background-color: rgba(255, 255, 255, 0.664);
+    color: black;
+}
+
+.content {
+    position: fixed;
+    left: 180px;
+    width: calc(100% - 180px);
+    height: calc(100% - 50px);
+    top: 50px;
+    background-color: rgba(255, 255, 255, 0.499);
+    padding-left: 10px;
+    color: black;
+}
+
+.sidebar .tab_btn {
+    color: black;
+}
+
+.focused {
+    background-color: rgba(255, 255, 255, 0.418);
+}
+
+#toolbar {
+    background-color: white;
+}

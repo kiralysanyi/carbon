@@ -44,6 +44,7 @@ document.getElementById("search_select").value = config["searchEngine"];
 document.getElementById("immersive_switch").setAttribute("value", experimental_config["immersive_interface"]);
 document.getElementById("fstart_switch").setAttribute("value", experimental_config["disableFastStartup"]);
 document.getElementById("startup_switch").setAttribute("value", checkStartup());
+document.getElementById("theme_select").value = config["theme"];
 
 //setting up permissions page
 
@@ -127,6 +128,7 @@ const autoupdate_switch = document.getElementById("autoupdate_switch");
 const search_select = document.getElementById("search_select");
 const immersive_switch = document.getElementById("immersive_switch");
 const fstart_switch = document.getElementById("fstart_switch");
+const theme_select = document.getElementById("theme_select");
 
 immersive_switch.onchange = () => {
     experimental_config["immersive_interface"] = immersive_switch.checked;
@@ -163,6 +165,35 @@ document.getElementById("startup_switch").onchange = () => {
 search_select.onchange = () => {
     config["searchEngine"] = search_select.value;
     saveConf();
+}
+
+//apply theme
+function applyTheme(theme) {
+    if (theme == "light") {
+        var head = document.getElementsByTagName('head')[0];
+
+        // Creating link element
+        var style = document.createElement('link');
+        style.id = "lightthemecss"
+        style.href = 'light.css'
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    } else {
+        try {
+            document.getElementById("lightthemecss").remove();
+        } catch (error) {
+            console.log("Light theme not loaded. I'm doing nothing.");
+        }
+    }
+}
+applyTheme(config["theme"]);
+
+theme_select.onchange = () => {
+    config["theme"] = theme_select.value;
+    applyTheme(theme_select.value);
+    saveConf();
+    ipcRenderer.send("applyTheme");
 }
 
 //about page

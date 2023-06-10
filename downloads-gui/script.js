@@ -91,3 +91,28 @@ if (process.platform == "win32" || process.platform == "darwin") {
 if(process.platform == "darwin") {
     document.getElementById("toolbar").style.left = "80px";
 }
+
+ipcRenderer.on("applyTheme", (e, theme) => {
+    applyTheme(theme);
+});
+
+//apply theme
+function applyTheme(theme) {
+    if (theme == "light") {
+        var head = document.getElementsByTagName('head')[0];
+
+        // Creating link element
+        var style = document.createElement('link');
+        style.id = "lightthemecss"
+        style.href = 'light.css'
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    } else {
+        try {
+            document.getElementById("lightthemecss").remove();
+        } catch (error) {
+            console.log("Light theme not loaded. I'm doing nothing.");
+        }
+    }
+}
