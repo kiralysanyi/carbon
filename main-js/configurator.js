@@ -32,6 +32,7 @@ if (config_exp == "{}") {
     //default config
     config_exp["immersive_interface"] = false;
     config_exp["disableFastStartup"] = false;
+    config_exp["remove_blur"] = false;
     settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
 } else {
     config_exp = JSON.parse(config_exp);
@@ -63,6 +64,10 @@ if (config["versionindex"] < package_data["version_index"]) {
 
     if (config["versionindex"] < 12) {
         config["theme"] = "dark";
+    }
+
+    if (config["versionindex"] < 13) {
+        config_exp["remove_blur"] = false;
     }
 
     config["versionindex"] = package_data["version_index"]

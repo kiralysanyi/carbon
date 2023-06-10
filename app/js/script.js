@@ -1,3 +1,5 @@
+let isBlurDisabled = false;
+
 function showLoader() {
     document.getElementById("loader").style.display = "block";
 }
@@ -186,7 +188,11 @@ function showSettingsModal() {
         document.getElementById("settings_iframe").openDevTools();
     }
     modal_back.style.display = "block";
-    modal_back.style.backdropFilter = "blur(32px)";
+    if (isBlurDisabled == false) {
+        modal_back.style.backdropFilter = "blur(32px)"; 
+    } else {
+        modal_back.style.backdropFilter = "blur(0px)";
+    }
 }
 
 document.getElementById("hideSettings").style.display = "none";
@@ -474,3 +480,30 @@ function applyTheme(theme) {
         }
     }
 }
+
+//removing blur if needed
+
+function removeBlur(bool) {
+    if (bool == true) {
+        document.head.innerHTML += '<style id="noblur">body * {backdrop-filter: blur(0px);}</style>'
+        document.getElementById("tab_placeholder").style.filter = "blur(0px)";
+        if (document.getElementById("settings_modal_back").style.display == "block") {
+            document.getElementById("settings_modal_back").style.backdropFilter = "blur(0px)";
+        }
+    } else {
+        try {
+            if (document.getElementById("settings_modal_back").style.display == "block") {
+                document.getElementById("settings_modal_back").style.backdropFilter = "blur(32px)";
+            }
+            document.getElementById("noblur").remove();
+        } catch (error) {
+            
+        }
+    }
+}
+
+ipcRenderer.on("removeBlur", (e, bool) => {
+    isBlurDisabled = bool;
+    console.log("Removing blur: ", bool);
+    removeBlur(bool);
+})

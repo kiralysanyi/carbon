@@ -682,17 +682,24 @@ function attachControlHost(win) {
             overlayConf.symbolColor = "white";
         };
         win.setTitleBarOverlay(overlayConf);
-        win.webContents.send("applyTheme", settings.readKeyFromFile("general.conf.json", "theme"));
+        win.webContents.send("applyTheme", settings.readKeyFromFile("general.conf.json", "theme"));        
+    }
+
+    let removeBlur = () => {
+        win.webContents.send("removeBlur", settings.readKeyFromFile("experimental.conf.json", "remove_blur"));
     }
 
     win.webContents.on("did-finish-load", () => {
         applyTheme();
+        removeBlur();
     });
 
     ipcMain.on("applyTheme", applyTheme)
+    ipcMain.on("removeBlur", removeBlur);
 
     win.once("closed", () => {
         ipcMain.removeListener("applyTheme", applyTheme);
+        ipcMain.removeListener("removeBlur", removeBlur);
     })
 
     win.webContents.on("ipc-message-sync", (e, channel) => {
@@ -828,6 +835,10 @@ app.whenReady().then(async () => {
 
         ipcMain.on("getTheme", (e) => {
             e.returnValue = settings.readKeyFromFile("general.conf.json", "theme");
+        });
+
+        ipcMain.on("isBlurRemoved", (e) => {
+            e.returnValue = settings.readKeyFromFile("experimental.conf.json", "remove_blur");
         });
 
         for (var x in process.argv) {

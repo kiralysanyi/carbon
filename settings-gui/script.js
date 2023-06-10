@@ -129,6 +129,8 @@ const search_select = document.getElementById("search_select");
 const immersive_switch = document.getElementById("immersive_switch");
 const fstart_switch = document.getElementById("fstart_switch");
 const theme_select = document.getElementById("theme_select");
+const noblur_switch = document.getElementById("noblur_switch");
+noblur_switch.setAttribute("value", experimental_config["remove_blur"]);
 
 immersive_switch.onchange = () => {
     experimental_config["immersive_interface"] = immersive_switch.checked;
@@ -156,6 +158,12 @@ adblock_switch.onchange = () => {
 autoupdate_switch.onchange = () => {
     config["auto-update"] = autoupdate_switch.checked;
     saveConf();
+}
+
+noblur_switch.onchange = () => {
+    experimental_config["remove_blur"] = noblur_switch.checked;
+    saveConf();
+    ipcRenderer.send("removeBlur");
 }
 
 document.getElementById("startup_switch").onchange = () => {

@@ -1,3 +1,21 @@
+//removing blur if needed
+
+function removeBlur(bool) {
+    if (bool == true) {
+        document.head.innerHTML += '<style id="noblur">body * {backdrop-filter: blur(0px); filter: blur(0px);}</style>'
+    } else {
+        try {
+            document.getElementById("noblur").remove();
+        } catch (error) {
+            
+        }
+    }
+}
+
+if (carbonAPI.experimental.isBlurRemoved() == true) {
+    removeBlur(true);
+}
+
 //setting up searchform
 var searchform = document.getElementById("searchform");
 var searchbox = document.getElementById("searchbox");
@@ -231,7 +249,7 @@ function lightenColor(red, green, blue, percent) {
     blue = Math.min(blue + amount, 255);
 
     // Return the modified color as an RGB string
-    return [red,green,blue];
+    return [red, green, blue];
 }
 
 const startTheming = async () => {
@@ -242,7 +260,7 @@ const startTheming = async () => {
         color = await colorThief.getColor(localStorage.getItem("background"))
     }
     console.log(color)
-    
+
     if (carbonAPI.getTheme() == "light") {
         hex = rgbToHex(color[0], color[1], color[2])
         if (carbonAPI.experimental.wc_hex_is_light(hex) == false) {
@@ -587,3 +605,4 @@ function applyTheme(theme) {
 }
 
 applyTheme(carbonAPI.getTheme());
+

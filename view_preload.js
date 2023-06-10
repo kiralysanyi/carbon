@@ -59,7 +59,11 @@ carbonAPI.getTheme = () => {
     return ipcRenderer.sendSync("getTheme");
 }
 
-carbonAPI.experimental = {}
+carbonAPI.experimental = {};
+
+carbonAPI.experimental.isBlurRemoved = () => {
+    return ipcRenderer.sendSync("isBlurRemoved");
+}
 
 const ColorThief = require('colorthief');
 
