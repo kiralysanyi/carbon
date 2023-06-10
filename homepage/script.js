@@ -221,7 +221,18 @@ const colorThief = carbonAPI.experimental.ColorThief;
 var backgroundRGB;
 var backgroundHEX;
 
+function lightenColor(red, green, blue, percent) {
+    // Calculate the lightness increase
+    const amount = Math.round(255 * (percent / 100));
 
+    // Increase the color channels
+    red = Math.min(red + amount, 255);
+    green = Math.min(green + amount, 255);
+    blue = Math.min(blue + amount, 255);
+
+    // Return the modified color as an RGB string
+    return [red,green,blue];
+}
 
 const startTheming = async () => {
     var color;
@@ -231,6 +242,15 @@ const startTheming = async () => {
         color = await colorThief.getColor(localStorage.getItem("background"))
     }
     console.log(color)
+    
+    if (carbonAPI.getTheme() == "light") {
+        hex = rgbToHex(color[0], color[1], color[2])
+        if (carbonAPI.experimental.wc_hex_is_light(hex) == false) {
+            color = lightenColor(color[0], color[1], color[2], 50);
+            console.log(color);
+        }
+    }
+
     hex = rgbToHex(color[0], color[1], color[2])
     console.log(hex)
     backgroundRGB = color;
@@ -437,7 +457,7 @@ function renderFavorites() {
     container.innerHTML = "";
     const len = Object.keys(favorites).length;
     var overflow = 0;
-    
+
     if (len >= 6) {
         overflow = len - 5
     }
@@ -449,7 +469,7 @@ function renderFavorites() {
         htmlObj.style.height = "200px";
         favorites_add.style.top = "100px";
         container.style.height = "200px";
-    } else { 
+    } else {
         htmlObj.style.width = (100 + (100 * len)) + "px";
         htmlObj.style.height = "100px";
         favorites_add.style.top = "0px";
@@ -544,3 +564,26 @@ function toggleHistory() {
         document.getElementById("history_toggle").disabled = false;
     }, 600);
 }
+
+//apply theme
+function applyTheme(theme) {
+    if (theme == "light") {
+        var head = document.getElementsByTagName('head')[0];
+
+        // Creating link element
+        var style = document.createElement('link');
+        style.id = "lightthemecss"
+        style.href = 'light.css'
+        style.type = 'text/css'
+        style.rel = 'stylesheet'
+        head.append(style);
+    } else {
+        try {
+            document.getElementById("lightthemecss").remove();
+        } catch (error) {
+            console.log("Light theme not loaded. I'm doing nothing.");
+        }
+    }
+}
+
+applyTheme(carbonAPI.getTheme());

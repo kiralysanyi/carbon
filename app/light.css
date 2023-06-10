@@ -26,3 +26,16 @@
 #overview {
     background-color: rgb(223, 223, 223);
 }
+
+#suggestions {
+    background-color: rgba(220, 220, 220, 0.792);
+    color: black;
+}
+
+#suggestions div {
+    color: black;
+}
+
+#suggestions div:hover {
+    background-color: rgba(0, 0, 0, 0.079);
+}
