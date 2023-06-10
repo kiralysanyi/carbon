@@ -42,6 +42,7 @@ document.getElementById("adblock_switch").setAttribute("value", config["adblock"
 document.getElementById("autoupdate_switch").setAttribute("value", config["auto-update"]);
 document.getElementById("search_select").value = config["searchEngine"];
 document.getElementById("immersive_switch").setAttribute("value", experimental_config["immersive_interface"]);
+document.getElementById("fstart_switch").setAttribute("value", experimental_config["disableFastStartup"]);
 document.getElementById("startup_switch").setAttribute("value", checkStartup());
 
 //setting up permissions page
@@ -125,8 +126,16 @@ const adblock_switch = document.getElementById("adblock_switch");
 const autoupdate_switch = document.getElementById("autoupdate_switch");
 const search_select = document.getElementById("search_select");
 const immersive_switch = document.getElementById("immersive_switch");
+const fstart_switch = document.getElementById("fstart_switch");
+
 immersive_switch.onchange = () => {
     experimental_config["immersive_interface"] = immersive_switch.checked;
+    saveConf();
+}
+
+fstart_switch.onchange = () => {
+    experimental_config["disableFastStartup"] = fstart_switch.checked;
+    updateStartupConfig(false);
     saveConf();
 }
 

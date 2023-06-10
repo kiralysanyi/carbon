@@ -843,7 +843,13 @@ process.on("uncaughtException", (e) => {
 })
 
 
-app.on('window-all-closed', e => e.preventDefault())
+app.on('window-all-closed', (e) => {
+    e.preventDefault();
+    let shouldExit = settings.readKeyFromFile("experimental.conf.json", "disableFastStartup");
+    if (shouldExit == true) {
+        app.exit();
+    }
+})
 
 ipcMain.on("restart", () => {
     app.relaunch();

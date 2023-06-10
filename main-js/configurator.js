@@ -22,10 +22,25 @@ if (Object.keys(config).length == 0) {
     first_startup = true;
 }
 
+//initializing experimental config file
+var config_exp = settings.readData("experimental.conf.json");
+console.log("Configuration read: ", config_exp);
+if (config_exp == "{}") {
+    config_exp = {};
+    settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
+    //default config
+    config_exp["immersive_interface"] = false;
+    config_exp["disableFastStartup"] = false;
+    settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
+} else {
+    config_exp = JSON.parse(config_exp);
+}
+
 if (config["versionindex"] == null) {
     config["versionindex"] = package_data["version_index"];
 }
 
+//include some settings after update detected
 console.log("Application version index: ", package_data["version_index"])
 console.log(config["versionindex"])
 if (config["versionindex"] < package_data["version_index"]) {
@@ -37,26 +52,20 @@ if (config["versionindex"] < package_data["version_index"]) {
         config["auto-update"] = true;
     }
 
-    if (config["versionIndex"] < 10) {
+    if (config["versionindex"] < 10) {
         delete config["auto-start"];
+    }
+
+    if (config["versionindex"] < 11) {
+        config_exp["disableFastStartup"] = false;
     }
 
     config["versionindex"] = package_data["version_index"]
     settings.saveData("general.conf.json", JSON.stringify(config));
+    console.log(config_exp);
+    settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
 }
 
-//initializing experimental config file
-var config_exp = settings.readData("experimental.conf.json");
-console.log("Configuration read: ", config_exp);
-if (config_exp == "{}") {
-    config_exp = {};
-    settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
-    //default config
-    config_exp["immersive_interface"] = false;
-    settings.saveData("experimental.conf.json", JSON.stringify(config_exp));
-} else {
-    config_exp = JSON.parse(config_exp);
-}
 
 //initializing download history
 
