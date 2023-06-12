@@ -8,81 +8,6 @@ body {
     color: white;
 }
 
-#sidebar {
-    position: fixed;
-    left: -300px;
-    top: 0px;
-    width: 300px;
-    height: 100%;
-    background-color: rgba(37, 37, 37, 0.705);
-    backdrop-filter: blur(4px);
-    transition: 200ms;
-    color: white;
-    overflow: hidden;
-}
-
-#sidebar_open {
-    position: fixed;
-    top: 0px;
-    left: 0px;
-    width: 40px;
-    height: 40px;
-    background-color: transparent;
-    transition: 200ms;
-    color: white;
-    font-size: 30px;
-    text-align: center;
-}
-
-#sidebar_open i {
-    position: absolute;
-    width: 30px;
-    height: 30px;
-    top: 5px;
-    left: 5px;
-}
-
-#sidebar_back {
-    position: fixed;
-    top: 0px;
-    width: 0px;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.192);
-    display: none;
-}
-
-#sidebar_content {
-    position: absolute;
-    top: 40px;
-    left: 0px;
-    width: 300px;
-    height: calc(100% - 70px);
-    display: block;
-}
-
-#sidebar_content div {
-    position: relative;
-    float: left;
-    width: 300px;
-    height: 40px;
-    transition: 200ms;
-    text-align: center;
-    font-size: 28px;
-    line-height: 40px;
-}
-
-#sidebar_content div:hover {
-    background-color: rgba(255, 255, 255, 0.123);
-}
-
-#version_indicator {
-    position: absolute;
-    bottom: 0px;
-    left: 0px;
-    line-height: 30px;
-}
-
 #main_content {
     position: fixed;
     top: 0px;
@@ -375,24 +300,6 @@ body {
     transition: 200ms;
 }
 
-#favorites_hint {
-    position: fixed;
-    top: 210px;
-    left: 50%;
-    width: 300px;
-    height: 30px;
-    background-color: rgba(0, 0, 0, 0.589);
-    backdrop-filter: blur(4px);
-    border-radius: 24px;
-    transform: translate(-50%, 0%);
-    text-align: center;
-    overflow: hidden;
-    transition: 200ms;
-    z-index: 100;
-    line-height: 30px;
-    display: none;
-}
-
 #favorites .button {
     position: relative;
     width: 100px;
@@ -511,70 +418,4 @@ body {
 
 #editWindow_done:hover {
     background-color: rgb(0, 123, 123);
-}
-
-.prompt {
-    position: fixed;
-    z-index: 10000000;
-    top: 0px;
-    left: 0px;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.644);
-    backdrop-filter: blur(16px);
-}
-
-.prompt_container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 400px;
-    width: 600px;
-    background-color: rgb(29, 29, 29);
-    color: white;
-    border-radius: 40px;
-    text-align: center;
-}
-
-.prompt_container input {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    height: 50px;
-    width: 400px;
-    outline: 0;
-    transition: 200ms;
-    background-color: rgba(255, 255, 255, 0.185);
-    color: black;
-    border-radius: 10px;
-    font-size: 26px;
-    border: none;
-}
-
-.prompt_container input:focus {
-    background-color: white;
-}
-
-.prompt_container h1 {
-    margin-top: 40px;
-}
-
-.prompt_container button {
-    position: absolute;
-    bottom: 40px;
-    width: 100px;
-    height: 50px;
-    left: calc(50% - 50px);
-    border: none;
-    background-color: rgb(0, 126, 126);
-    color: white;
-    outline: 0;
-    border-radius: 10px;
-    transition: 200ms;
-}
-
-.prompt_container button:hover {
-    background-color: rgb(0, 160, 160);
 }

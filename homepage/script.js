@@ -419,38 +419,6 @@ if (localStorage.getItem("background") == "random") {
     background_image_preview.src = localStorage.getItem("background");
 }
 
-//prompt
-function prompt(title = "?", placeholder = "") {
-    return new Promise((resolved) => {
-        const htmlObj = document.createElement("div");
-        htmlObj.classList.add("prompt");
-        const container = document.createElement("div");
-        container.classList.add("prompt_container");
-        htmlObj.appendChild(container);
-
-        const title_object = document.createElement("h1");
-        title_object.innerHTML = title;
-        container.appendChild(title_object);
-
-        const input_object = document.createElement("input");
-        input_object.type = "text";
-        input_object.placeholder = placeholder;
-        container.appendChild(input_object);
-
-        const submit_button = document.createElement("button");
-        submit_button.innerHTML = "OK";
-        container.appendChild(submit_button);
-
-        submit_button.onclick = () => {
-            resolved(input_object.value)
-            htmlObj.remove();
-        }
-
-        document.body.appendChild(htmlObj);
-    })
-}
-
-
 //favorites handling
 
 if (!localStorage.getItem("favorites")) {
@@ -529,6 +497,11 @@ function openAddWindow() {
     const editWindow_inner = document.getElementById("editWindow_inner");
     const editWindow_url = document.getElementById("editWindow_url");
     const editWindow_name = document.getElementById("editWindow_name");
+    editWindow_name.value = "";
+    editWindow_url.value = "";
+    if (carbonAPI.experimental.isBlurRemoved() == true) {
+        editWindow.style.backdropFilter = "blur(0px)";
+    }
     editWindow.style.display = "block";
     setTimeout(() => {
         editWindow.style.opacity = 1;
@@ -572,6 +545,9 @@ function openEditWindow(url) {
     const editWindow_inner = document.getElementById("editWindow_inner");
     const editWindow_url = document.getElementById("editWindow_url");
     const editWindow_name = document.getElementById("editWindow_name");
+    if (carbonAPI.experimental.isBlurRemoved() == true) {
+        editWindow.style.backdropFilter = "blur(0px)";
+    }
     editWindow_url.value = url;
     editWindow_name.value = favorites[url]["title"];
     editWindow.style.display = "block";
