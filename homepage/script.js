@@ -7,7 +7,7 @@ function removeBlur(bool) {
         try {
             document.getElementById("noblur").remove();
         } catch (error) {
-            
+
         }
     }
 }
@@ -463,13 +463,6 @@ function saveFavorites() {
     localStorage.setItem("favorites", JSON.stringify(favorites));
 }
 
-document.getElementById("favorites").addEventListener("mouseenter", () => {
-    document.getElementById("favorites_hint").style.display = "block";
-})
-
-document.getElementById("favorites").addEventListener("mouseleave", () => {
-    document.getElementById("favorites_hint").style.display = "none";
-})
 
 
 function renderFavorites() {
@@ -522,12 +515,111 @@ function renderFavorites() {
             location.href = obj.url;
         }
 
-        element.oncontextmenu = () => {
-            delete favorites[obj.url];
-            renderFavorites();
-            saveFavorites();
+        element.oncontextmenu = (e) => {
+            e.preventDefault();
+            openEditWindow(obj.url);
         }
     }
+}
+
+function openAddWindow() {
+    document.getElementById("editWindow_title").innerHTML = "Add shortcut";
+    document.getElementById("editWindow_delete").innerHTML = "Cancel";
+    const editWindow = document.getElementById("editWindow");
+    const editWindow_inner = document.getElementById("editWindow_inner");
+    const editWindow_url = document.getElementById("editWindow_url");
+    const editWindow_name = document.getElementById("editWindow_name");
+    editWindow.style.display = "block";
+    setTimeout(() => {
+        editWindow.style.opacity = 1;
+        setTimeout(() => {
+            editWindow_inner.style.transform = "scale(1)";
+        }, 200);
+    }, 50);
+    const editWindow_done = document.getElementById("editWindow_done");
+    document.getElementById("editWindow_delete").onclick = () => {
+        closeEditWindow();
+    };
+    editWindow_done.onclick = () => {
+        let newURL;
+        try {
+            newURL = new URL(editWindow_url.value);
+
+        } catch (error) {
+            closeEditWindow();
+            return;
+        }
+        let favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + newURL.toString();
+        if (domainIcons[newURL.host] != undefined) {
+            favicon_url = domainIcons[newURL.host];
+        }
+
+        favorites[editWindow_url.value] = {
+            favicon_url: favicon_url,
+            title: editWindow_name.value,
+            url: editWindow_url.value
+        };
+        closeEditWindow();
+        saveFavorites();
+        renderFavorites();
+    }
+}
+
+function openEditWindow(url) {
+    document.getElementById("editWindow_title").innerHTML = "Edit shortcut";
+    document.getElementById("editWindow_delete").innerHTML = "Delete";
+    const editWindow = document.getElementById("editWindow");
+    const editWindow_inner = document.getElementById("editWindow_inner");
+    const editWindow_url = document.getElementById("editWindow_url");
+    const editWindow_name = document.getElementById("editWindow_name");
+    editWindow_url.value = url;
+    editWindow_name.value = favorites[url]["title"];
+    editWindow.style.display = "block";
+    setTimeout(() => {
+        editWindow.style.opacity = 1;
+        setTimeout(() => {
+            editWindow_inner.style.transform = "scale(1)";
+        }, 200);
+    }, 50);
+    const editWindow_done = document.getElementById("editWindow_done");
+    document.getElementById("editWindow_delete").onclick = () => {
+        delete favorites[url];
+        saveFavorites();
+        renderFavorites();
+        closeEditWindow();
+    };
+    editWindow_done.onclick = () => {
+        if (url == editWindow_url.value) {
+            closeEditWindow();
+            return;
+        }
+        const newURL = new URL(editWindow_url.value);
+        let favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + newURL.toString();
+        if (domainIcons[newURL.host] != undefined) {
+            favicon_url = domainIcons[newURL.host];
+        }
+        delete favorites[url];
+        favorites[editWindow_url.value] = {
+            favicon_url: favicon_url,
+            title: editWindow_name.value,
+            url: editWindow_url.value
+        };
+        closeEditWindow();
+        saveFavorites();
+        renderFavorites();
+    }
+}
+
+function closeEditWindow() {
+    const editWindow = document.getElementById("editWindow");
+    const editWindow_inner = document.getElementById("editWindow_inner");
+    setTimeout(() => {
+        editWindow.style.opacity = 0;
+        editWindow_inner.style.transform = "scale(0)";
+        setTimeout(() => {
+            editWindow.style.display = "none";
+        }, 200);
+    }, 50);
 }
 
 setTimeout(() => {
@@ -535,21 +627,7 @@ setTimeout(() => {
 }, 1000)
 
 async function addFavorite() {
-    const url = new URL(await prompt("Webpage url", "url"));
-    const title = await prompt("Title", "Title");
-    let favicon_url = "https://s2.googleusercontent.com/s2/favicons?sz=64&domain_url=" + url.toString();
-    if (domainIcons[url.host] != undefined) {
-        favicon_url = domainIcons[url.host];
-    }
-    var object = {
-        "url": url.toString(),
-        "favicon_url": favicon_url,
-        "title": title
-    }
-
-    favorites[url] = object;
-    saveFavorites();
-    renderFavorites();
+    openAddWindow();
 }
 
 var historyDisplayState = false;

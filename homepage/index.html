@@ -22,7 +22,6 @@
             <div id="favorites_container"></div>
             <div class="button" onclick="addFavorite()" id="favorites_add">+</div>
         </div>
-        <div id="favorites_hint">Right click on item to remove</div>
         <div id="history_container">
             <div id="history_header">Browsing history</div>
             <div id="history_close"><i class="lni lni-chevron-left"></i></div>
@@ -43,6 +42,17 @@
         <div id="tab_bar"></div>
         <div id="container"></div>
     </div>  
+    <div id="editWindow">
+        <div id="editWindow_inner">
+            <h1 id="editWindow_title">Edit shortcut</h1>
+            <input type="url" id="editWindow_url" placeholder="URL" />
+            <br>
+            <input type="text" id="editWindow_name" placeholder="Name"/>    
+            <br>
+            <button id="editWindow_done">Done</button>
+            <button id="editWindow_delete">Delete</button>
+        </div>
+    </div>
 </body>
 <script src="script.js"></script>
 <script src="frame_test.js"></script>
