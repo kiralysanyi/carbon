@@ -332,6 +332,10 @@ body {
     font-size: 20px;
     left: 50%;
     transform: translate(-50%, 0%);
+    width: 100%;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 #favorites .button:hover {
