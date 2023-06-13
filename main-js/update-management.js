@@ -57,7 +57,12 @@ const startUpdate = async (ipc_callback) => {
         }, 1000);
 
     } else {
-        var answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + app.getVersion() + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
+        var answer;
+        if (info == undefined) {
+            prompt.updatePrompt("No updates available.", "updateprompt");
+            return;
+        }
+        answer = await prompt.updatePrompt("Do you want to update? \n Current Version: " + app.getVersion() + " \n Version: " + info.updateInfo.version + " \n Notes: \n" + info.updateInfo.releaseNotes, "updateprompt")
         runInfoUpdate();
         if (answer == true) {
             runInfoUpdate();
