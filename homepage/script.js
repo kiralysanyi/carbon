@@ -33,10 +33,20 @@ const autocomplete_box = document.getElementById("autocomplete_box");
 
 function showBox() {
     autocomplete_box.style.display = "block";
+    setTimeout(() => {
+        autocomplete_box.style.opacity = 1;
+    }, 10);
+    searchbox.style.borderBottomLeftRadius = "0px";
+    searchbox.style.borderBottomRightRadius = "0px";
 }
 
 function hideBox() {
-    autocomplete_box.style.display = "none";
+    autocomplete_box.style.opacity = 0;
+    setTimeout(() => {
+        autocomplete_box.style.display = "none";
+        searchbox.style.borderBottomLeftRadius = "30px";
+        searchbox.style.borderBottomRightRadius = "30px";
+    }, 200);
 }
 
 searchbox.addEventListener("focus", () => {
@@ -215,6 +225,10 @@ class historyItem {
         this.htmlObj.appendChild(this.titleDOM);
         this.htmlObj.onclick = () => {
             location.href = this.url;
+        }
+
+        this.iconDOM.onerror = () => {
+            this.iconDOM.src = "notfound.png";
         }
         //add icon to domainIcons
         let domain = new URL(this.url).host;
@@ -476,6 +490,9 @@ function renderFavorites() {
         image.src = obj.favicon_url;
         const title = document.createElement("a");
         title.innerHTML = obj.title;
+        image.onerror = () => {
+            image.src = "notfound.png";
+        }
         element.appendChild(image);
         element.appendChild(title);
         container.appendChild(element);
@@ -565,7 +582,7 @@ function openEditWindow(url) {
         closeEditWindow();
     };
     editWindow_done.onclick = () => {
-        if (url == editWindow_url.value) {
+        if (url == editWindow_url.value && editWindow_name.value == favorites[url].title) {
             closeEditWindow();
             return;
         }
@@ -667,3 +684,9 @@ function applyTheme(theme) {
 
 applyTheme(carbonAPI.getTheme());
 
+//update clock
+
+setInterval(() => {
+    let d = new Date();
+    document.getElementById("clock").innerHTML = d.getHours() + ":" + d.getMinutes();
+}, 1000);

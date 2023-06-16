@@ -37,6 +37,7 @@ body {
     background-color: rgb(34, 34, 34);
     color: white;
     outline: 0;
+    border-radius: 20px;
 }
 
 #autocomplete_box {
@@ -51,6 +52,8 @@ body {
     overflow-y: auto;
     transition: 200ms;
     backdrop-filter: blur(8px);
+    border-bottom-left-radius: 30px;
+    border-bottom-right-radius: 30px;
 }
 
 #autocomplete_box div {
@@ -324,6 +327,7 @@ body {
     margin-top: 5px;
     width: 50px;
     height: 50px;
+    transition: 200ms;
 }
 
 #favorites_container a {
@@ -336,10 +340,31 @@ body {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    transition: 200ms;
 }
 
 #favorites .button:hover {
     background-color: rgba(255, 255, 255, 0.158);
+}
+
+#favorites .button:hover img{
+    height: 32px;
+    width: 32px;
+}
+
+#favorites .button:hover a {
+    position: absolute;
+    bottom: 15px;
+    font-size: 20px;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    width: 100%;
+    line-height: 20px;
+    height: 40px;
+    overflow: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    text-overflow: ellipsis;
 }
 
 #favorites_add {
@@ -422,4 +447,15 @@ body {
 
 #editWindow_done:hover {
     background-color: rgb(0, 123, 123);
+}
+
+#clock {
+    position: fixed;
+    top: 50px;
+    left: calc(50% - 100px);
+    width: 200px;
+    height: 50px;
+    line-height: 50px;
+    text-align: center;
+    font-size: 50px;
 }
