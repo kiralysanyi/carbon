@@ -26,17 +26,55 @@
             <div id="changeLocationButton">Change Location</div>
             <div id="changeLocationForm">
                 <input type="text" id="cityNameInput">
+                <br>
                 <button id="citySearchButton">Search</button>
                 <button id="searchCancelButton">Cancel</button>
                 <div id="citySearchResults">
-                    
+
                 </div>
             </div>
             <div id="temperature_display">N/A C</div>
             <div id="weather_hidden_info">
+                <h1>72 hour weather forecast</h1>
                 <p>
                 <h2>Temperature</h2>
-                <canvas id="tempChart"></canvas>
+                <canvas class="chart" id="tempChart"></canvas>
+                </p>
+                <p>
+                <h2>UV index</h2>
+                <canvas class="chart" id="uvindexChart"></canvas>
+                <h4 id="currentUvindex">Current: N/A</h4>
+                </p>
+                <p>
+                <h2>Precipitation</h2>
+                <canvas class="chart" id="precipitationChart"></canvas>
+                <h4 id="currentPrecipitation">Current: N/A</h4>
+                </p>
+                <p>
+                <h2>Cloud coverage</h2>
+                <canvas class="chart" id="cloudcoverChart"></canvas>
+                <h4 id="currentCloudcover">Current: N/A</h4>
+                </p>
+                <p>
+                <h2>Surface pressure</h2>
+                <canvas class="chart" id="surface_pressureChart"></canvas>
+                <h4 id="currentSurface_pressure">Current: N/A</h4>
+                </p>
+                <p>
+                <h2>Wind speed</h2>
+                <canvas class="chart" id="windspeedChart"></canvas>
+                <h4 id="currentWindspeed">Current: N/A</h4>
+                </p>
+                <p>
+                <h2>Visibility</h2>
+                <canvas class="chart" id="visibilityChart"></canvas>
+                <h4 id="currentVisibility">Current: N/A</h4>
+                </p>
+                <p>
+                    <h5 id="lastUpdated">Last updated: <script>document.write(new Date(localStorage.getItem("lastWeatherUpdate")).toLocaleString())</script></h5>
+                    <button onclick="forceWeatherUpdate()">Update information</button>
+                </p>
+                <p id="space">
                 </p>
             </div>
         </div>

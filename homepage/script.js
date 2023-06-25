@@ -766,6 +766,7 @@ function requestWeatherInfo() {
             sendRequest("https://api.open-meteo.com/v1/forecast?latitude=" + locationInfo.lat + "&longitude=" + locationInfo.lon + "&hourly=temperature_2m,precipitation,surface_pressure,cloudcover,visibility,windspeed_10m,uv_index&forecast_days=3&timezone=auto", (data) => {
                 localStorage.setItem("lastWeatherUpdate", new Date().toISOString());
                 localStorage.setItem("weatherInfo", JSON.stringify(data));
+                document.getElementById("lastUpdated").innerHTML = "Last updated: " + new Date(localStorage.getItem("lastWeatherUpdate")).toLocaleString();
                 resolved(data);
             });
         } else {
@@ -774,19 +775,44 @@ function requestWeatherInfo() {
     });
 }
 
-let tempChart;
+let tempChart, precipitationChart, surface_pressureChart, windspeedChart, uvindexChart, cloudcoverChart, visibilityChart;
+function forceWeatherUpdate() {
+    resetWeatherInfo();
+    setTimeout(() => {
+        tempChart.destroy();
+        surface_pressureChart.destroy();
+        precipitationChart.destroy();
+        windspeedChart.destroy();
+        uvindexChart.destroy();
+        cloudcoverChart.destroy();
+        visibilityChart.destroy();
+        fillInfo();
+    }, 200);
+}
 Chart.defaults.global.defaultFontColor = "#fff";
-async function fillTemperatureInfo() {
+if (carbonAPI.getTheme() == "light") {
+    Chart.defaults.global.defaultFontColor = "#000"; 
+}
+async function fillInfo() {
     //current temperature
     let locationInfo = JSON.parse(localStorage.getItem("locationInfo"));
 
     const currentDate = new Date();
     let info = await requestWeatherInfo();
+    for (let x in info["hourly"]["visibility"]) {
+        info["hourly"]["visibility"][x] /= 1000;
+    }
     for (let x in info["hourly"]["time"]) {
         let d = new Date(info["hourly"]["time"][x]);
         if (d.getHours() == currentDate.getHours() && d.getDay() == currentDate.getDay()) {
             temperature_display.innerHTML = Math.floor(info["hourly"]["temperature_2m"][x]) + info["hourly_units"]["temperature_2m"];
             location_display.innerHTML = locationInfo.city;
+            document.getElementById("currentPrecipitation").innerHTML = "Current: " + info["hourly"]["precipitation"][x] + "mm";
+            document.getElementById("currentSurface_pressure").innerHTML = "Current: " + info["hourly"]["surface_pressure"][x] + "hPa";
+            document.getElementById("currentWindspeed").innerHTML = "Current: " + info["hourly"]["windspeed_10m"][x] + "km/h";
+            document.getElementById("currentUvindex").innerHTML = "Current: " + info["hourly"]["uv_index"][x];
+            document.getElementById("currentCloudcover").innerHTML = "Current: " + info["hourly"]["cloudcover"][x] + "%";
+            document.getElementById("currentVisibility").innerHTML = "Current: " + info["hourly"]["visibility"][x] + "KM";
             console.log(x);
         }
     }
@@ -806,6 +832,102 @@ async function fillTemperatureInfo() {
         },
 
     });
+
+    //precipitation
+    precipitationChart = new Chart("precipitationChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "precipitation in mm",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["precipitation"]
+            }]
+        },
+
+    });
+
+    //surface pressure
+    surface_pressureChart = new Chart("surface_pressureChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "Surface pressure in hPa",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["surface_pressure"]
+            }]
+        },
+
+    });
+
+    //windspeed
+    windspeedChart = new Chart("windspeedChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "Wind speed in km/h",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["windspeed_10m"]
+            }]
+        },
+
+    });
+
+    //uv index
+    uvindexChart = new Chart("uvindexChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "UV index",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["uv_index"]
+            }]
+        },
+
+    });
+
+    //cloud coverage
+    cloudcoverChart = new Chart("cloudcoverChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "Cloud coverage in %",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["cloudcover"]
+            }]
+        },
+
+    });
+
+    //visibility
+    visibilityChart = new Chart("visibilityChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "Visibility in KM",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["visibility"]
+            }]
+        },
+
+    });
 }
 
 if (localStorage.getItem("locationInfo") == null) {
@@ -816,15 +938,9 @@ if (localStorage.getItem("locationInfo") == null) {
     }))
 }
 
-fillTemperatureInfo();
+fillInfo();
 
-function forceWeatherUpdate() {
-    resetWeatherInfo();
-    setTimeout(() => {
-        tempChart.destroy();
-        fillTemperatureInfo();    
-    }, 200);
-}
+
 
 document.getElementById("searchCancelButton").onclick = () => {
     document.getElementById("changeLocationForm").style.display = "none";

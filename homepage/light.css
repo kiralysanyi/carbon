@@ -60,3 +60,21 @@ body {
     background-color: rgb(206, 206, 206);
     color: black;
 }
+
+#weather_display {
+    background-color: rgba(255, 255, 255, 0.345);
+}
+
+#changeLocationForm {
+    background-color: white;
+    color: black;
+}
+
+#citySearchResults div {
+    color: black;
+    background-color: rgb(194, 194, 194);
+}
+
+#citySearchResults div:hover {
+    background-color: rgb(203, 203, 203);
+}

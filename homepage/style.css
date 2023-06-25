@@ -501,6 +501,7 @@ body {
     height: 100%;
     display: none;
     overflow: auto;
+    text-align: center;
 }
 
 #weather_hide {
@@ -518,9 +519,12 @@ body {
     background-color: rgba(255, 255, 255, 0.214);
 }
 
-#tempChart {
+.chart {
     position: relative;
+    left: 50%;
+    transform: translate(-50%, 0%);
     width: 100%;
+    max-width: 700px;
     height: 100%;
 }
 
@@ -540,6 +544,25 @@ body {
     background-color: rgba(255, 255, 255, 0.21);
 }
 
+#cityNameInput {
+    width: 300px;
+    height: 40px;
+    background-color: rgb(208, 208, 208);
+    color: black;
+    border: none;
+    border-radius: 10px;
+}
+
+#changeLocationForm button {
+    width: 100px;
+    height: 40px;
+    border: none;
+    background-color: blue;
+    color: white;
+    border-radius: 10px;
+    margin: 5px;
+}
+
 #changeLocationForm {
     position: absolute;
     top: 0px;
@@ -550,6 +573,7 @@ body {
     color: white;
     z-index: 100;
     display: none;
+    text-align: center;
 }
 
 #citySearchResults {
@@ -573,4 +597,8 @@ body {
 
 #citySearchResults div:hover {
     background-color: rgb(56, 56, 56);
+}
+
+#space {
+    height: 100px;
 }
