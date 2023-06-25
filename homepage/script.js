@@ -690,3 +690,179 @@ setInterval(() => {
     let d = new Date();
     document.getElementById("clock").innerHTML = d.getHours() + ":" + d.getMinutes();
 }, 1000);
+
+//weather info
+const weather_display = document.getElementById("weather_display");
+const location_display = document.getElementById("location_display");
+const temperature_display = document.getElementById("temperature_display");
+const weather_hidden_info = document.getElementById("weather_hidden_info");
+const weather_hide = document.getElementById("weather_hide");
+const changeLocationButton = document.getElementById("changeLocationButton");
+let isHiddenInfoShown = false;
+weather_hide.addEventListener("click", hideHiddenWeatherInfo);
+
+function showHiddenWeatherInfo() {
+    if (isHiddenInfoShown == true) {
+        return;
+    }
+    isHiddenInfoShown = true;
+    weather_display.style.top = "0px";
+    weather_display.style.left = "0px";
+    weather_display.style.width = "100%";
+    weather_display.style.height = "100%";
+    weather_display.style.borderRadius = "0px";
+    weather_hidden_info.style.display = "block";
+    location_display.style.width = "50%";
+    location_display.style.left = "80px";
+    weather_hide.style.display = "block";
+    changeLocationButton.style.display = "block";
+}
+
+weather_display.addEventListener("click", (e) => {
+    if (e.target.id == "hideicon" || e.target.id == "weather_hide") {
+        hideHiddenWeatherInfo();
+        return;
+    }
+    showHiddenWeatherInfo();
+})
+
+function hideHiddenWeatherInfo() {
+    if (isHiddenInfoShown == false) {
+        return;
+    }
+    isHiddenInfoShown = false;
+    weather_display.style.top = "20px";
+    weather_display.style.left = "20px";
+    weather_display.style.width = "200px";
+    weather_display.style.height = "70px";
+    weather_display.style.borderRadius = "20px";
+    weather_hidden_info.style.display = "none";
+    location_display.style.width = "140px";
+    weather_hide.style.display = "none";
+    location_display.style.left = "10px";
+    changeLocationButton.style.display = "none";
+}
+
+
+
+
+function resetWeatherInfo() {
+    localStorage.removeItem("weatherInfo");
+    localStorage.removeItem("lastWeatherUpdate");
+}
+
+function requestWeatherInfo() {
+    return new Promise((resolved) => {
+        let locationInfo = JSON.parse(localStorage.getItem("locationInfo"));
+        console.log(locationInfo);
+        let lastUpdateDate;
+        if (localStorage.getItem("lastWeatherUpdate") != null) {
+            lastUpdateDate = new Date(localStorage.getItem("lastWeatherUpdate"));
+        } else {
+            lastUpdateDate = new Date(0);
+        }
+
+        if (lastUpdateDate.getHours() < new Date().getHours() || lastUpdateDate.getDay() < new Date().getDay()) {
+            sendRequest("https://api.open-meteo.com/v1/forecast?latitude=" + locationInfo.lat + "&longitude=" + locationInfo.lon + "&hourly=temperature_2m,precipitation,surface_pressure,cloudcover,visibility,windspeed_10m,uv_index&forecast_days=3&timezone=auto", (data) => {
+                localStorage.setItem("lastWeatherUpdate", new Date().toISOString());
+                localStorage.setItem("weatherInfo", JSON.stringify(data));
+                resolved(data);
+            });
+        } else {
+            resolved(JSON.parse(localStorage.getItem("weatherInfo")));
+        }
+    });
+}
+
+let tempChart;
+Chart.defaults.global.defaultFontColor = "#fff";
+async function fillTemperatureInfo() {
+    //current temperature
+    let locationInfo = JSON.parse(localStorage.getItem("locationInfo"));
+
+    const currentDate = new Date();
+    let info = await requestWeatherInfo();
+    for (let x in info["hourly"]["time"]) {
+        let d = new Date(info["hourly"]["time"][x]);
+        if (d.getHours() == currentDate.getHours() && d.getDay() == currentDate.getDay()) {
+            temperature_display.innerHTML = Math.floor(info["hourly"]["temperature_2m"][x]) + info["hourly_units"]["temperature_2m"];
+            location_display.innerHTML = locationInfo.city;
+            console.log(x);
+        }
+    }
+
+    //chart
+    tempChart = new Chart("tempChart", {
+        type: "line",
+        data: {
+            labels: info["hourly"]["time"],
+            datasets: [{
+                label: "Temperature in Celsius",
+                backgroundColor: "rgba(0,0,255,1.0)",
+                color: "white",
+                borderColor: "rgba(0,0,255,0.1)",
+                data: info["hourly"]["temperature_2m"]
+            }]
+        },
+
+    });
+}
+
+if (localStorage.getItem("locationInfo") == null) {
+    localStorage.setItem("locationInfo", JSON.stringify({
+        city: "Budapest",
+        lon: 19.04045,
+        lat: 47.49835
+    }))
+}
+
+fillTemperatureInfo();
+
+function forceWeatherUpdate() {
+    resetWeatherInfo();
+    setTimeout(() => {
+        tempChart.destroy();
+        fillTemperatureInfo();    
+    }, 200);
+}
+
+document.getElementById("searchCancelButton").onclick = () => {
+    document.getElementById("changeLocationForm").style.display = "none";
+}
+
+function searchLocation(cityname) {
+    return new Promise((resolved) => {
+        const url = new URL("https://geocoding-api.open-meteo.com/v1/search?name=" + cityname + "&count=10&language=en&format=json").toString();
+        sendRequest(url, (data) => {
+            console.log(data);
+            resolved(data["results"]);
+        })
+    });
+
+}
+
+document.getElementById("citySearchButton").onclick = async () => {
+    let cityname = document.getElementById("cityNameInput").value;
+    let data = await searchLocation(cityname);
+    let citySearchResults = document.getElementById("citySearchResults");
+    citySearchResults.innerHTML = "";
+    for (let x in data) {
+        let item = document.createElement("div");
+        item.innerHTML = data[x]["name"] + ", " + data[x]["country"];
+        item.onclick = () => {
+            console.log(data[x]);
+            localStorage.setItem("locationInfo", JSON.stringify({
+                city: data[x]["name"],
+                lon: data[x]["longitude"],
+                lat: data[x]["latitude"]
+            }));
+            forceWeatherUpdate();
+            document.getElementById("changeLocationForm").style.display = "none";
+        }
+        citySearchResults.appendChild(item);
+    }
+}
+
+changeLocationButton.onclick = () => {
+    document.getElementById("changeLocationForm").style.display = "block";
+}

@@ -13,11 +13,33 @@
     <link rel="stylesheet" href="../lib/select/select.css">
     <script src="../lib/select/select.js"></script>
     <script src="../lib/tabs/tabs.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js">
+    </script>
 </head>
 
 <body>
 
     <div id="main_content">
+        <div id="weather_display">
+            <div id="weather_hide"><i id="hideicon" class="lni lni-chevron-left"></i></div>
+            <div id="location_display">N/A</div>
+            <div id="changeLocationButton">Change Location</div>
+            <div id="changeLocationForm">
+                <input type="text" id="cityNameInput">
+                <button id="citySearchButton">Search</button>
+                <button id="searchCancelButton">Cancel</button>
+                <div id="citySearchResults">
+                    
+                </div>
+            </div>
+            <div id="temperature_display">N/A C</div>
+            <div id="weather_hidden_info">
+                <p>
+                <h2>Temperature</h2>
+                <canvas id="tempChart"></canvas>
+                </p>
+            </div>
+        </div>
         <div id="clock"></div>
         <div id="favorites">
             <div id="favorites_container"></div>
@@ -29,7 +51,7 @@
             <div id="history"></div>
             <button id="clearHistory" onclick="carbonAPI.clearHistory(); location.reload()">Clear History</button>
         </div>
-    
+
         <form id="searchform">
             <input id="searchbox" type="text" placeholder="Type keywords">
         </form>
@@ -42,13 +64,13 @@
         <button id="close_settings" onclick="hideSettings()">&times;</button>
         <div id="tab_bar"></div>
         <div id="container"></div>
-    </div>  
+    </div>
     <div id="editWindow">
         <div id="editWindow_inner">
             <h1 id="editWindow_title">Edit shortcut</h1>
             <input type="url" id="editWindow_url" placeholder="URL" />
             <br>
-            <input type="text" id="editWindow_name" placeholder="Name"/>    
+            <input type="text" id="editWindow_name" placeholder="Name" />
             <br>
             <button id="editWindow_done">Done</button>
             <button id="editWindow_delete">Delete</button>
