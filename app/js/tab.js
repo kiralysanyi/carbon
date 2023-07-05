@@ -1,6 +1,6 @@
 const { ipcRenderer } = require("electron");
 const settings = require("../main-js/settings");
-
+let isInitializing = true;
 //ipc crap
 var afterinit = false;
 
@@ -227,6 +227,10 @@ class tab {
         }
 
         var loadend = (utype) => {
+            if (isInitializing == true) {
+                hideSplashScreen();
+                isInitializing = false;
+            }
             this.loader.style.display = "none";
             if (focused_tab == this.id) {
                 if (document.getElementById("urlbar") != document.activeElement && utype != "home") {

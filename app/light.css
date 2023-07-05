@@ -39,3 +39,8 @@
 #suggestions div:hover {
     background-color: rgba(0, 0, 0, 0.079);
 }
+
+#splashscreen {
+    background-color: white;
+    color: black;
+}

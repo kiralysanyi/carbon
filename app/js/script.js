@@ -522,3 +522,19 @@ ipcRenderer.on("removeBlur", (e, bool) => {
     console.log("Removing blur: ", bool);
     removeBlur(bool);
 })
+
+const splashscreen = document.getElementById("splashscreen");
+
+function showSplashScreen() {
+    splashscreen.style.display = "block";
+    setTimeout(() => {
+        splashscreen.style.opacity = 1;
+    }, 50);
+}
+
+function hideSplashScreen() {
+    splashscreen.style.opacity = 0;
+    setTimeout(() => {
+        splashscreen.style.display = "none";
+    }, 200);
+}
