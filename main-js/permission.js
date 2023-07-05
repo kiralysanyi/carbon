@@ -1,4 +1,4 @@
-const {app, session} = require("electron");
+const { app, session, ipcMain, webContents, BrowserWindow } = require("electron");
 const prompt = require("./prompt");
 const settings = require("./settings");
 
@@ -28,8 +28,9 @@ function savePermissions() {
     settings.saveData("permissions.conf.json", JSON.stringify(permissions));
 }
 
-app.on("session-created", () => {
-    session.defaultSession.setPermissionRequestHandler(async (webcontents, permission, callback) => {
+let attachPermissionHandler = (winID, mainWindow = new BrowserWindow(), webcontents = new webContents()) => {
+    console.log("Attaching permission handler: ", winID);
+    webcontents.session.setPermissionRequestHandler(async (webcontents, permission, callback) => {
         await loadPermissions();
         const host = new URL(webcontents.getURL()).hostname;
 
@@ -79,8 +80,9 @@ app.on("session-created", () => {
             return false;
         }
 
-        if (permission == "media") {
-            var answer = await prompt.confirm("Do you want to grant audio/video permission for " + host + " ?", host + permission);
+        console.log(host, " asked for permission: ", permission);
+
+        ipcMain.once(permission + winID, (e, answer) => {
             if (permissions[host]) {
                 permissions[host][permission] = answer;
             }
@@ -90,22 +92,16 @@ app.on("session-created", () => {
             }
             savePermissions();
             callback(answer);
+            console.log("Answer to permission request: ", answer)
             return answer;
-        }
+        })
 
-        console.log(host, " asked for permission: ", permission)
-        var answer = await prompt.confirm("Do you want to grant permission: " + permission + " for " + host + " ?", host + permission);
-        if (permissions[host]) {
-            permissions[host][permission] = answer;
-        }
-        else {
-            permissions[host] = {};
-            permissions[host][permission] = answer;
-        }
-        savePermissions();
-        return answer;
-
+        mainWindow.webContents.send("permissionPrompt", winID, permission, host);
     });
+}
+
+app.on("session-created", () => {
+
 
     session.defaultSession.setPermissionCheckHandler(async (webcontents, permission, origin, details) => {
         await loadPermissions();
@@ -119,3 +115,5 @@ app.on("session-created", () => {
         }
     });
 })
+
+module.exports = { attachPermissionHandler }

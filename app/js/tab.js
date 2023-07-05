@@ -1,4 +1,5 @@
 const { ipcRenderer } = require("electron");
+require("./js/permission_prompt");
 const settings = require("../main-js/settings");
 let isInitializing = true;
 //ipc crap

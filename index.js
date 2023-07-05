@@ -97,7 +97,7 @@ const prompt = require("./main-js/prompt");
 //getting the useragent
 const { USERAGENT, USERAGENT_FIREFOX } = require("./main-js/useragent-provider");
 const { runUpdate, startUpdate } = require("./main-js/update-management");
-const permission_handler = require("./main-js/permission")
+const permission_handler = require("./main-js/permission");
 
 const autoupdate = settings.readKeyFromFile("general.conf.json", "auto-update")
 
@@ -184,6 +184,12 @@ function initMainWindow(startupURL = null) {
     });
     const winID = randomUUID();
     windows[winID] = win;
+
+    win.webContents.on("ipc-message-sync", (e, channel) => {
+        if (channel == "requestWinID") {
+            e.returnValue = winID;
+        }
+    });
 
     win.maximize();
 
@@ -405,6 +411,7 @@ function initMainWindow(startupURL = null) {
                     })
                 }
             }
+            permission_handler.attachPermissionHandler(winID, win, view.webContents);
 
             isFirstOpen = false;
             view.webContents.setUserAgent(USERAGENT);
