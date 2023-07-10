@@ -3,10 +3,11 @@ const { ipcMain, app, BrowserWindow } = require("electron");
 const prompt = require("./prompt");
 
 let Blowfish;
-import("egoroof-blowfish").then((mod) => {
+import("egoroof-blowfish/dist/blowfish.mjs").then((mod) => {
     Blowfish = mod.Blowfish;
-}).catch(() => {
+}).catch((error) => {
     console.log("Failed to import blowfish module");
+    console.log(error);
     process.exit();
 });
 let bf;

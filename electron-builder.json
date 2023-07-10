@@ -4,6 +4,7 @@
   "generateUpdatesFilesForAllChannels": true,
   "afterSign": "./signpackage.js",
   "files": ["!**/signpackage.js"],
+  "asar": "false",
   "electronDownload": {
     "mirror": "https://github.com/castlabs/electron-releases/releases/download/v",
     "version": "24.5.0+wvcus"
