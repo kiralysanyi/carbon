@@ -469,7 +469,11 @@ ipcRenderer.on("leave_fullscreen_darwin", () => {
 });
 
 ipcRenderer.on("applyTheme", (e, theme) => {
+    console.log("Apply theme: ", theme);
     applyTheme(theme);
+    setTimeout(() => {
+        hideSplashScreen();
+    }, 500)
 });
 
 //apply theme

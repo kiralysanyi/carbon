@@ -183,6 +183,41 @@ var alert = (text) => {
     })
 }
 
+var passwordPrompt = (text) => {
+    return new Promise((resolved) => {
+        const winID = uuidv4();
+        const win = new BrowserWindow({
+            width: 500,
+            height: 280,
+            resizable: false,
+            frame: false,
+            alwaysOnTop: true,
+            webPreferences: {
+                nodeIntegration: true,
+                contextIsolation: false
+            }
+        });
+        win.removeMenu();
+        win.webContents.setUserAgent(winID);
+        win.loadFile("prompts/passprompt.html");
+        //win.webContents.openDevTools();
+
+        ipcMain.once(winID + "text", (e) => {
+            e.sender.send(winID + "text", text);
+        });
+
+        ipcMain.once(winID + "cancel", (e) => {
+            resolved(null)
+            win.close();
+        });
+
+        ipcMain.once(winID + "password", (e, password) => {
+            resolved(password);
+            win.close();
+        })
+    })
+}
+
 ipcMain.on("alert", async (e, text) => {
     await alert(text);
     e.returnValue = 0;
@@ -193,5 +228,6 @@ module.exports = {
     confirm: confirm,
     alert: alert,
     updatePrompt: updatePrompt,
+    passwordPrompt,
     updateDisplay: updateDisplay
 }

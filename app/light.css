@@ -44,3 +44,13 @@
     background-color: white;
     color: black;
 }
+
+#permission_prompt_back {
+    background-color: white;
+    color: black;
+}
+
+#permission_prompt {
+    background-color: rgb(214, 214, 214);
+    color: black;
+}

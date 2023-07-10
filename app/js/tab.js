@@ -229,7 +229,6 @@ class tab {
 
         var loadend = (utype) => {
             if (isInitializing == true) {
-                hideSplashScreen();
                 isInitializing = false;
             }
             this.loader.style.display = "none";

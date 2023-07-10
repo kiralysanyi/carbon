@@ -41,7 +41,7 @@ const { readFileSync, existsSync } = require("fs");
 const configurator = require("./main-js/configurator");
 require("./main-js/download_backend");
 require("./main-js/adblock");
-const {getStartupConfig, updateStartupConfig} = require("./main-js/autostart");
+const { getStartupConfig, updateStartupConfig } = require("./main-js/autostart");
 const shortcutRegister = require("./main-js/shortcut_register");
 const persistent = require("./main-js/persistent_variables");
 var args = process.argv;
@@ -71,7 +71,7 @@ let startup = getStartupConfig();
 if (checkParameter("--nowindowinit")) {
     if (startup == false) {
         app.exit();
-    }    
+    }
 }
 
 if (checkParameter("--verbose") == false) {
@@ -195,7 +195,7 @@ function initMainWindow(startupURL = null) {
 
     win.show();
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools({mode: "detach"});
+        win.webContents.openDevTools({ mode: "detach" });
     }
 
     //main window event handling
@@ -227,7 +227,7 @@ function initMainWindow(startupURL = null) {
         win.on("enter-full-screen", () => {
             win.webContents.send("enter_fullscreen_darwin")
         })
-    
+
         win.on("leave-full-screen", () => {
             win.webContents.send("leave_fullscreen_darwin")
         })
@@ -285,7 +285,7 @@ function initMainWindow(startupURL = null) {
         //open developer tools for current tab
         if (channel == "openDevTools") {
             const view = webviews[uuid];
-            view.webContents.openDevTools({mode: "detach"});
+            view.webContents.openDevTools({ mode: "detach" });
             e.returnValue = 0;
         }
 
@@ -608,7 +608,7 @@ function initMainWindow(startupURL = null) {
             view.webContents.setWindowOpenHandler((details) => {
                 sendEvent({ type: "new-window", url: details.url });
                 return { action: 'deny' }
-              })
+            })
 
             var isFullScreen = false;
 
@@ -689,7 +689,7 @@ function attachControlHost(win) {
             overlayConf.symbolColor = "white";
         };
         win.setTitleBarOverlay(overlayConf);
-        win.webContents.send("applyTheme", settings.readKeyFromFile("general.conf.json", "theme"));        
+        win.webContents.send("applyTheme", settings.readKeyFromFile("general.conf.json", "theme"));
     }
 
     let removeBlur = () => {
@@ -754,7 +754,7 @@ function initSetup() {
     win.show();
     attachControlHost(win);
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools({mode: "detach"});
+        win.webContents.openDevTools({ mode: "detach" });
     }
 
     win.on("closed", () => {
@@ -783,7 +783,7 @@ ipcMain.on("opendownloads", () => {
     attachControlHost(win);
 
     if (checkParameter("--carbon-debug")) {
-        win.webContents.openDevTools({mode: "detach"});
+        win.webContents.openDevTools({ mode: "detach" });
     }
 })
 
@@ -847,6 +847,9 @@ app.whenReady().then(async () => {
         ipcMain.on("isBlurRemoved", (e) => {
             e.returnValue = settings.readKeyFromFile("experimental.conf.json", "remove_blur");
         });
+
+        //load password manager backend
+        require("./main-js/password_manager");
 
         for (var x in process.argv) {
             if (x > 0) {
